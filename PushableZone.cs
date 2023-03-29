@@ -35,7 +35,6 @@ public class PushableZone : Collideable
         if (coll.name == "Player" || coll.name == "Weapon")
         {
             pushable.PushBlock(push_direction);
-            Debug.Log("push attempted");
         }
             
     }

@@ -6,6 +6,8 @@ public class Pushable : Fighter
 {
     protected BoxCollider2D boxCollider;
     protected RaycastHit2D hit;
+    protected float last_push;
+    public float push_cooldown = 0.05f;
 
 
     protected virtual void Start()
@@ -20,26 +22,28 @@ public class Pushable : Fighter
 
     public virtual void PushBlock(string direction)
     {
-        Debug.Log("pushed");
-        if (direction == "left")
+        if (Time.time - last_push > push_cooldown)
         {
-            Vector2 input = new Vector2(-1, 0);
-            Move(input);
-        }
-        else if (direction == "right")
-        {
-            Vector2 input = new Vector2(1, 0);
-            Move(input);
-        }
-        else if (direction == "up")
-        {
-            Vector2 input = new Vector2(0, 1);
-            Move(input);
-        }
-        else
-        {
-            Vector2 input = new Vector2(0, -1);
-            Move(input);
+            if (direction == "left")
+            {
+                Vector2 input = new Vector2(-1, 0);
+                Move(input);
+            }
+            else if (direction == "right")
+            {
+                Vector2 input = new Vector2(1, 0);
+                Move(input);
+            }
+            else if (direction == "up")
+            {
+                Vector2 input = new Vector2(0, 1);
+                Move(input);
+            }
+            else
+            {
+                Vector2 input = new Vector2(0, -1);
+                Move(input);
+            }
         }
     }
 
@@ -50,7 +54,7 @@ public class Pushable : Fighter
             hit = Physics2D.BoxCast(transform.position, boxCollider.size * 0.1f, 0, new Vector2(0, input.y), 0.01f, LayerMask.GetMask("Characters", "Block"));
             if (hit.collider == null)
             {
-                Debug.Log("moved");
+                last_push = Time.time;
                 if (input.y > 0)
                 {
                     transform.Translate(0, 0.01f, 0);
@@ -70,7 +74,7 @@ public class Pushable : Fighter
             hit = Physics2D.BoxCast(transform.position, boxCollider.size * 0.1f, 0, new Vector2(input.x, 0), 0.01f, LayerMask.GetMask("Characters", "Block"));
             if (hit.collider == null)
             {
-                Debug.Log("moved");
+                last_push = Time.time;
                 if (input.x > 0)
                 {
                     transform.Translate(0.01f, 0, 0);

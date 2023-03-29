@@ -8,7 +8,7 @@ public class Button : Activatable
     public Sprite pushed_button;
     public List<Activatable> activatees;
     protected bool pushed;
-    protected float unpush_cooldown = 2.0f;
+    protected float unpush_cooldown = 0.5f;
     protected float last_push;
     private ContactFilter2D filter;
     private BoxCollider2D box_collider;
@@ -21,8 +21,22 @@ public class Button : Activatable
 
     protected virtual void FixedUpdate()
     {
-        // Button is automatically unpushed after some time.
-        if (pushed)
+        int overlaps = 0;
+        box_collider.OverlapCollider(filter,hits);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[i] == null)
+                continue;
+
+            if (hits[i].tag == "Interactable" || hits[i].name == "Player")
+            {
+                overlaps++;
+            }
+
+            hits[i] = null;
+        }
+        // Button is automatically unpushed after some time if nothing is on it.
+        if (overlaps == 0)
         {
             if (Time.time - last_push > unpush_cooldown)
             {
@@ -32,16 +46,7 @@ public class Button : Activatable
         // Button is pushed by things moving over it.
         else
         {
-            box_collider.OverlapCollider(filter,hits);
-            for (int i = 0; i < hits.Length; i++)
-            {
-                if (hits[i] == null)
-                    continue;
-                
-                OnCollide(hits[i]);
-
-                hits[i] = null;
-            }
+            Push();
         }
     }
 
