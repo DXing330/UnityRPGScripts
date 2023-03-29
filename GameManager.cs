@@ -97,6 +97,8 @@ public class GameManager : MonoBehaviour
             if (upgraded_stat == "bonus_health")
             {
                 player.bonus_health++;
+                player.SetMaxHealth();
+                OnHealthChange();
             }
             else if (upgraded_stat == "damage_multiplier")
             {
