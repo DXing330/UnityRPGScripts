@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     // References
     public Player player;
     public Weapon weapon;
+    public PlayerProjectile projectile;
     public Familiar familiar;
     public FloatingTextManager floatingTextManager;
     public RectTransform healthBar;
@@ -264,6 +265,10 @@ public class GameManager : MonoBehaviour
         familiar_stats.UpdateData();
         string familiar_stats_json = JsonUtility.ToJson(familiar_stats, true);
         File.WriteAllText("Assets/Saves/familiar_stats.json", familiar_stats_json);
+        ProjectileStatsWrapper projectile_stats = new ProjectileStatsWrapper();
+        projectile_stats.UpdateData();
+        string projectile_stats_json = JsonUtility.ToJson(projectile_stats, true);
+        File.WriteAllText("Assets/Saves/projectile_stats.json", projectile_stats_json);
         Debug.Log("Saved");
     }
 
@@ -287,6 +292,9 @@ public class GameManager : MonoBehaviour
             string familiar_stats = File.ReadAllText("Assets/Saves/familiar_stats.json");
             FamiliarStatsWrapper loaded_familiar_stats = JsonUtility.FromJson<FamiliarStatsWrapper>(familiar_stats);
             familiar.SetStats(loaded_familiar_stats);
+            string projectile_stats = File.ReadAllText("Assets/Saves/projectile_stats.json");
+            ProjectileStatsWrapper loaded_projectile_stats = JsonUtility.FromJson<ProjectileStatsWrapper>(projectile_stats);
+            projectile.SetStats(loaded_projectile_stats);
         }
         else
         {

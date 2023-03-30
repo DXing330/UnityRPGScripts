@@ -17,10 +17,12 @@ public class AreaBoss : EnemyAnimated
         {
             if (target_transform != null)
             {
+                // If the player is somehow detected but the door isn't open yet, stop chasing.
                 if (!locked_door.active)
                 {
                     target_transform = null;
                 }
+                // If the player is through the door, lock it behind them.
                 else if (locked_door.active)
                 {
                     active = true;

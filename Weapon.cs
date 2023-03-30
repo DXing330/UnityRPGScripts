@@ -17,7 +17,7 @@ public class Weapon : Collideable
 
     // Swing
     private Animator animator;
-    private float cooldown = 0.25f;
+    private float cooldown = 0.36f;
     private float lastSwing;
 
     private void Awake()
@@ -35,7 +35,9 @@ public class Weapon : Collideable
     {
         base.Update();
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C))
+        float x_direction = Input.GetAxisRaw("Horizontal");
+
+        if (Input.GetKeyDown(KeyCode.C))
         {
             if (Time.time - lastSwing > cooldown)
             {
@@ -43,16 +45,6 @@ public class Weapon : Collideable
                 Swing();
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            if (Time.time - lastSwing > cooldown)
-            {
-                lastSwing = Time.time;
-                BackSwing();
-            }
-        }
-
     }
 
     protected override void OnCollide(Collider2D coll)

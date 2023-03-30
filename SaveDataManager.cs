@@ -122,3 +122,27 @@ public class FamiliarStatsWrapper
         bonus_heal = GameManager.instance.familiar.bonus_heal;
     }
 }
+
+public class WeaponStatsWrapper
+{
+    public int weapon_level;
+
+    public void UpdateData()
+    {
+        weapon_level = GameManager.instance.weapon.weaponLevel;
+    }
+}
+
+public class ProjectileStatsWrapper
+{
+    public int bonus_damage;
+    public int bonus_speed;
+    public int bonus_weight;
+
+    public void UpdateData()
+    {
+        bonus_damage = GameManager.instance.projectile.bonus_damage;
+        bonus_speed = GameManager.instance.projectile.bonus_speed;
+        bonus_weight = GameManager.instance.projectile.bonus_weight;
+    }
+}

@@ -6,9 +6,9 @@ public class Projectile : EnemyHitbox
 {
     private Rigidbody2D rigidBody2D;
     private Vector3 force;
-    private float speed = 1.3f;
-    private float duration = 6.0f;
     private float spawn_time;
+    private float duration = 6.0f;
+    private float speed = 1.3f;
 
     protected override void Start()
     {

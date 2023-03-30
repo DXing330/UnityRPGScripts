@@ -12,6 +12,10 @@ public class Player : Mover
     public int damage_multiplier;
     // Affects drops.
     public int luck;
+    // Ranged Attack.
+    protected bool facing_right;
+    protected float ranged_attack_cooldown = 0.6f;
+    protected float last_ranged_attack;
 
     protected override void Start()
     {
@@ -46,6 +50,14 @@ public class Player : Mover
     private void FixedUpdate()
     {
         float x = Input.GetAxisRaw("Horizontal");
+        if (x < 0)
+        {
+            facing_right = false;
+        }
+        else if (x > 0)
+        {
+            facing_right = true;
+        }
         float y = Input.GetAxisRaw("Vertical");
 
         UpdateMotor(new Vector3(x,y,0));

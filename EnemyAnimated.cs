@@ -151,7 +151,7 @@ public class EnemyAnimated : Mover
         }
         if (dead)
         {
-            if (Time.time - last_alive > 3.0f)
+            if (Time.time - last_alive > 2.0f)
             {
                 GameManager.instance.GrantExp(exp_value);
                 Destroy(gameObject);
