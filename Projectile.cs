@@ -39,7 +39,7 @@ public class Projectile : EnemyHitbox
             coll.SendMessage("ReceiveDamage", damage);
             Destroy(gameObject);
         }
-        if (coll.tag == "Block")
+        if (coll.tag == "Block" || coll.tag == "Weapon")
         {
             Destroy(gameObject);
         }
@@ -53,6 +53,11 @@ public class Projectile : EnemyHitbox
     public virtual void UpdateForce(Vector3 new_force)
     {
         force = new_force;
+    }
+
+    public virtual void UpdateDamage(int new_damage)
+    {
+        damage_per_hit = new_damage;
     }
 
     public virtual void FireProjectile(Vector3 force)

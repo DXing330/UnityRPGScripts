@@ -6,7 +6,8 @@ public class Cannon : Activatable
 {
     public Projectile projectile;
     public float firing_distance;
-    private float cooldown = 2.0f;
+    public float cooldown = 2.0f;
+    public int firing_damage;
     private float last_fired;
     private BoxCollider2D player_position;
     private BoxCollider2D cannon_position;
@@ -23,10 +24,16 @@ public class Cannon : Activatable
 
     public void FixedUpdate()
     {
-        if (Time.time - last_fired > cooldown  && (player_position.bounds.center - cannon_position.bounds.center).magnitude < firing_distance)
+        if (Time.time - last_fired > cooldown  && (player_position.bounds.center - cannon_position.bounds.center).magnitude < firing_distance && active)
         {
             Shoot();
+            active = false;
         }
+    }
+
+    public override void Activate()
+    {
+        active = true;
     }
 
     protected void Shoot()
@@ -34,6 +41,7 @@ public class Cannon : Activatable
         last_fired = Time.time;
         Projectile clone = Instantiate(projectile, cannon_position.bounds.center, new Quaternion(0, 0, 0, 0));
         clone.UpdateForce((player_position.bounds.center - cannon_position.bounds.center).normalized);
+        clone.UpdateDamage(firing_damage);
         animator.SetTrigger("Shoot");
     }
 }

@@ -13,6 +13,7 @@ public class EnemyAnimated : Mover
     protected float last_attack;
     protected bool dead = false;
     protected float last_alive;
+    public float corpse_linger_time;
     protected Animator animator;
     protected bool chasing;
     protected bool horizontal_flip = false;
@@ -151,7 +152,7 @@ public class EnemyAnimated : Mover
         }
         if (dead)
         {
-            if (Time.time - last_alive > 2.0f)
+            if (Time.time - last_alive > corpse_linger_time)
             {
                 GameManager.instance.GrantExp(exp_value);
                 Destroy(gameObject);

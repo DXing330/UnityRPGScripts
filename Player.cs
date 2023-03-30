@@ -6,14 +6,15 @@ public class Player : Mover
 {
     public int playerLevel;
     private SpriteRenderer sprite_renderer;
-    private float dash_cooldown = 1.0f;
+    private float dash_cooldown = 0.6f;
     private float last_dash;
     public int bonus_health;
     public int damage_multiplier;
     // Affects drops.
     public int luck;
     // Ranged Attack.
-    protected bool facing_right;
+    public PlayerProjectile projectile;
+    protected bool facing_right = true;
     protected float ranged_attack_cooldown = 0.6f;
     protected float last_ranged_attack;
 
@@ -36,6 +37,21 @@ public class Player : Mover
         GameManager.instance.OnHealthChange();
     }
 
+    protected virtual void RangedAttack(bool right)
+    {
+        PlayerProjectile clone = Instantiate(projectile, transform.position, new Quaternion(0, 0, 0, 0));
+        clone.SetStats(GameManager.instance.familiar);
+        if (right)
+        {
+            Vector3 direction = new Vector3(1, 0, 0);
+            clone.UpdateForce(direction);
+        }
+        else
+        {
+            Vector3 direction = new Vector3(-1, 0, 0);
+            clone.UpdateForce(direction);
+        }
+    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.X) && Time.time - last_dash > dash_cooldown)
@@ -45,6 +61,12 @@ public class Player : Mover
             Dash(new Vector3(x,y,0));
             last_dash = Time.time;
             PayHealth(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Z) && Time.time - last_ranged_attack > ranged_attack_cooldown)
+        {
+            last_ranged_attack = Time.time;
+            PayHealth(GameManager.instance.familiar.bonus_damage);
+            RangedAttack(facing_right);
         }
     }
     private void FixedUpdate()

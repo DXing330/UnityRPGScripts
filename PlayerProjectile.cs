@@ -6,6 +6,7 @@ public class PlayerProjectile : Collideable
 {
     private Rigidbody2D rigidBody2D;
     private Vector3 direction;
+    private Animator animator;
     protected float spawn_time;
     protected bool active = false;
     protected float duration = 6.0f;
@@ -14,12 +15,15 @@ public class PlayerProjectile : Collideable
     protected float push_force = 1.0f;
     public int bonus_damage = 0;
     public int bonus_speed = 0;
+    protected float bonus_speed_float;
     public int bonus_weight = 0;
+    protected float bonus_weight_float;
 
     protected override void Start()
     {
         base.Start();
         rigidBody2D = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         spawn_time = Time.time;
         FireProjectile(direction);
     }
@@ -35,7 +39,7 @@ public class PlayerProjectile : Collideable
 
     protected override void OnCollide(Collider2D coll)
     {
-        if (coll.tag == "Enemy")
+        if (coll.tag == "Enemy" || coll.tag == "Interactable")
         {
             Damage damage = new Damage
             {
@@ -43,8 +47,11 @@ public class PlayerProjectile : Collideable
                 origin = transform.position,
                 push_force = push_force
             };
+            if (coll.tag == "Enemy")
+            {
+                coll.SendMessage("Alert", GameManager.instance.player.transform);
+            }
             coll.SendMessage("ReceiveDamage", damage);
-            coll.SendMessage("Alert", GameManager.instance.player.transform);
             Destroy(gameObject);
         }
         if (coll.tag == "Block")
@@ -60,11 +67,9 @@ public class PlayerProjectile : Collideable
 
     public virtual void UpdateStats()
     {
-        float speed_float = bonus_speed;
-        float weight_float = bonus_weight;
         damage_per_hit += bonus_damage;
-        speed += speed_float/10;
-        push_force += weight_float/10;
+        speed += bonus_speed_float;
+        push_force += bonus_weight_float;
     }
 
     public void FireProjectile(Vector3 direction)
@@ -76,10 +81,16 @@ public class PlayerProjectile : Collideable
         }
     }
 
-    public void SetStats(ProjectileStatsWrapper loaded_stats)
+    public void SetStats(Familiar loaded_stats)
     {
+        active = true;
         bonus_damage = loaded_stats.bonus_damage;
-        bonus_speed = loaded_stats.bonus_speed;
-        bonus_weight = loaded_stats.bonus_weight;
+        bonus_speed = loaded_stats.bonus_rotate_speed;
+        bonus_speed_float = bonus_speed;
+        bonus_speed_float = bonus_speed_float/10;
+        bonus_weight = loaded_stats.bonus_push_force;
+        bonus_weight_float = bonus_weight;
+        bonus_weight_float = bonus_weight_float/10;
+        UpdateStats();
     }
 }
