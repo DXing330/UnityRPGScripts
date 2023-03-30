@@ -19,6 +19,13 @@ public class SaveDataManager
         str += mana_crystals.ToString();
 
         PlayerPrefs.SetString("SaveState", str);
+        ProjectileStatsWrapper projectile_stats = new ProjectileStatsWrapper();
+        projectile_stats.UpdateData();
+        string projectile_stats_json = JsonUtility.ToJson(projectile_stats, true);
+        File.WriteAllText("Assets/Saves/projectile_stats.json", projectile_stats_json);
+        string projectile_stats = File.ReadAllText("Assets/Saves/projectile_stats.json");
+        ProjectileStatsWrapper loaded_projectile_stats = JsonUtility.FromJson<ProjectileStatsWrapper>(projectile_stats);
+        projectile.SetStats(loaded_projectile_stats);
         */
         if (!Directory.Exists("Assets/Saves/"))
         {
@@ -107,7 +114,7 @@ public class PlayerStatsWrapper
 
 public class FamiliarStatsWrapper
 {
-    public int bonus_rotate_speed;
+    public int bonus_speed;
     public int heal_threshold_increase;
     public int bonus_damage;
     public int bonus_push_force;
@@ -115,7 +122,7 @@ public class FamiliarStatsWrapper
 
     public void UpdateData()
     {
-        bonus_rotate_speed = GameManager.instance.familiar.bonus_rotate_speed;
+        bonus_speed = GameManager.instance.familiar.bonus_rotate_speed;
         heal_threshold_increase = GameManager.instance.familiar.heal_threshold_increase;
         bonus_damage = GameManager.instance.familiar.bonus_damage;
         bonus_push_force = GameManager.instance.familiar.bonus_push_force;

@@ -115,7 +115,7 @@ public class Familiar : MonoBehaviour
 
     public void SetStats(FamiliarStatsWrapper loaded_stats)
     {
-        bonus_rotate_speed = loaded_stats.bonus_rotate_speed;
+        bonus_rotate_speed = loaded_stats.bonus_speed;
         bonus_rotate_speed_float = bonus_rotate_speed * 1.0f;
         heal_threshold_increase = loaded_stats.heal_threshold_increase;
         bonus_damage = loaded_stats.bonus_damage;

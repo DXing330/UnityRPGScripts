@@ -9,10 +9,12 @@ public class EnemyWeakspot : Collideable
 
     protected override void OnCollide(Collider2D coll)
     {
-        if (coll.name == "Weapon")
-        {
-            Debug.Log("Hit by weapon.");
-        }
+        return;
+    }
+
+    protected virtual void Alert(Transform target)
+    {
+        user.SendMessage("Alert", target);
     }
     
     protected virtual void ReceiveDamage(Damage damage)

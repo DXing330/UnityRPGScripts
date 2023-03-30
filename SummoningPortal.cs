@@ -5,6 +5,11 @@ using UnityEngine;
 public class SummoningPortal : MonoBehaviour
 {
     public Enemy enemy_to_spawn;
+    public EnemyAnimated animated_enemy_to_spawn;
+    public EnemyRanged ranged_enemy_to_spawn;
+    public bool normal;
+    public bool animated;
+    public bool ranged;
     public float distance_to_spawn;
     public float spawn_cooldown;
     private float spawn_limit;
@@ -23,8 +28,22 @@ public class SummoningPortal : MonoBehaviour
         {
             last_spawn = Time.time;
             spawn_limit -= 1;
-            Enemy clone = Instantiate(enemy_to_spawn, transform);
-            clone.transform.position = transform.position;
+            if (normal)
+            {
+                Enemy clone = Instantiate(enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
+            }
+            else if (animated)
+            {
+                EnemyAnimated clone = Instantiate(animated_enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
+            }
+            else if (ranged)
+            {
+                EnemyRanged clone = Instantiate(ranged_enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
+            }
+        }
+        if (spawn_limit <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 }
