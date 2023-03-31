@@ -112,6 +112,11 @@ public class Enemy : Mover
         }
     }
 
+    protected virtual void Taunt(Transform target)
+    {
+        target_transform = target;
+    }
+
     protected override void Death()
     {
         GameManager.instance.GrantExp(exp_value);

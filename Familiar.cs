@@ -10,7 +10,7 @@ public class Familiar : MonoBehaviour
     private Transform player_transform;
     // Familiar will fly around the player.
     private float rotate_speed = 1.0f;
-    private float radius = 0.3f;
+    private float radius = 0.16f;
     private Vector3 center;
     private float angle;
     // Has a chance of healing the hero, with their blood magic.
@@ -22,7 +22,7 @@ public class Familiar : MonoBehaviour
     private Collider2D[] hits = new Collider2D[10];
     // Base stats that will automatically adjust on level.
     private float push_force = 1.0f;
-    private float hit_cooldown = 0.5f;
+    private float hit_cooldown = 0.66f;
     private float last_hit;
     // Customizable stats that the player can put stat points into whenever the familiar levels up.
     public int upgrade_cost = 1;
@@ -109,7 +109,11 @@ public class Familiar : MonoBehaviour
                 push_force = push_force + (bonus_push_force/10)
             };
             coll.SendMessage("ReceiveDamage", damage);
-            GameManager.instance.ShowText("Hehe Fresh Blood.", 15, Color.red, transform.position, Vector3.up*25, 1.0f);
+            int laugh = Random.Range(0, 5);
+            if (laugh == 0)
+            {
+                GameManager.instance.ShowText("Hehe, Fresh Blood.", 15, Color.red, transform.position, Vector3.up*25, 0.66f);
+            }
         }
     }
 

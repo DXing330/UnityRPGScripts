@@ -17,7 +17,6 @@ public class EnemyAnimated : Mover
     protected Animator animator;
     protected bool chasing;
     protected bool horizontal_flip = false;
-    protected bool colliding_with_player;
     protected NavMeshAgent agent;
     // Hitbox and targetting.
     public ContactFilter2D filter;
@@ -86,7 +85,7 @@ public class EnemyAnimated : Mover
 
             if (chasing && !dead)
             {
-                if (!colliding_with_player)
+                if (!attacking)
                 {
                     agent.SetDestination(target_transform.position);
                     if (facing_right)
@@ -123,8 +122,7 @@ public class EnemyAnimated : Mover
         {
             attacking = false;
         }
-
-        colliding_with_player = false;
+        int enemies_in_range = 0;
         hitbox.OverlapCollider(filter,hits);
         for (int i = 0; i < hits.Length; i++)
         {
@@ -133,22 +131,21 @@ public class EnemyAnimated : Mover
             
             if (hits[i].tag == "Fighter")
             {
-                colliding_with_player = true;
+                enemies_in_range++;
             }
 
             // Clear the array after you're done.
             hits[i] = null;
+        }
+        if (enemies_in_range > 0 && !dead)
+        {
+            Attack();
         }
         // While chasing the player, use the move animation.
         if (chasing && !moving && !dead)
         {
             moving = true;
             animator.SetBool("Moving", moving);
-        }
-        // If they reach the player, stop using the move animation and switch to the attack animation.
-        if (colliding_with_player && moving && !dead)
-        {
-            Attack();
         }
         if (dead)
         {
@@ -175,6 +172,11 @@ public class EnemyAnimated : Mover
         {
             target_transform = target;
         }
+    }
+
+    protected virtual void Taunt(Transform target)
+    {
+        target_transform = target;
     }
 
     protected override void Death()
