@@ -7,8 +7,8 @@ using UnityEngine.AI;
 // Should attack the closest enemy.
 public class PlayerAlly : Mover
 {
+    public float linger_distance = 0.3f;
     protected bool moving = false;
-    protected bool attacking = false;
     public float attack_cooldown;
     protected float last_attack;
     protected bool dead = false;
@@ -35,6 +35,13 @@ public class PlayerAlly : Mover
         player_transform = GameManager.instance.player.transform;
     }
 
+    protected virtual void UpdateStats(Player loaded_stats)
+    {
+        max_health += loaded_stats.bonus_health;
+        health = max_health;
+        damage_reduction = loaded_stats.damage_reduction;
+    }
+
     protected virtual void Update()
     {
         if (push_direction.magnitude > 0 && !dead)
@@ -58,7 +65,7 @@ public class PlayerAlly : Mover
                 }
                 hits[j] = null;
             }
-            if (target_transform == null)
+            if (target_transform == null && Vector3.Distance(player_transform.position, transform.position) > linger_distance)
             {
                 agent.SetDestination(player_transform.position);
                 if (facing_right)
@@ -88,9 +95,13 @@ public class PlayerAlly : Mover
                     }
                 }
             }
+            else if (target_transform == null && Vector3.Distance(player_transform.position, transform.position) <= linger_distance)
+            {
+                agent.SetDestination(transform.position);
+            }
         }
         // Move toward the target.
-        else if (target_transform != null && !dead && !attacking)
+        else if (target_transform != null && !dead)
         {
             agent.SetDestination(target_transform.position);
             if (facing_right)
@@ -136,11 +147,7 @@ public class PlayerAlly : Mover
             // Clear the array after you're done.
             hits[i] = null;
         }
-        if (attacking && Time.time - last_attack > attack_cooldown && !dead)
-        {
-            attacking = false;
-        }
-        if (target_transform != null && !attacking && !moving && !dead)
+        if (target_transform != null && !moving && !dead)
         {
             moving = true;
             animator.SetBool("Moving", moving);
@@ -161,12 +168,9 @@ public class PlayerAlly : Mover
             moving = false;
             animator.SetBool("Moving", moving);
             animator.SetTrigger("Attack");
-            attacking = true;
             last_attack = Time.time;
         }
     }
-
-
     protected override void Death()
     {
         if (!dead)

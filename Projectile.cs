@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Projectile : EnemyHitbox
 {
-    private Rigidbody2D rigidBody2D;
-    private Vector3 force;
-    private float spawn_time;
-    private float duration = 6.0f;
-    private float speed = 1.3f;
+    protected Rigidbody2D rigidBody2D;
+    protected Vector3 force;
+    protected float spawn_time;
+    public float speed = 1.5f;
+    protected float duration = 6.0f;
 
     protected override void Start()
     {
@@ -28,21 +28,19 @@ public class Projectile : EnemyHitbox
     }
     protected override void OnCollide(Collider2D coll)
     {
-        if (coll.tag == "Fighter")
+        base.OnCollide(coll);
+        if (!ally)
         {
-            Damage damage = new Damage
+            if (coll.tag == "Fighter" || coll.tag == "Weapon")
             {
-                damage_amount = damage_per_hit,
-                origin = transform.position,
-                push_force = push_force
-            };
-            coll.SendMessage("ReceiveDamage", damage);
-            Destroy(gameObject);
+                Destroy(gameObject);
+            }
         }
-        if (coll.tag == "Block" || coll.tag == "Weapon")
+        if (!enemy && coll.tag == "Enemy")
         {
             Destroy(gameObject);
         }
+
     }
 
     public virtual void UpdateSpeed(float new_speed)

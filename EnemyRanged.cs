@@ -22,7 +22,7 @@ public class EnemyRanged : Mover
     public CircleCollider2D detection_range;
     public ContactFilter2D filter;
     protected Collider2D[] hits = new Collider2D[10];
-    protected Transform target_transform = null;
+    protected Transform target_position = null;
     protected override void Start()
     {
         base.Start();
@@ -46,9 +46,9 @@ public class EnemyRanged : Mover
                 {
                     continue;
                 }
-                if (hits[j].tag == "Fighter")
+                if (hits[j].tag == "Fighter" && target_position == null)
                 {
-                    target_transform = hits[j].transform;
+                    target_position = hits[j].transform;
                     things_in_range++;
                 }
                 hits[j] = null;
@@ -64,20 +64,21 @@ public class EnemyRanged : Mover
         }
         if (things_in_range == 0)
         {
-            target_transform = null;
+            target_position = null;
         }
-        if (target_transform != null && !dead && Time.time - last_attack > attack_cooldown)
+        if (target_position != null && !dead && Time.time - last_attack > attack_cooldown)
         {
             last_attack = Time.time;
+            cannon.SetTarget(target_position);
             cannon.Activate();
             if (facing_right)
             {
-                if (target_transform.position.x - transform.position.x < 0 && !horizontal_flip)
+                if (target_position.position.x - transform.position.x < 0 && !horizontal_flip)
                 {
                     horizontal_flip = true;
                     transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
                 }
-                else if (target_transform.position.x - transform.position.x > 0 && horizontal_flip)
+                else if (target_position.position.x - transform.position.x > 0 && horizontal_flip)
                 {
                     horizontal_flip = false;
                     transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
@@ -85,12 +86,12 @@ public class EnemyRanged : Mover
             }
             else
             {
-                if (target_transform.position.x - transform.position.x > 0 && !horizontal_flip)
+                if (target_position.position.x - transform.position.x > 0 && !horizontal_flip)
                 {
                     horizontal_flip = true;
                     transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
                 }
-                else if (target_transform.position.x - transform.position.x < 0 && horizontal_flip)
+                else if (target_position.position.x - transform.position.x < 0 && horizontal_flip)
                 {
                     horizontal_flip = false;
                     transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
@@ -101,10 +102,15 @@ public class EnemyRanged : Mover
 
     protected virtual void Alert(Transform target)
     {
-        if (target_transform == null)
+        if (target_position == null)
         {
-            target_transform = target;
+            target_position = target;
         }
+    }
+
+    protected virtual void Taunt(Transform target)
+    {
+        target_position = target;
     }
 
     protected override void Death()

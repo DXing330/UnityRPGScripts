@@ -61,15 +61,15 @@ public abstract class Mover : Fighter
     // Want to have a sudden burst of speed.
     protected virtual void Dash(Vector3 input)
     {
-        moveDelta = new Vector3(input.x, input.y, 0);
+        moveDelta = new Vector3(input.x * 0.6f, input.y * 0.6f, 0);
 
         while (moveDelta.x != 0 || moveDelta.y != 0)
         {
             // If there is still some x movement, check for collisions.
-            if (moveDelta.x > 0)
+            while (moveDelta.x > 0)
             {
                 // Try to move one unit until you hit a wall.
-                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.right, Mathf.Abs(transform.localScale.x), LayerMask.GetMask("Characters", "Block"));
+                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.right, boxCollider.size.x, LayerMask.GetMask("Characters", "Block"));
                 if (hit.collider == null)
                 {
                     // Movement.
@@ -85,10 +85,10 @@ public abstract class Mover : Fighter
                     moveDelta.x = 0;
                 }
             }
-            else if (moveDelta.x < 0)
+            while (moveDelta.x < 0)
             {
                 // Try to move one unit until you hit a wall.
-                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.left, Mathf.Abs(transform.localScale.x), LayerMask.GetMask("Characters", "Block"));
+                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.left, boxCollider.size.x, LayerMask.GetMask("Characters", "Block"));
                 if (hit.collider == null)
                 {
                     // Movement.
@@ -104,9 +104,9 @@ public abstract class Mover : Fighter
                     moveDelta.x = 0;
                 }
             }
-            if (moveDelta.y > 0)
+            while (moveDelta.y > 0)
             {
-                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.up, Mathf.Abs(boxCollider.size.y), LayerMask.GetMask("Characters", "Block"));
+                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.up, boxCollider.size.y, LayerMask.GetMask("Characters", "Block"));
                 if (hit.collider == null)
                 {
                     transform.Translate(0, boxCollider.size.y, 0);
@@ -121,9 +121,9 @@ public abstract class Mover : Fighter
                     moveDelta.y = 0;
                 }
             }
-            else if (moveDelta.y < 0)
+            while (moveDelta.y < 0)
             {
-                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.down, Mathf.Abs(boxCollider.size.y), LayerMask.GetMask("Characters", "Block"));
+                hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, Vector2.down, boxCollider.size.y, LayerMask.GetMask("Characters", "Block"));
                 if (hit.collider == null)
                 {
                     transform.Translate(0, -boxCollider.size.y, 0);

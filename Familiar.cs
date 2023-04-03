@@ -75,7 +75,7 @@ public class Familiar : MonoBehaviour
             int talk = Random.Range(0, 10);
             if (talk == 0)
             {
-                GameManager.instance.ShowText("Find Enemies! Make Blood!", 15, Color.red, transform.position, Vector3.up*25, 1.0f);
+                GameManager.instance.ShowText("Find Enemies! Make Blood!", 15, Color.red, transform.position, Vector3.up*25, 0.66f);
             }
             if (talk == 1)
             {
@@ -86,14 +86,14 @@ public class Familiar : MonoBehaviour
                     push_force = 0
                 };
                 GameManager.instance.player.SendMessage("ReceiveDamage", damage);
-                GameManager.instance.ShowText("Blood from Master.", 15, Color.red, transform.position, Vector3.up*25, 1.0f);
+                GameManager.instance.ShowText("Blood from Master.", 15, Color.red, transform.position, Vector3.up*25, 0.66f);
             }
         }
     }
     protected void HealMaster()
     {
         GameManager.instance.player.SendMessage("ReceiveHealing", bonus_heal+1);
-        GameManager.instance.ShowText("Blood for Master.", 15, Color.white, transform.position, Vector3.up*25, 0.7f);
+        GameManager.instance.ShowText("Blood for Master.", 15, Color.white, transform.position, Vector3.up*25, 0.66f);
     }
 
     protected virtual void OnCollide(Collider2D coll)
