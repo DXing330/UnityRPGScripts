@@ -153,3 +153,17 @@ public class ProjectileStatsWrapper
         bonus_weight = GameManager.instance.projectile.bonus_weight;
     }
 }
+
+public class SummonStatsWrapper
+{
+    public int bonus_time;
+    public int bonus_health;
+    public int bonus_damage;
+
+    public void UpdateData(PlayerAlly summon)
+    {
+        bonus_time = summon.bonus_time;
+        bonus_health = summon.bonus_health;
+        bonus_damage = summon.bonus_damage;
+    }
+}

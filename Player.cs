@@ -17,6 +17,12 @@ public class Player : Mover
     protected bool facing_right = true;
     protected float ranged_attack_cooldown = 0.6f;
     protected float last_ranged_attack;
+    //Summons.
+    public List<PlayerAlly> summonables;
+    protected int summon_index = 0;
+    protected float summon_cooldown = 6.0f;
+    protected float summon_limit;
+    protected float last_summon;
 
     protected override void Start()
     {
@@ -52,6 +58,23 @@ public class Player : Mover
             clone.UpdateForce(direction);
         }
     }
+
+    protected virtual void SummonAlly()
+    {
+        PlayerAlly clone = Instantiate(summonables[summon_index], transform.position, new Quaternion(0, 0, 0, 0));
+        if (clone.summon_cost == "low")
+        {
+            PayHealth(GameManager.instance.summons.summon_cost_low);
+        }
+        else if (clone.summon_cost == "medium")
+        {
+            PayHealth(GameManager.instance.summons.summon_cost_medium);
+        }
+        else if (clone.summon_cost == "high")
+        {
+            PayHealth(GameManager.instance.summons.summon_cost_high);
+        }
+    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.X) && Time.time - last_dash > dash_cooldown)
@@ -65,8 +88,13 @@ public class Player : Mover
         if (Input.GetKeyDown(KeyCode.Z) && Time.time - last_ranged_attack > ranged_attack_cooldown)
         {
             last_ranged_attack = Time.time;
-            PayHealth(GameManager.instance.familiar.bonus_damage);
+            PayHealth((GameManager.instance.familiar.bonus_damage/2)+1);
             RangedAttack(facing_right);
+        }
+        if (Input.GetKeyDown(KeyCode.S) && Time.time - last_summon > summon_cooldown)
+        {
+            last_summon = Time.time;
+            SummonAlly();
         }
     }
     private void FixedUpdate()

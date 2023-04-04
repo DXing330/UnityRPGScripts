@@ -7,6 +7,16 @@ using UnityEngine.AI;
 // Should attack the closest enemy.
 public class PlayerAlly : Mover
 {
+    public string summon_cost;
+    public string ID;
+    // Bonus stats.
+    public int bonus_time;
+    public int bonus_health;
+    public int bonus_damage;
+    // Whether the summon is permanent or temporary.
+    public bool persistant = false;
+    protected float start_time;
+    public float time_limit;
     public float linger_distance = 0.3f;
     protected bool moving = false;
     public float attack_cooldown;
@@ -22,6 +32,7 @@ public class PlayerAlly : Mover
     protected Collider2D[] hits = new Collider2D[10];
     public BoxCollider2D hitbox;
     public CircleCollider2D detection_range;
+    public EnemyHitbox attack_hitbox;
     protected Transform target_transform = null;
     protected Transform player_transform;
 
@@ -33,13 +44,24 @@ public class PlayerAlly : Mover
 		agent.updateUpAxis = false;
         animator = GetComponent<Animator>();
         player_transform = GameManager.instance.player.transform;
+        start_time = Time.time;
+        UpdateStatsbyID();
     }
 
-    protected virtual void UpdateStats(Player loaded_stats)
+    protected virtual void UpdateStatsbyID()
+    {
+        if (ID == "wolf")
+        {
+            UpdateStats(GameManager.instance.summons.wolf_data);
+        }
+    }
+
+    protected virtual void UpdateStats(SummonStatsWrapper loaded_stats)
     {
         max_health += loaded_stats.bonus_health;
         health = max_health;
-        damage_reduction = loaded_stats.damage_reduction;
+        time_limit += loaded_stats.bonus_time;
+        attack_hitbox.damage_per_hit += loaded_stats.bonus_damage;
     }
 
     protected virtual void Update()
@@ -155,6 +177,13 @@ public class PlayerAlly : Mover
         if (dead)
         {
             if (Time.time - last_alive > corpse_linger_time)
+            {
+                Destroy(gameObject);
+            }
+        }
+        if (!persistant)
+        {
+            if (Time.time - start_time > time_limit)
             {
                 Destroy(gameObject);
             }

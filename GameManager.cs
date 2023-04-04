@@ -25,14 +25,15 @@ public class GameManager : MonoBehaviour
     // Resources.
     public List<Sprite> weaponSprites;
     public int weaponPrice;
-    public int familiarPrice;
     public int expLevelUp;
+    public int levelLimit;
 
     // References
     public Player player;
     public Weapon weapon;
     public PlayerProjectile projectile;
     public Familiar familiar;
+    public SummonDataManager summons;
     public FloatingTextManager floatingTextManager;
     public RectTransform healthBar;
     public Text healthText;
@@ -163,8 +164,12 @@ public class GameManager : MonoBehaviour
 
     public int GetExptoLevel()
     {
-        int level = player.playerLevel + 1;
-        int exp = expLevelUp * level * level;
+        int exp = 0;
+        if (player.playerLevel < levelLimit)
+        {
+            int level = player.playerLevel + 1;
+            exp = expLevelUp * level * level;
+        }
 
         return exp;
     }
@@ -192,7 +197,7 @@ public class GameManager : MonoBehaviour
         int added_exp = Mathf.RoundToInt(exp * (luck_bonus));
         experience +=added_exp;
         ShowText("+" + added_exp + "exp", 20, Color.cyan, player.transform.position, Vector3.up*40, 1.0f);
-        if(experience >= GetExptoLevel())
+        if(experience >= GetExptoLevel() && player.playerLevel < levelLimit)
         {
             experience -= GetExptoLevel();
             PlayerLevelUp();
@@ -266,6 +271,7 @@ public class GameManager : MonoBehaviour
         string familiar_stats_json = JsonUtility.ToJson(familiar_stats, true);
         File.WriteAllText("Assets/Saves/familiar_stats.json", familiar_stats_json);
         Debug.Log("Saved");
+        summons.SaveData();
     }
 
     public void LoadState(Scene scene, LoadSceneMode mode)
@@ -293,6 +299,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Load failed");
         }
+        summons.LoadData();
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)

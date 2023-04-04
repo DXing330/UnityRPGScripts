@@ -30,6 +30,8 @@ public class MenuManager : MonoBehaviour
     public Text bonus_heal;
     public Text bonus_urgency;
     public Text bonus_weight;
+    // Summon stuff.
+    public MenuManagerSummons summon_menu_info;
 
     // Logic.
     public Image weapon_sprite;
@@ -209,5 +211,10 @@ public class MenuManager : MonoBehaviour
         {
             UpdateFamiliarMenu();
         }
+    }
+
+    public void UpdateSummonMenu()
+    {
+        summon_menu_info.UpdateText();
     }
 }
