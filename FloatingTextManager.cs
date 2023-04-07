@@ -7,6 +7,7 @@ public class FloatingTextManager : MonoBehaviour
 {
     public GameObject textContainer;
     public GameObject textPrefab;
+    public Joystick player_joystick;
     private List<FloatingText> floatingTexts = new List<FloatingText>();
 
     private FloatingText GetFloatingText()
@@ -40,10 +41,17 @@ public class FloatingTextManager : MonoBehaviour
     }
 
     private void Update()
-    {
+    {   float x = Input.GetAxisRaw("Horizontal");
+        float joy_x = player_joystick.Horizontal;
+        x += joy_x;
+        float y = Input.GetAxisRaw("Vertical");
+        float joy_y = player_joystick.Vertical;
+        y += joy_y;
+        Vector3 input = new Vector3(x, y, 0);
         foreach (FloatingText txt in floatingTexts)
         {
             txt.UpdateFloatingText();
+            txt.UpdateFloatingTextPosition(input);
         }
     }
 }
