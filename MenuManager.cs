@@ -114,15 +114,6 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    // Familiar Upgrade
-    public void OnFamiliarUpgrade()
-    {
-        if (GameManager.instance.TryUpgradeFamiliar())
-        {
-            UpdateFamiliarMenu();
-        }
-    }
-
     // Character info.
     public void UpdateMenu()
     {

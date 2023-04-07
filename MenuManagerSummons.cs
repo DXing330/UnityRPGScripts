@@ -19,7 +19,7 @@ public class MenuManagerSummons : MonoBehaviour
 
     public void UpdateText()
     {
-        wolf_cost.text = summon_data.summon_cost_low.ToString();
+        wolf_cost.text = summon_data.wolf_data.summon_cost.ToString();
         wolf_bonus_health.text = summon_data.wolf_data.bonus_health.ToString();
         wolf_bonus_damage.text = summon_data.wolf_data.bonus_damage.ToString();
         wolf_bonus_time.text = summon_data.wolf_data.bonus_time.ToString();

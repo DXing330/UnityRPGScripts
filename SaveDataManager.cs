@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class SaveDataManager
 {
-    public SaveData game_data;
 
     public void SaveGameData()
     {
@@ -82,6 +81,7 @@ public class SaveDataWrapper
     public int mana_crystals;
     public int experience;
     public int stat_points;
+    public int danger_level;
     public string random_stuff;
 
     public void UpdateData()
@@ -93,6 +93,7 @@ public class SaveDataWrapper
         mana_crystals = GameManager.instance.mana_crystals;
         experience = GameManager.instance.experience;
         stat_points = GameManager.instance.stat_points;
+        danger_level = GameManager.instance.danger_level;
     }
 }
 
@@ -156,12 +157,14 @@ public class ProjectileStatsWrapper
 
 public class SummonStatsWrapper
 {
+    public int summon_cost;
     public int bonus_time;
     public int bonus_health;
     public int bonus_damage;
 
     public void UpdateData(PlayerAlly summon)
     {
+        summon_cost = summon.summon_cost;
         bonus_time = summon.bonus_time;
         bonus_health = summon.bonus_health;
         bonus_damage = summon.bonus_damage;

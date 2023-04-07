@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : Mover
 {
     public int playerLevel;
+    public Joystick joystick;
     private SpriteRenderer sprite_renderer;
     private float dash_cooldown = 0.6f;
     private float last_dash;
@@ -21,7 +22,7 @@ public class Player : Mover
     public List<PlayerAlly> summonables;
     protected int summon_index = 0;
     protected float summon_cooldown = 6.0f;
-    protected float summon_limit;
+    public int summon_limit;
     protected float last_summon;
 
     protected override void Start()
@@ -29,6 +30,7 @@ public class Player : Mover
         base.Start();
         sprite_renderer = GetComponent<SpriteRenderer>();
         i_frames = 0.5f;
+        last_summon = -summon_cooldown;
     }
 
     protected override void ReceiveDamage(Damage damage)
@@ -61,29 +63,35 @@ public class Player : Mover
 
     protected virtual void SummonAlly()
     {
-        PlayerAlly clone = Instantiate(summonables[summon_index], transform.position, new Quaternion(0, 0, 0, 0));
-        if (clone.summon_cost == "low")
+        if (summon_limit > 0 && Time.time - last_summon > summon_cooldown)
         {
-            PayHealth(GameManager.instance.summons.summon_cost_low);
+            last_summon = Time.time;
+            PlayerAlly clone = Instantiate(summonables[summon_index], transform.position, new Quaternion(0, 0, 0, 0));
+            PayHealth(clone.summon_cost);
+            summon_limit--;
         }
-        else if (clone.summon_cost == "medium")
+    }
+
+    public void StartDash()
+    {
+        if (Time.time - last_dash > dash_cooldown)
         {
-            PayHealth(GameManager.instance.summons.summon_cost_medium);
-        }
-        else if (clone.summon_cost == "high")
-        {
-            PayHealth(GameManager.instance.summons.summon_cost_high);
+            float x = Input.GetAxisRaw("Horizontal");
+            float joy_x = joystick.Horizontal;
+            x += joy_x;
+            float y = Input.GetAxisRaw("Vertical");
+            float joy_y = joystick.Vertical;
+            y += joy_y;
+            Dash(new Vector3(x,y,0));
+            last_dash = Time.time;
+            PayHealth(1);
         }
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X) && Time.time - last_dash > dash_cooldown)
+        if (Input.GetKeyDown(KeyCode.X))
         {
-            float x = Input.GetAxisRaw("Horizontal");
-            float y = Input.GetAxisRaw("Vertical");
-            Dash(new Vector3(x,y,0));
-            last_dash = Time.time;
-            PayHealth(1);
+            StartDash();
         }
         if (Input.GetKeyDown(KeyCode.Z) && Time.time - last_ranged_attack > ranged_attack_cooldown)
         {
@@ -91,15 +99,16 @@ public class Player : Mover
             PayHealth((GameManager.instance.familiar.bonus_damage/2)+1);
             RangedAttack(facing_right);
         }
-        if (Input.GetKeyDown(KeyCode.S) && Time.time - last_summon > summon_cooldown)
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            last_summon = Time.time;
             SummonAlly();
         }
     }
     private void FixedUpdate()
     {
         float x = Input.GetAxisRaw("Horizontal");
+        float joy_x = joystick.Horizontal;
+        x += joy_x;
         if (x < 0)
         {
             facing_right = false;
@@ -109,6 +118,8 @@ public class Player : Mover
             facing_right = true;
         }
         float y = Input.GetAxisRaw("Vertical");
+        float joy_y = joystick.Vertical;
+        y += joy_y;
 
         UpdateMotor(new Vector3(x,y,0));
     }
@@ -124,6 +135,7 @@ public class Player : Mover
     public void SetLevel(int level)
     {
         playerLevel = level;
+        summon_limit = playerLevel/6;
         SetMaxHealth();
     }
 

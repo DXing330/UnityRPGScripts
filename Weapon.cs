@@ -39,11 +39,7 @@ public class Weapon : Collideable
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            if (Time.time - lastSwing > cooldown)
-            {
-                lastSwing = Time.time;
-                Swing();
-            }
+            Swing();
         }
     }
 
@@ -64,9 +60,13 @@ public class Weapon : Collideable
         }
     }
 
-    private void Swing()
+    public void Swing()
     {
-        animator.SetTrigger("Swing");
+        if (Time.time - lastSwing > cooldown)
+        {
+            lastSwing = Time.time;
+            animator.SetTrigger("Swing");
+        }
     }
 
     private void BackSwing()

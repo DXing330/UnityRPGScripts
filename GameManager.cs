@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     public List<Sprite> weaponSprites;
     public int weaponPrice;
     public int expLevelUp;
+    public int familiar_upgrade_cost_scaling;
     public int levelLimit;
 
     // References
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
     public int mana_crystals;
     public int experience;
     public int stat_points;
+    public int danger_level;
 
     // Floating text.
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
@@ -87,10 +89,6 @@ public class GameManager : MonoBehaviour
     }
 
     // Upgrade Familiar.
-    public bool TryUpgradeFamiliar()
-    {
-        return false;
-    }
 
     public bool UpgradePlayerStats(string upgraded_stat)
     {
@@ -126,34 +124,34 @@ public class GameManager : MonoBehaviour
 
     public bool UpgradeFamiliarStats(string upgraded_stat)
     {
-        if (upgraded_stat == "bonus_rotate_speed" && mana_crystals > familiar.bonus_rotate_speed)
+        if (upgraded_stat == "bonus_rotate_speed" && mana_crystals >= familiar.bonus_rotate_speed * familiar_upgrade_cost_scaling)
         {
+            mana_crystals -= familiar.bonus_rotate_speed * familiar_upgrade_cost_scaling;
             familiar.bonus_rotate_speed++;
-            mana_crystals -= familiar.bonus_rotate_speed;
             return true;
         }
-        else if (upgraded_stat == "heal_threshold_increase" && mana_crystals > familiar.heal_threshold_increase)
+        else if (upgraded_stat == "heal_threshold_increase" && mana_crystals > familiar.heal_threshold_increase * familiar_upgrade_cost_scaling)
         {
+            mana_crystals -= familiar.heal_threshold_increase * familiar_upgrade_cost_scaling;
             familiar.heal_threshold_increase++;
-            mana_crystals -= familiar.heal_threshold_increase;
             return true;
         }
-        else if (upgraded_stat == "bonus_damage" && mana_crystals > familiar.bonus_damage)
+        else if (upgraded_stat == "bonus_damage" && mana_crystals >= familiar.bonus_damage * familiar_upgrade_cost_scaling)
         {
+            mana_crystals -= familiar.bonus_damage * familiar_upgrade_cost_scaling;
             familiar.bonus_damage++;
-            mana_crystals -= familiar.bonus_damage;
             return true;
         }
-        else if (upgraded_stat == "bonus_push_force" && mana_crystals > familiar.bonus_push_force)
+        else if (upgraded_stat == "bonus_push_force" && mana_crystals >= familiar.bonus_push_force * familiar_upgrade_cost_scaling)
         {
+            mana_crystals -= familiar.bonus_push_force * familiar_upgrade_cost_scaling;
             familiar.bonus_push_force++;
-            mana_crystals -= familiar.bonus_push_force;
             return true;
         }
-        else if (upgraded_stat == "bonus_heal" && mana_crystals > familiar.bonus_heal)
+        else if (upgraded_stat == "bonus_heal" && mana_crystals >= familiar.bonus_heal * familiar_upgrade_cost_scaling)
         {
+            mana_crystals -= familiar.bonus_heal * familiar_upgrade_cost_scaling;
             familiar.bonus_heal++;
-            mana_crystals -= familiar.bonus_heal;
             return true;
         }
         else
@@ -234,10 +232,15 @@ public class GameManager : MonoBehaviour
         {
             coins = 0;
         }
-        experience -= player.playerLevel;
+        experience -= player.max_health;
         if (experience < 0)
         {
             experience = 0;
+        }
+        danger_level--;
+        if (danger_level < 0)
+        {
+            danger_level = 0;
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         SaveState();

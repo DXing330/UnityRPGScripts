@@ -7,7 +7,7 @@ using UnityEngine.AI;
 // Should attack the closest enemy.
 public class PlayerAlly : Mover
 {
-    public string summon_cost;
+    public int summon_cost;
     public string ID;
     // Bonus stats.
     public int bonus_time;
@@ -58,6 +58,11 @@ public class PlayerAlly : Mover
 
     protected virtual void UpdateStats(SummonStatsWrapper loaded_stats)
     {
+        summon_cost = loaded_stats.summon_cost;
+        if (summon_cost < GameManager.instance.summons.summon_cost_low)
+        {
+            summon_cost = GameManager.instance.summons.summon_cost_low;
+        }
         max_health += loaded_stats.bonus_health;
         health = max_health;
         time_limit += loaded_stats.bonus_time;
@@ -185,7 +190,7 @@ public class PlayerAlly : Mover
         {
             if (Time.time - start_time > time_limit)
             {
-                Destroy(gameObject);
+                Death();
             }
         }
     }
@@ -208,6 +213,7 @@ public class PlayerAlly : Mover
             last_alive = Time.time;
             animator.SetBool("Moving", false);
             animator.SetTrigger("Dead");
+            GameManager.instance.player.summon_limit++;
         }
     }
 }

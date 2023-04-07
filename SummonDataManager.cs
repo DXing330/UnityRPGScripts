@@ -5,10 +5,20 @@ using UnityEngine;
 
 public class SummonDataManager : MonoBehaviour
 {
+    // references
     public int base_upgrade_cost;
     public int summon_cost_low;
     public int summon_cost_medium;
     public int summon_cost_high;
+    public int summon_health_low;
+    public int summon_health_medium;
+    public int summon_health_high;
+    public int summon_damage_low;
+    public int summon_damage_medium;
+    public int summon_damage_high;
+    public int summon_time_low;
+    public int summon_time_medium;
+    public int summon_time_high;
     public MenuManagerSummons summon_menu;
     protected string summon_to_upgrade;
     public SummonStatsWrapper wolf_data;
@@ -29,6 +39,10 @@ public class SummonDataManager : MonoBehaviour
         {
             string wolf_json = File.ReadAllText("Assets/Saves/SummonData/wolf_data.json");
             wolf_data = JsonUtility.FromJson<SummonStatsWrapper>(wolf_json);
+            if (wolf_data.summon_cost < summon_cost_low)
+            {
+                wolf_data.summon_cost = summon_cost_low;
+            }
         }
         else
         {
@@ -41,48 +55,29 @@ public class SummonDataManager : MonoBehaviour
         summon_to_upgrade = summon_name;
     }
 
-    public void UpgradeSummon(string summon_stat)
+    public void UpgradeSummon()
     {
-        int cost = DetermineCost(summon_stat);
+        int cost = DetermineCost();
         if (summon_to_upgrade == "wolf")
         {
             if (CheckCost(cost))
             {
                 ApplyCost(cost);
-                if (summon_stat == "time")
-                {
-                    wolf_data.bonus_time++;
-                }
-                else if (summon_stat == "damage")
-                {
-                    wolf_data.bonus_damage++;
-                }
-                else if (summon_stat == "health")
-                {
-                    wolf_data.bonus_health++;
-                }
+                wolf_data.summon_cost += summon_cost_low;
+                wolf_data.bonus_health += summon_health_low;
+                wolf_data.bonus_damage += summon_damage_medium;
+                wolf_data.bonus_time += summon_time_medium;
                 summon_menu.UpdateText();
             }
         }
     }
 
-    public int DetermineCost(string summon_stat)
+    public int DetermineCost()
     {
         int cost = base_upgrade_cost;
         if (summon_to_upgrade == "wolf")
         {
-            if (summon_stat == "time")
-            {
-                cost += wolf_data.bonus_time;
-            }
-            else if (summon_stat == "damage")
-            {
-                cost += wolf_data.bonus_damage;
-            }
-            else if (summon_stat == "health")
-            {
-                cost += wolf_data.bonus_health;
-            }
+            cost += wolf_data.summon_cost * wolf_data.summon_cost;
         }
         return cost;
     }
