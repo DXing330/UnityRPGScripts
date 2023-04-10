@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public Familiar familiar;
     public SummonDataManager summons;
     public FloatingTextManager floatingTextManager;
+    public FixedTextManager fixedTextManager;
     public RectTransform healthBar;
     public Text healthText;
 
@@ -50,6 +51,12 @@ public class GameManager : MonoBehaviour
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
     {
         floatingTextManager.Show(msg, fontSize, color, position, motion, duration);
+    }
+
+    // Fixed Textbox.
+    public void ShowFixedText(string speaker, string speakers_words)
+    {
+        fixedTextManager.ShowText(speaker, speakers_words);
     }
 
     // Determine prices.
@@ -124,42 +131,68 @@ public class GameManager : MonoBehaviour
 
     public bool UpgradeFamiliarStats(string upgraded_stat)
     {
-        if (upgraded_stat == "bonus_rotate_speed" && mana_crystals >= familiar.bonus_rotate_speed * familiar_upgrade_cost_scaling)
+        int cost = UpgradeFamiliarCost(upgraded_stat);
+        if (mana_crystals >= cost)
         {
-            mana_crystals -= familiar.bonus_rotate_speed * familiar_upgrade_cost_scaling;
-            familiar.bonus_rotate_speed++;
-            return true;
+            mana_crystals -= cost;
+            if (upgraded_stat == "bonus_rotate_speed")
+            {
+                familiar.bonus_rotate_speed++;
+                return true;
+            }
+            else if (upgraded_stat == "heal_threshold_increase")
+            {
+                familiar.heal_threshold_increase++;
+                return true;
+            }
+            else if (upgraded_stat == "bonus_damage")
+            {
+                familiar.bonus_damage++;
+                return true;
+            }
+            else if (upgraded_stat == "bonus_push_force")
+            {
+                familiar.bonus_push_force++;
+                return true;
+            }
+            else if (upgraded_stat == "bonus_heal")
+            {
+                familiar.bonus_heal++;
+                return true;
+            }
+            else
+            {
+                mana_crystals += cost;
+                return false;
+            }
         }
-        else if (upgraded_stat == "heal_threshold_increase" && mana_crystals > familiar.heal_threshold_increase * familiar_upgrade_cost_scaling)
-        {
-            mana_crystals -= familiar.heal_threshold_increase * familiar_upgrade_cost_scaling;
-            familiar.heal_threshold_increase++;
-            return true;
-        }
-        else if (upgraded_stat == "bonus_damage" && mana_crystals >= familiar.bonus_damage * familiar_upgrade_cost_scaling)
-        {
-            mana_crystals -= familiar.bonus_damage * familiar_upgrade_cost_scaling;
-            familiar.bonus_damage++;
-            return true;
-        }
-        else if (upgraded_stat == "bonus_push_force" && mana_crystals >= familiar.bonus_push_force * familiar_upgrade_cost_scaling)
-        {
-            mana_crystals -= familiar.bonus_push_force * familiar_upgrade_cost_scaling;
-            familiar.bonus_push_force++;
-            return true;
-        }
-        else if (upgraded_stat == "bonus_heal" && mana_crystals >= familiar.bonus_heal * familiar_upgrade_cost_scaling)
-        {
-            mana_crystals -= familiar.bonus_heal * familiar_upgrade_cost_scaling;
-            familiar.bonus_heal++;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return false;
     }
-
+    public int UpgradeFamiliarCost(string upgraded_stat)
+    {
+        int cost = 0;
+        if (upgraded_stat == "bonus_rotate_speed")
+        {
+            cost = familiar.bonus_rotate_speed * familiar.bonus_rotate_speed;
+        }
+        else if  (upgraded_stat == "heal_threshold_increase")
+        {
+            cost = familiar.heal_threshold_increase * familiar.heal_threshold_increase;
+        }
+        else if  (upgraded_stat == "bonus_damage")
+        {
+            cost = familiar.bonus_damage * familiar.bonus_damage;
+        }
+        else if  (upgraded_stat == "bonus_push_force")
+        {
+            cost = familiar.bonus_push_force * familiar.bonus_push_force;
+        }
+        else if  (upgraded_stat == "bonus_heal")
+        {
+            cost = familiar.bonus_heal * familiar.bonus_heal;
+        }
+        return cost;
+    }
     public int GetExptoLevel()
     {
         int exp = 0;
@@ -237,7 +270,7 @@ public class GameManager : MonoBehaviour
         {
             experience = 0;
         }
-        danger_level--;
+        danger_level -= player.playerLevel;
         if (danger_level < 0)
         {
             danger_level = 0;

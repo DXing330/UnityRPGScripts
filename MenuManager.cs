@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour
     public Text level_text;
     public Text health_text;
     public Text coin_text;
+    public Text mana_text;
     // Weapon stuff.
     public Text weapon_level_text;
     public Text upgrade_cost;
@@ -24,6 +25,9 @@ public class MenuManager : MonoBehaviour
     public Text bonus_defense_text;
     public Text bonus_luck_text;
     // Familiar stuff.
+    public Text familiar_damage;
+    public Text familiar_heal;
+    public Text familiar_heal_threshold;
     public Text mana_crystal_text;
     public Text bonus_speed;
     public Text bonus_damage;
@@ -118,6 +122,10 @@ public class MenuManager : MonoBehaviour
     public void UpdateMenu()
     {
         // Use the game manager to get the information.
+        // Familiar.
+        familiar_damage.text =  (1 + GameManager.instance.familiar.bonus_damage).ToString();
+        familiar_heal.text = (1 + GameManager.instance.familiar.bonus_heal).ToString();
+        familiar_heal_threshold.text = ((GameManager.instance.player.max_health)/3 + GameManager.instance.familiar.heal_threshold_increase).ToString();
         // Weapon.
         int weapon_level = GameManager.instance.weapon.weaponLevel;
         weapon_level_text.text = weapon_level.ToString();
@@ -133,6 +141,7 @@ public class MenuManager : MonoBehaviour
         // Meta.
         health_text.text = GameManager.instance.player.health.ToString()+" / "+GameManager.instance.player.max_health.ToString();
         coin_text.text = GameManager.instance.coins.ToString();
+        mana_text.text = GameManager.instance.mana_crystals.ToString();
         int current_level = GameManager.instance.player.playerLevel;
         level_text.text = current_level.ToString();
         public_stat_points.text = GameManager.instance.stat_points.ToString();
