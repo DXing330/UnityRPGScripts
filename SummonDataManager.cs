@@ -19,9 +19,18 @@ public class SummonDataManager : MonoBehaviour
     public int summon_time_low;
     public int summon_time_medium;
     public int summon_time_high;
+    public List<PlayerAlly> summonables;
     public MenuManagerSummons summon_menu;
     protected string summon_to_upgrade;
     public SummonStatsWrapper wolf_data;
+
+    public void UpdateSummonStats()
+    {
+        for (int i = 0; i < summonables.Count; i++)
+        {
+            summonables[i].UpdateStatsbyID();
+        }
+    }
 
     public void SaveData()
     {
@@ -48,6 +57,7 @@ public class SummonDataManager : MonoBehaviour
         {
             Debug.Log("Load failed");
         }
+        UpdateSummonStats();
     }
 
     public void SetSummon(string summon_name)

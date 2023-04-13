@@ -48,7 +48,7 @@ public class PlayerAlly : Mover
         UpdateStatsbyID();
     }
 
-    protected virtual void UpdateStatsbyID()
+    public virtual void UpdateStatsbyID()
     {
         if (ID == "wolf")
         {

@@ -125,7 +125,7 @@ public class MenuManager : MonoBehaviour
         // Familiar.
         familiar_damage.text =  (1 + GameManager.instance.familiar.bonus_damage).ToString();
         familiar_heal.text = (1 + GameManager.instance.familiar.bonus_heal).ToString();
-        familiar_heal_threshold.text = ((GameManager.instance.player.max_health)/3 + GameManager.instance.familiar.heal_threshold_increase).ToString();
+        familiar_heal_threshold.text = ((GameManager.instance.player.max_health - GameManager.instance.familiar.heal_threshold_increase)/3).ToString();
         // Weapon.
         int weapon_level = GameManager.instance.weapon.weaponLevel;
         weapon_level_text.text = weapon_level.ToString();

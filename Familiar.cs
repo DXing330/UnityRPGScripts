@@ -66,7 +66,7 @@ public class Familiar : MonoBehaviour
 
     protected void CheckOnMaster()
     {
-        if ((GameManager.instance.player.health - heal_threshold_increase) * 3 < GameManager.instance.player.max_health)
+        if ((GameManager.instance.player.health) * 3 < GameManager.instance.player.max_health - heal_threshold_increase)
             {
                 HealMaster();
             }

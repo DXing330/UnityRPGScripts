@@ -9,6 +9,7 @@ public class Player : Mover
     private SpriteRenderer sprite_renderer;
     private float dash_cooldown = 0.6f;
     private float last_dash;
+    public int health_per_level = 5;
     public int bonus_health;
     public int damage_multiplier;
     // Affects drops.
@@ -45,23 +46,28 @@ public class Player : Mover
         GameManager.instance.OnHealthChange();
     }
 
-    protected virtual void RangedAttack(bool right)
+    public virtual void RangedAttack()
     {
-        PlayerProjectile clone = Instantiate(projectile, transform.position, new Quaternion(0, 0, 0, 0));
-        clone.SetStats(GameManager.instance.familiar);
-        if (right)
+        if (Time.time - last_ranged_attack > ranged_attack_cooldown)
         {
-            Vector3 direction = new Vector3(1, 0, 0);
-            clone.UpdateForce(direction);
-        }
-        else
-        {
-            Vector3 direction = new Vector3(-1, 0, 0);
-            clone.UpdateForce(direction);
+            last_ranged_attack = Time.time;
+            PayHealth((GameManager.instance.familiar.bonus_damage/2)+1);
+            PlayerProjectile clone = Instantiate(projectile, transform.position, new Quaternion(0, 0, 0, 0));
+            clone.SetStats(GameManager.instance.familiar);
+            if (facing_right)
+            {
+                Vector3 direction = new Vector3(1, 0, 0);
+                clone.UpdateForce(direction);
+            }
+            else
+            {
+                Vector3 direction = new Vector3(-1, 0, 0);
+                clone.UpdateForce(direction);
+            }
         }
     }
 
-    protected virtual void SummonAlly()
+    public virtual void SummonAlly()
     {
         if (summon_limit > 0 && Time.time - last_summon > summon_cooldown)
         {
@@ -93,11 +99,9 @@ public class Player : Mover
         {
             StartDash();
         }
-        if (Input.GetKeyDown(KeyCode.Z) && Time.time - last_ranged_attack > ranged_attack_cooldown)
+        if (Input.GetKeyDown(KeyCode.Z))
         {
-            last_ranged_attack = Time.time;
-            PayHealth((GameManager.instance.familiar.bonus_damage/2)+1);
-            RangedAttack(facing_right);
+            RangedAttack();
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
@@ -127,7 +131,7 @@ public class Player : Mover
     public void LevelUp()
     {
         playerLevel++;
-        max_health += 10;
+        max_health += health_per_level;
         health = max_health;
         GameManager.instance.OnHealthChange();
     }
@@ -149,7 +153,7 @@ public class Player : Mover
 
     public void SetMaxHealth()
     {
-        max_health = playerLevel * 10;
+        max_health = playerLevel * health_per_level;
         max_health += bonus_health;
     }
 

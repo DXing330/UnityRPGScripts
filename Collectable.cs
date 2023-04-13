@@ -5,7 +5,8 @@ using UnityEngine;
 public class Collectable : Collideable
 {
     // Logic.
-    protected bool collected;
+    public bool collected;
+    public bool one_time = true;
 
     protected override void OnCollide(Collider2D coll)
     {
