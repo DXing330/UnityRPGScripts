@@ -277,7 +277,7 @@ public class GameManager : MonoBehaviour
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         SaveState();
-        ShowText("You were defeated but I brought you back.", 15, Color.red, familiar.transform.position, Vector3.zero, 2.0f);
+        ShowFixedText("Spirit Guardian Blaty", "You were defeated but I brought you back.");
     }
 
     public void OnHealthChange()

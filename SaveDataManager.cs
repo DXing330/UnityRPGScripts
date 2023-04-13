@@ -170,3 +170,15 @@ public class SummonStatsWrapper
         bonus_damage = summon.bonus_damage;
     }
 }
+
+public class DestructibleWrapper
+{
+    public bool destroyed;
+    public int current_health;
+
+    public void UpdateData(Destructible destructible)
+    {
+        destroyed = destructible.destroyed;
+        current_health = destructible.health;
+    }
+}
