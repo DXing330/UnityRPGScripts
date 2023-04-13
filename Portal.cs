@@ -6,6 +6,12 @@ using UnityEngine.SceneManagement;
 public class Portal : Collideable
 {
     public string[] sceneNames;
+    // Some portals will go to a random place in the list.
+    // Need some way to adjust weights.
+    public bool randomportal = false;
+    // Going through a portal means you've cleared an area.
+    // As you clear more areas the dungeon notices and tries to drive you out.
+    public int danger_increase = 0;
 
     protected override void OnCollide(Collider2D coll)
     {

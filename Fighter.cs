@@ -13,7 +13,7 @@ public class Fighter : MonoBehaviour
 
     // Iframes.
     protected float i_frames = 0.25f;
-    protected float last_i_frame;
+    public float last_i_frame;
 
     // Push.
     protected Vector3 push_direction;
