@@ -126,6 +126,15 @@ public class Player : Mover
         y += joy_y;
 
         UpdateMotor(new Vector3(x,y,0));
+        if (slowed)
+        {
+            Debug.Log(slow_duration);
+            Debug.Log(Time.time - slow_start_time);
+            if (Time.time - slow_start_time > slow_duration)
+            {
+                ResetSpeed();
+            }
+        }
     }
 
     public void LevelUp()

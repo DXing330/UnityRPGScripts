@@ -5,11 +5,11 @@ using UnityEngine;
 public class Weapon : Collideable
 {
     // Damage structure
-    private int damage_per_hit = 2;
-    private int damage_gain = 2;
-    private float push_force = 5.0f;
-    private float push_gain = 0.2f;
-    private int damage_multiplier;
+    public int damage_per_hit = 1;
+    public int damage_gain = 1;
+    public float push_force = 5.0f;
+    public float push_gain = 0.2f;
+    public int damage_multiplier;
 
     // Upgrade
     public int weaponLevel = 0;

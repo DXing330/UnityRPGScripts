@@ -31,6 +31,28 @@ public class MoverActor : Mover
 		agent.updateRotation = false;
 		agent.updateUpAxis = false;
         animator = GetComponent<Animator>();
+        StartSpeed();
+    }
+
+    protected override void StartSpeed()
+    {
+        int random_speed_adjustment = Random.Range(-1, 1);
+        float move_variance = (base_move_speed/10) * random_speed_adjustment;
+        agent.speed = base_move_speed + move_variance;
+    }
+
+    protected override void ResetSpeed()
+    {
+        agent.speed += move_speed_slow;
+        move_speed_slow = 0;
+        slowed = false;
+    }
+
+    protected override void SlowEffect(float slow_percentage)
+    {
+        base.SlowEffect(slow_percentage);
+        move_speed_slow = base_move_speed * (slow_percentage);
+        agent.speed -= move_speed_slow;
     }
 
     protected virtual void Alert(Transform target)
@@ -133,6 +155,13 @@ public class MoverActor : Mover
             {
                 GameManager.instance.GrantExp(exp_value);
                 Destroy(gameObject);
+            }
+        }
+        if (slowed)
+        {
+            if (Time.time - slow_start_time > slow_duration)
+            {
+                ResetSpeed();
             }
         }
     }

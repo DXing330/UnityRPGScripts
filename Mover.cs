@@ -4,6 +4,13 @@ using UnityEngine;
 
 public abstract class Mover : Fighter
 {
+    // Actors can be under the effects of slow.
+    // Actors have a slightly variable movespeed.
+    public float base_move_speed;
+    protected float move_speed_slow;
+    protected bool slowed = false;
+    protected float slow_duration = 0;
+    protected float slow_start_time;
     private Vector3 originalSize;
     protected BoxCollider2D boxCollider;
     protected Vector3 moveDelta;
@@ -15,6 +22,53 @@ public abstract class Mover : Fighter
     {
         originalSize = transform.localScale;
         boxCollider = GetComponent<BoxCollider2D>();
+    }
+
+    protected virtual void StartSpeed()
+    {
+
+    }
+
+    protected virtual void ResetSpeed()
+    {
+        slowed = false;
+        x_speed += move_speed_slow;
+        y_speed += move_speed_slow;
+        move_speed_slow = 0;
+    }
+
+    protected virtual void SlowEffect(float slow_percentage)
+    {
+        if (move_speed_slow == 0)
+        {
+            move_speed_slow = slow_percentage;
+            x_speed -= move_speed_slow;
+            y_speed -= move_speed_slow;
+        }
+        else
+        {
+            if (slow_percentage > move_speed_slow)
+            {
+                float slow_difference = slow_percentage - move_speed_slow;
+                move_speed_slow = slow_percentage;
+                x_speed -= slow_difference;
+                y_speed -= slow_difference;
+            }
+        }
+    }
+
+    protected virtual void StartSlow(float slow_time)
+    {
+        if (!slowed)
+        {
+            slowed = true;
+            slow_start_time = Time.time;
+            slow_duration += slow_time;
+        }
+        else if (Time.time - last_i_frame > i_frames)
+        {
+            slow_duration += slow_time;
+        }
     }
 
     protected virtual void UpdateMotor(Vector3 input)
