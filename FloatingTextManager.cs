@@ -51,7 +51,7 @@ public class FloatingTextManager : MonoBehaviour
         foreach (FloatingText txt in floatingTexts)
         {
             txt.UpdateFloatingText();
-            txt.UpdateFloatingTextPosition(input);
+            //txt.UpdateFloatingTextPosition(input);
         }
     }
 }

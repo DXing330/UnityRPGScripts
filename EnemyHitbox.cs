@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyHitbox : Collideable
 {
     public int damage_per_hit;
+    public string damage_type = "physical";
     public float push_force;
     public bool enemy = true;
     public bool ally = false;
@@ -22,19 +23,29 @@ public class EnemyHitbox : Collideable
         }
     }
 
+    protected Damage MakeDamage()
+    {
+        // Make a damage object and send it to whoever gets hit.
+        Damage damage = new Damage
+        {
+            damage_amount = damage_per_hit,
+            origin = transform.position,
+            push_force = push_force
+        };
+        if (damage_type != "physical")
+        {
+            damage.UpdateDamageType(damage_type);
+        }
+        return damage;
+    }
+
     protected override void OnCollide(Collider2D coll)
     {
         if (enemy)
         {
             if (coll.tag == "Fighter")
             {
-                // Make a damage object and send it to the player.
-                Damage damage = new Damage
-                {
-                    damage_amount = damage_per_hit,
-                    origin = transform.position,
-                    push_force = push_force
-                };
+                Damage damage = MakeDamage();
                 coll.SendMessage("ReceiveDamage", damage);
                 SlowOnHit(coll);
             }
@@ -43,13 +54,7 @@ public class EnemyHitbox : Collideable
         {
             if (coll.tag == "Enemy")
             {
-                // Make a damage object and send it to the player.
-                Damage damage = new Damage
-                {
-                    damage_amount = damage_per_hit,
-                    origin = transform.position,
-                    push_force = push_force
-                };
+                Damage damage = MakeDamage();
                 coll.SendMessage("ReceiveDamage", damage);
                 SlowOnHit(coll);
             }
@@ -58,13 +63,7 @@ public class EnemyHitbox : Collideable
         {
             if (coll.tag == "Enemy" || coll.tag == "Fighter")
             {
-                // Make a damage object and send it to the player.
-                Damage damage = new Damage
-                {
-                    damage_amount = damage_per_hit,
-                    origin = transform.position,
-                    push_force = push_force
-                };
+                Damage damage = MakeDamage();
                 coll.SendMessage("ReceiveDamage", damage);
                 SlowOnHit(coll);
             }

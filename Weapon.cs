@@ -6,6 +6,7 @@ public class Weapon : Collideable
 {
     // Damage structure
     public int damage_per_hit = 1;
+    public string damage_type = "physical";
     public int damage_gain = 1;
     public float push_force = 5.0f;
     public float push_gain = 0.2f;
@@ -17,7 +18,7 @@ public class Weapon : Collideable
 
     // Swing
     private Animator animator;
-    private float cooldown = 0.36f;
+    public float attack_cooldown = 0.36f;
     private float lastSwing;
 
     private void Awake()
@@ -43,6 +44,11 @@ public class Weapon : Collideable
         }
     }
 
+    protected virtual void UpdateDamageType(string new_type)
+    {
+        damage_type = new_type;
+    }
+
     protected override void OnCollide(Collider2D coll)
     {
         if (coll.tag == "Enemy" || coll.tag == "Interactable")
@@ -53,6 +59,10 @@ public class Weapon : Collideable
                 origin = transform.position,
                 push_force = push_force + (push_gain * weaponLevel)
             };
+            if (damage_type != "physical")
+            {
+                damage.UpdateDamageType(damage_type);
+            }
             float multiplier_float = damage_multiplier;
             float increase_percentage = multiplier_float/(50 + multiplier_float);
             damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1.0f + increase_percentage));
@@ -62,7 +72,7 @@ public class Weapon : Collideable
 
     public void Swing()
     {
-        if (Time.time - lastSwing > cooldown)
+        if (Time.time - lastSwing > attack_cooldown)
         {
             lastSwing = Time.time;
             animator.SetTrigger("Swing");

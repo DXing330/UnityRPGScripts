@@ -11,6 +11,12 @@ public class Fighter : MonoBehaviour
     public int damage_reduction = 0;
     public float recovery_speed = 0.2f;
 
+    // Resistances.
+    public FighterResistances resistances;
+
+    // Equipment.
+    public FighterEquipment armor = null;
+
     // Iframes.
     protected float i_frames = 0.25f;
     public float last_i_frame;
@@ -18,22 +24,36 @@ public class Fighter : MonoBehaviour
     // Push.
     protected Vector3 push_direction;
 
+    // Fighters can use equipment to adjust their stats.
+    protected virtual void Equip(FighterEquipment equipment)
+    {
+        if (!equipment.equipped && equipment.armor && armor == null)
+        {
+            equipment.equipped = true;
+            armor = equipment;
+            equipment.AddResistances(resistances);
+        }
+    }
+
+    protected virtual void UnequipArmor()
+    {
+        if (armor != null)
+        {
+            armor.RemoveResistances(resistances);
+            armor.equipped = false;
+            armor = null;
+        }
+    }
+
     // All fighters can take damage and die.
     protected virtual void ReceiveDamage(Damage damage)
     {
         if (Time.time - last_i_frame > i_frames)
         {
             last_i_frame = Time.time;
-            float reduction_float = damage_reduction;
-            float reduction_percentage = reduction_float/(100 + reduction_float);
-            damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1.0f - reduction_percentage));
-            if (damage.damage_amount < 1)
-            {
-                damage.damage_amount = 1;
-            }
-            health -= damage.damage_amount;
+            int damage_taken = CheckResistances(damage);
+            health -= damage_taken;
             push_direction = (transform.position - damage.origin).normalized * damage.push_force;
-
             GameManager.instance.ShowText(damage.damage_amount.ToString(), 20, Color.red, transform.position, Vector3.up*25, 1.0f);
 
             if (health <= 0)
@@ -42,6 +62,22 @@ public class Fighter : MonoBehaviour
                 Death();
             }
         }
+    }
+
+    // Fighters will have resistances to certain types of damage.
+    protected virtual int CheckResistances(Damage damage)
+    {
+        float reduction_float = damage_reduction;
+        float reduction_percentage = reduction_float/(100 + reduction_float);
+        damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1.0f - reduction_percentage));
+        float resistance_float = resistances.CheckResistance(damage.damage_type);
+        float resistance_percentage = resistance_float/100;
+        damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1-resistance_percentage));
+        if (damage.damage_amount < 1)
+        {
+            damage.damage_amount = 1;
+        }
+        return damage.damage_amount;
     }
 
     // Fighters can also be healed, by fountains or other things.

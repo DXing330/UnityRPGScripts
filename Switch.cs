@@ -6,6 +6,8 @@ public class Switch : Activatable
 {
     public Sprite flipped_switch;
     public Sprite unflipped_switch;
+    public bool one_use = false;
+    protected bool used = false;
     public List<Activatable> activatees;
     private float flip_cooldown = 2.0f;
     private float last_flip;
@@ -49,11 +51,18 @@ public class Switch : Activatable
     [ContextMenu("Activate")]
     public override void Activate()
     {
-        last_flip = Time.time;
-        FlipSwitch();
-        for (int i = 0; i < activatees.Count; i++)
+        if (!used)
         {
-            activatees[i].Activate();
+            last_flip = Time.time;
+            FlipSwitch();
+            for (int i = 0; i < activatees.Count; i++)
+            {
+                activatees[i].Activate();
+            }
+            if (one_use)
+            {
+                used = true;
+            }
         }
     }
 
