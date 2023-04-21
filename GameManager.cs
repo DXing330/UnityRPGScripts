@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public Weapon weapon;
     public Familiar familiar;
     public SummonDataManager summons;
+    public EquipmentDataManager equipment;
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
     public RectTransform healthBar;
@@ -307,6 +308,7 @@ public class GameManager : MonoBehaviour
         File.WriteAllText("Assets/Saves/familiar_stats.json", familiar_stats_json);
         Debug.Log("Saved");
         summons.SaveData();
+        equipment.SaveData();
     }
 
     public void LoadState(Scene scene, LoadSceneMode mode)
@@ -335,6 +337,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Load failed");
         }
         summons.LoadData();
+        equipment.LoadData();
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)

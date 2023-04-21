@@ -15,7 +15,9 @@ public class Fighter : MonoBehaviour
     public FighterResistances resistances;
 
     // Equipment.
-    public FighterEquipment armor = null;
+    public FighterEquipment upper_armor = null;
+    public FighterEquipment lower_armor = null;
+    public FighterEquipment full_armor = null;
 
     // Iframes.
     protected float i_frames = 0.25f;
@@ -27,21 +29,21 @@ public class Fighter : MonoBehaviour
     // Fighters can use equipment to adjust their stats.
     protected virtual void Equip(FighterEquipment equipment)
     {
-        if (!equipment.equipped && equipment.armor && armor == null)
+        if (!equipment.equipped && equipment.upper_armor && upper_armor == null)
         {
             equipment.equipped = true;
-            armor = equipment;
+            upper_armor = equipment;
             equipment.AddResistances(resistances);
         }
     }
 
-    protected virtual void UnequipArmor()
+    protected virtual void UnequipUpperArmor()
     {
-        if (armor != null)
+        if (upper_armor != null)
         {
-            armor.RemoveResistances(resistances);
-            armor.equipped = false;
-            armor = null;
+            upper_armor.RemoveResistances(resistances);
+            upper_armor.equipped = false;
+            upper_armor = null;
         }
     }
 
