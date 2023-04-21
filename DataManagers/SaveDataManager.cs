@@ -141,7 +141,7 @@ public class WeaponStatsWrapper
     }
 }
 
-public class ProjectileStatsWrapper
+/*public class ProjectileStatsWrapper
 {
     public int bonus_damage;
     public int bonus_speed;
@@ -153,7 +153,7 @@ public class ProjectileStatsWrapper
         bonus_speed = GameManager.instance.projectile.bonus_speed;
         bonus_weight = GameManager.instance.projectile.bonus_weight;
     }
-}
+}*/
 
 public class SummonStatsWrapper
 {
