@@ -30,7 +30,6 @@ public class Player : Mover
     {
         base.Start();
         sprite_renderer = GetComponent<SpriteRenderer>();
-        i_frames = 0.5f;
         last_summon = -summon_cooldown;
     }
 

@@ -15,37 +15,18 @@ public class Fighter : MonoBehaviour
     public FighterResistances resistances;
 
     // Equipment.
-    public FighterEquipment upper_armor = null;
-    public FighterEquipment lower_armor = null;
-    public FighterEquipment full_armor = null;
+
+    public FighterEquipment equipment_stats;
 
     // Iframes.
-    protected float i_frames = 0.25f;
-    public float last_i_frame;
+    public float i_frames = 0.25f;
+    protected float last_i_frame;
+    public int dodge_chance = 0;
+    public float dodge_cooldown = 1.0f;
+    protected float last_dodge;
 
     // Push.
     protected Vector3 push_direction;
-
-    // Fighters can use equipment to adjust their stats.
-    protected virtual void Equip(FighterEquipment equipment)
-    {
-        if (!equipment.equipped && equipment.upper_armor && upper_armor == null)
-        {
-            equipment.equipped = true;
-            upper_armor = equipment;
-            equipment.AddResistances(resistances);
-        }
-    }
-
-    protected virtual void UnequipUpperArmor()
-    {
-        if (upper_armor != null)
-        {
-            upper_armor.RemoveResistances(resistances);
-            upper_armor.equipped = false;
-            upper_armor = null;
-        }
-    }
 
     // All fighters can take damage and die.
     protected virtual void ReceiveDamage(Damage damage)
@@ -53,17 +34,42 @@ public class Fighter : MonoBehaviour
         if (Time.time - last_i_frame > i_frames)
         {
             last_i_frame = Time.time;
-            int damage_taken = CheckResistances(damage);
-            health -= damage_taken;
-            push_direction = (transform.position - damage.origin).normalized * damage.push_force;
-            GameManager.instance.ShowText(damage.damage_amount.ToString(), 20, Color.red, transform.position, Vector3.up*25, 1.0f);
-
-            if (health <= 0)
+            if (CheckDodge(damage))
             {
-                health = 0;
-                Death();
+                last_dodge = Time.time;
+            }
+            else
+            {
+                int damage_taken = CheckResistances(damage);
+                health -= damage_taken;
+                push_direction = (transform.position - damage.origin).normalized * damage.push_force;
+                GameManager.instance.ShowText(damage.damage_amount.ToString(), 20, Color.red, transform.position, Vector3.up*25, 1.0f);
+
+                if (health <= 0)
+                {
+                    health = 0;
+                    Death();
+                }
             }
         }
+    }
+
+    protected virtual bool CheckDodge(Damage damage)
+    {
+        if (Time.time - last_dodge > dodge_cooldown && dodge_chance > 0)
+        {
+            int adjusted_dodge_chance = damage.accuracy - dodge_chance;
+            int random_number = Random.Range(0, 99);
+            if (adjusted_dodge_chance <= random_number)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 
     // Fighters will have resistances to certain types of damage.

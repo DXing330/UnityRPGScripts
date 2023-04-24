@@ -7,6 +7,9 @@ public abstract class Mover : Fighter
     // Actors can be under the effects of slow.
     // Actors have a slightly variable movespeed.
     public float base_move_speed;
+    public float base_dash_distance = 0.6f;
+    protected float dash_distance;
+    protected float move_speed;
     protected float move_speed_slow;
     protected bool slowed = false;
     protected float slow_duration = 0;
@@ -22,18 +25,18 @@ public abstract class Mover : Fighter
     {
         originalSize = transform.localScale;
         boxCollider = GetComponent<BoxCollider2D>();
+        move_speed = base_move_speed;
+        dash_distance = base_dash_distance;
     }
 
     protected virtual void StartSpeed()
     {
-
     }
 
     protected virtual void ResetSpeed()
     {
         slowed = false;
-        x_speed += move_speed_slow;
-        y_speed += move_speed_slow;
+        move_speed += move_speed_slow;
         move_speed_slow = 0;
     }
 
@@ -42,8 +45,7 @@ public abstract class Mover : Fighter
         if (move_speed_slow == 0)
         {
             move_speed_slow = slow_percentage;
-            x_speed -= move_speed_slow;
-            y_speed -= move_speed_slow;
+            move_speed -= move_speed_slow;
         }
         else
         {
@@ -51,8 +53,7 @@ public abstract class Mover : Fighter
             {
                 float slow_difference = slow_percentage - move_speed_slow;
                 move_speed_slow = slow_percentage;
-                x_speed -= slow_difference;
-                y_speed -= slow_difference;
+                move_speed -= slow_difference;
             }
         }
     }
@@ -74,7 +75,7 @@ public abstract class Mover : Fighter
     protected virtual void UpdateMotor(Vector3 input)
     {
         // Reset MoveDelta.
-        moveDelta = new Vector3(input.x * x_speed, input.y * y_speed, 0);
+        moveDelta = new Vector3(input.x * move_speed, input.y * move_speed, 0);
 
         // Swap sprite direction, depending on direction.
         if (moveDelta.x > 0)
@@ -115,7 +116,7 @@ public abstract class Mover : Fighter
     // Want to have a sudden burst of speed.
     protected virtual void Dash(Vector3 input)
     {
-        moveDelta = new Vector3(input.x * 0.6f, input.y * 0.6f, 0);
+        moveDelta = new Vector3(input.x * dash_distance, input.y * dash_distance, 0);
 
         while (moveDelta.x != 0 || moveDelta.y != 0)
         {

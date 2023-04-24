@@ -7,6 +7,7 @@ public class Damage
     public Vector3 origin;
     public int damage_amount;
     public float push_force;
+    public int accuracy = 100;
     public string damage_type = "physical";
     public bool physical_damage = true;
     public bool fire_damage = false;
