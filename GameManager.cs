@@ -316,9 +316,6 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= LoadState;
         if (File.Exists("Assets/Saves/save_data.json"))
         {
-            string player_stats = File.ReadAllText("Assets/Saves/player_stats.json");
-            PlayerStatsWrapper loaded_player_stats = JsonUtility.FromJson<PlayerStatsWrapper>(player_stats);
-            player.SetStats(loaded_player_stats);
             string save_data = File.ReadAllText("Assets/Saves/save_data.json");
             SaveDataWrapper loaded_data = JsonUtility.FromJson<SaveDataWrapper>(save_data);
             player.SetLevel(loaded_data.player_level);

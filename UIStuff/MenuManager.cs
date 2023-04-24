@@ -15,15 +15,6 @@ public class MenuManager : MonoBehaviour
     public Text upgrade_cost;
     // Player stuff.
     public Text exp_text;
-    public Text public_stat_points;
-    public Text damage_multiplier;
-    public Text damage_reduction;
-    public Text luck_text;
-    public Text stat_points_text;
-    public Text bonus_health_text;
-    public Text bonus_attack_text;
-    public Text bonus_defense_text;
-    public Text bonus_luck_text;
     // Familiar stuff.
     public Text familiar_damage;
     public Text familiar_heal;
@@ -144,30 +135,6 @@ public class MenuManager : MonoBehaviour
         mana_text.text = GameManager.instance.mana_crystals.ToString();
         int current_level = GameManager.instance.player.playerLevel;
         level_text.text = current_level.ToString();
-        public_stat_points.text = GameManager.instance.stat_points.ToString();
-        luck_text.text = GameManager.instance.player.luck.ToString();
-        if (GameManager.instance.player.damage_multiplier > 0)
-        {
-            int multiplier = GameManager.instance.player.damage_multiplier;
-            float f_multiplier = (multiplier * 100) / (50 + multiplier);
-            int int_multiplier = Mathf.RoundToInt(f_multiplier);
-            damage_multiplier.text = int_multiplier.ToString() + " %";
-        }
-        else
-        {
-            damage_multiplier.text = "0%";
-        }
-        if (GameManager.instance.player.damage_reduction > 0)
-        {
-            int multiplier = GameManager.instance.player.damage_reduction;
-            float f_multiplier = (multiplier * 100) / (100 + multiplier);
-            int int_multiplier = Mathf.RoundToInt(f_multiplier);
-            damage_reduction.text = int_multiplier.ToString() + " %";
-        }
-        else
-        {
-            damage_reduction.text = "0%";
-        }
         // EXP Bar.
         int currect_exp = GameManager.instance.experience;
         int exp_to_level = GameManager.instance.GetExptoLevel();
@@ -178,22 +145,6 @@ public class MenuManager : MonoBehaviour
     }
 
     // Character stats.
-    public void UpdateStatPointMenu()
-    {
-        stat_points_text.text = GameManager.instance.stat_points.ToString();
-        bonus_health_text.text = GameManager.instance.player.bonus_health.ToString();
-        bonus_attack_text.text = GameManager.instance.player.damage_multiplier.ToString();
-        bonus_defense_text.text = GameManager.instance.player.damage_reduction.ToString();
-        bonus_luck_text.text = GameManager.instance.player.luck.ToString();
-    }
-
-    public void PressUpdateButton(string upgraded_stat)
-    {
-        if (GameManager.instance.UpgradePlayerStats(upgraded_stat))
-        {
-            UpdateStatPointMenu();
-        }
-    }
 
     public void UpdateFamiliarMenu()
     {
