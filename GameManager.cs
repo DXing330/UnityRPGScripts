@@ -95,39 +95,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Upgrade Familiar.
-
-    public bool UpgradePlayerStats(string upgraded_stat)
-    {
-        if (stat_points > 0)
-        {
-            if (upgraded_stat == "bonus_health")
-            {
-                player.bonus_health++;
-                player.SetMaxHealth();
-                OnHealthChange();
-            }
-            else if (upgraded_stat == "damage_multiplier")
-            {
-                player.damage_multiplier++;
-            }
-            else if (upgraded_stat == "damage_reduction")
-            {
-                player.damage_reduction++;
-            }
-            else if (upgraded_stat == "luck")
-            {
-                player.luck++;
-            }
-            else
-            {
-                stat_points++;
-            }
-            stat_points--;
-            return true;
-        }
-        return false;
-    }
 
     public bool UpgradeFamiliarStats(string upgraded_stat)
     {
@@ -205,29 +172,10 @@ public class GameManager : MonoBehaviour
         return exp;
     }
 
-    public float GetLuckBonus()
-    {
-        float luck_bonus = 1.0f;
-        if (player.luck <= 100)
-        {
-            float random_luck = Random.Range(0, player.luck);
-            float random_luck_percentage = random_luck/100;
-            luck_bonus += random_luck_percentage;
-        }
-        else
-        {
-            float luck_percentage = player.luck/(100 + player.luck);
-            luck_bonus += luck_percentage;
-        }
-        return luck_bonus;
-    }
-
     public void GrantExp(int exp)
     {
-        float luck_bonus = GetLuckBonus();
-        int added_exp = Mathf.RoundToInt(exp * (luck_bonus));
-        experience +=added_exp;
-        ShowText("+" + added_exp + "exp", 20, Color.cyan, player.transform.position, Vector3.up*40, 1.0f);
+        experience += exp;
+        ShowText("+" + exp + "exp", 20, Color.cyan, player.transform.position, Vector3.up*40, 1.0f);
         if(experience >= GetExptoLevel() && player.playerLevel < levelLimit)
         {
             experience -= GetExptoLevel();
@@ -238,17 +186,14 @@ public class GameManager : MonoBehaviour
 
     public void GrantCoins(int money)
     {
-        float luck_bonus = GetLuckBonus();
-        int added_coins = Mathf.RoundToInt(money * luck_bonus);
-        coins += added_coins;
-        ShowText("+ "+added_coins+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
+        coins += money;
+        ShowText("+ "+money+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
     }
 
     public void GrantMana(int crystals)
     {
-        float luck_bonus = GetLuckBonus();
-        int added_mana = Mathf.RoundToInt(crystals * luck_bonus);
-        mana_crystals += added_mana;
+        mana_crystals += crystals;
+        ShowText("+ "+crystals+" crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
     }
     public void PlayerLevelUp()
     {
@@ -298,10 +243,6 @@ public class GameManager : MonoBehaviour
         save_data.UpdateData();
         string save_json = JsonUtility.ToJson(save_data, true);
         File.WriteAllText("Assets/Saves/save_data.json", save_json);
-        PlayerStatsWrapper player_stats = new PlayerStatsWrapper();
-        player_stats.UpdateData();
-        string player_stats_json = JsonUtility.ToJson(player_stats, true);
-        File.WriteAllText("Assets/Saves/player_stats.json", player_stats_json);
         FamiliarStatsWrapper familiar_stats = new FamiliarStatsWrapper();
         familiar_stats.UpdateData();
         string familiar_stats_json = JsonUtility.ToJson(familiar_stats, true);

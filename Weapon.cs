@@ -17,9 +17,7 @@ public class Weapon : Collideable
     private SpriteRenderer spriteRenderer;
 
     // Swing
-    private Animator animator;
-    public float attack_cooldown = 0.36f;
-    private float lastSwing;
+    public Animator animator;
 
     private void Awake()
     {
@@ -30,18 +28,6 @@ public class Weapon : Collideable
     {
         base.Start();
         animator = GetComponent<Animator>();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        float x_direction = Input.GetAxisRaw("Horizontal");
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Swing();
-        }
     }
 
     protected virtual void UpdateDamageType(string new_type)
@@ -67,15 +53,6 @@ public class Weapon : Collideable
             float increase_percentage = multiplier_float/(50 + multiplier_float);
             damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1.0f + increase_percentage));
             coll.SendMessage("ReceiveDamage", damage);
-        }
-    }
-
-    public void Swing()
-    {
-        if (Time.time - lastSwing > attack_cooldown)
-        {
-            lastSwing = Time.time;
-            animator.SetTrigger("Swing");
         }
     }
 

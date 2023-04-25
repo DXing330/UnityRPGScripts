@@ -56,6 +56,7 @@ public class EquipmentDataManager : MonoBehaviour
             equipment_two_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_two.txt");
         }
         AddStatsFromEquips();
+        player.SetStats();
     }
 
     public void AddEquipment(Equipment equipment)

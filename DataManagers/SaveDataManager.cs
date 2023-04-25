@@ -97,7 +97,7 @@ public class SaveDataWrapper
     }
 }
 
-public class PlayerStatsWrapper
+/*public class PlayerStatsWrapper
 {
     public int bonus_health;
     public int damage_multiplier;
@@ -109,9 +109,8 @@ public class PlayerStatsWrapper
         bonus_health = GameManager.instance.player.bonus_health;
         damage_multiplier = GameManager.instance.player.damage_multiplier;
         damage_reduction = GameManager.instance.player.damage_reduction;
-        luck = GameManager.instance.player.luck;
     }
-}
+}*/
 
 public class FamiliarStatsWrapper
 {

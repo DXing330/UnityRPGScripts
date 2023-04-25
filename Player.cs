@@ -6,14 +6,15 @@ public class Player : Mover
 {
     public int playerLevel;
     public Joystick joystick;
-    private SpriteRenderer sprite_renderer;
-    private float dash_cooldown = 0.6f;
-    private float last_dash;
-    public int health_per_level = 5;
-    public int bonus_health;
+    protected SpriteRenderer sprite_renderer;
+    protected float dash_cooldown = 0.6f;
+    protected float last_dash;
+    protected int health_per_level = 6;
+    // Melee Attack.
+    public Weapon player_weapon;
+    protected float attack_cooldown;
     public int damage_multiplier;
-    // Affects drops.
-    public int luck;
+    protected float last_attack;
     // Ranged Attack.
     public PlayerProjectile projectile;
     protected bool facing_right = true;
@@ -43,6 +44,15 @@ public class Player : Mover
     {
         base.ReceiveHealing(healing);
         GameManager.instance.OnHealthChange();
+    }
+
+    public virtual void SwingWeapon()
+    {
+        if (Time.time - last_attack > attack_cooldown)
+        {
+            last_attack = Time.time;
+            player_weapon.animator.SetTrigger("Swing");
+        }
     }
 
     public virtual void RangedAttack()
@@ -106,6 +116,10 @@ public class Player : Mover
         {
             SummonAlly();
         }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            SwingWeapon();
+        }
     }
     private void FixedUpdate()
     {
@@ -149,18 +163,22 @@ public class Player : Mover
         SetMaxHealth();
     }
 
-    public void SetStats(PlayerStatsWrapper loaded_stats)
+    public void SetStats()
     {
-        bonus_health = loaded_stats.bonus_health;
-        damage_multiplier = loaded_stats.damage_multiplier;
-        damage_reduction = loaded_stats.damage_reduction;
-        luck = loaded_stats.luck;
+        equipment_stats.UpdateStats();
+        damage_multiplier = equipment_stats.damage_multiplier;
+        damage_reduction = equipment_stats.damage_reduction;
+        i_frames = equipment_stats.i_frames;
+        dodge_chance = equipment_stats.dodge_chance;
+        move_speed = equipment_stats.move_speed;
+        dash_distance = equipment_stats.dash_distance;
+        attack_cooldown = equipment_stats.attack_cooldown;
+        recovery_speed = equipment_stats.knockback_resist;
     }
 
     public void SetMaxHealth()
     {
         max_health = playerLevel * health_per_level;
-        max_health += bonus_health;
     }
 
     public void SetHealth(int new_health)

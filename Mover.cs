@@ -7,7 +7,6 @@ public abstract class Mover : Fighter
     // Actors can be under the effects of slow.
     // Actors have a slightly variable movespeed.
     public float base_move_speed;
-    public float base_dash_distance = 0.6f;
     protected float dash_distance;
     protected float move_speed;
     protected float move_speed_slow;
@@ -26,7 +25,6 @@ public abstract class Mover : Fighter
         originalSize = transform.localScale;
         boxCollider = GetComponent<BoxCollider2D>();
         move_speed = base_move_speed;
-        dash_distance = base_dash_distance;
     }
 
     protected virtual void StartSpeed()
