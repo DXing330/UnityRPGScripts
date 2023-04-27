@@ -8,7 +8,7 @@ public abstract class Mover : Fighter
     // Actors have a slightly variable movespeed.
     public float base_move_speed;
     protected float dash_distance;
-    protected float move_speed;
+    public float move_speed;
     protected float move_speed_slow;
     protected bool slowed = false;
     protected float slow_duration = 0;

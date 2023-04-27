@@ -12,7 +12,7 @@ public class Player : Mover
     protected int health_per_level = 6;
     // Melee Attack.
     public Weapon player_weapon;
-    protected float attack_cooldown;
+    public float attack_cooldown;
     public int damage_multiplier;
     protected float last_attack;
     // Ranged Attack.
@@ -102,6 +102,7 @@ public class Player : Mover
             PayHealth(1);
         }
     }
+    
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.X))
@@ -170,6 +171,7 @@ public class Player : Mover
         damage_reduction = equipment_stats.damage_reduction;
         i_frames = equipment_stats.i_frames;
         dodge_chance = equipment_stats.dodge_chance;
+        dodge_cooldown = equipment_stats.dodge_cooldown;
         move_speed = equipment_stats.move_speed;
         dash_distance = equipment_stats.dash_distance;
         attack_cooldown = equipment_stats.attack_cooldown;

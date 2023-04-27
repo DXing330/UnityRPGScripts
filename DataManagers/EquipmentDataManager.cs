@@ -95,6 +95,47 @@ public class EquipmentDataManager : MonoBehaviour
         SaveData();
     }
 
+    // Try to remove an equipment of a specific type at a specific index.
+    public void RemoveEquipmentForGood(int slot, int i)
+    {
+        RemoveEquipmentatSlot(slot, i);
+        // Keep track of how many of the type you've seen.
+        int counter = 0;
+        // Loop through all the equipment.
+        for (int j = 0; j < all_equipment_stats.Count; j++)
+        {
+            // Check the type of each equipment.
+            string[] find_type = all_equipment_stats[j].Split("|");
+            // If the type matches the slot you want to delete from either delete it or add to the counter.
+            if (int.Parse(find_type[0]) == slot)
+            {
+                if (counter == i)
+                {
+                    all_equipment_stats.RemoveAt(j);
+                    // After deleting, stop.
+                    break;
+                }
+                else if (counter != i)
+                {
+                    counter++;
+                }
+            }
+        }
+    }
+
+    public void RemoveEquipmentatSlot(int slot, int i)
+    {
+        switch (slot)
+        {
+            case 1:
+                equipment_one_stats.RemoveAt(i);
+                break;
+            case 2:
+                equipment_two_stats.RemoveAt(i);
+                break;
+        }
+    }
+
     public string GetEquip(int equipment_type, int i)
     {
         switch (equipment_type)
@@ -107,17 +148,19 @@ public class EquipmentDataManager : MonoBehaviour
         return null;
     }
 
-    public void EquipToPlayer(string equipment, int slot)
+    public void EquipToPlayer(int slot, int index)
     {
         switch (slot)
         {
             case 1:
-                equipment_one_slot = equipment;
+                equipment_one_slot = equipment_one_stats[index];
                 break;
             case 2:
-                equipment_two_slot = equipment;
+                equipment_two_slot = equipment_two_stats[index];
                 break;
         }
+        AddStatsFromEquips();
+        player.SetStats();
     }
 
     public void UnequipFromPlayer(int slot)

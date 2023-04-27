@@ -50,7 +50,8 @@ public class Weapon : Collideable
                 damage.UpdateDamageType(damage_type);
             }
             float multiplier_float = damage_multiplier;
-            float increase_percentage = multiplier_float/(50 + multiplier_float);
+            // Every 100 points of damage increase increases the damage dealt by 100%.
+            float increase_percentage = multiplier_float/(100);
             damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1.0f + increase_percentage));
             coll.SendMessage("ReceiveDamage", damage);
         }

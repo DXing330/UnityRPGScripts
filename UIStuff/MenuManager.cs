@@ -27,6 +27,7 @@ public class MenuManager : MonoBehaviour
     public Text bonus_weight;
     // Summon stuff.
     public MenuManagerSummons summon_menu_info;
+    public MenuManagerEquipment equip_menu_info;
 
     // Logic.
     public Image weapon_sprite;
@@ -167,5 +168,10 @@ public class MenuManager : MonoBehaviour
     public void UpdateSummonMenu()
     {
         summon_menu_info.UpdateText();
+    }
+
+    public void UpdateEquipMenu()
+    {
+        equip_menu_info.UpdateResistanceTexts();
     }
 }
