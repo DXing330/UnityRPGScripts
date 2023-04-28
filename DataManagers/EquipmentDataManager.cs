@@ -128,10 +128,16 @@ public class EquipmentDataManager : MonoBehaviour
         switch (slot)
         {
             case 1:
-                equipment_one_stats.RemoveAt(i);
+                if (equipment_one_stats.Count > i && i >= 0)
+                {
+                    equipment_one_stats.RemoveAt(i);
+                }
                 break;
             case 2:
-                equipment_two_stats.RemoveAt(i);
+                if (equipment_two_stats.Count > i && i >= 0)
+                {
+                    equipment_two_stats.RemoveAt(i);
+                }
                 break;
         }
     }

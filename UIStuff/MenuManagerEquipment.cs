@@ -78,6 +78,11 @@ public class MenuManagerEquipment : MonoBehaviour
         selected_equip_index = index + (6*current_page);
     }
 
+    public void ResetIndex()
+    {
+        selected_equip_index = -1;
+    }
+
     public void SwitchPage(bool right)
     {
         if (right)
@@ -157,7 +162,7 @@ public class MenuManagerEquipment : MonoBehaviour
     public void UpdateSelectedInfo()
     {
         int count = GetEquipCount();
-        if (selected_equip_index < count)
+        if (selected_equip_index < count && selected_equip_index >= 0)
         {
             string[] selected_stats = GetSelectedInfo();
             selected_stat_1.text = selected_stats[4];
