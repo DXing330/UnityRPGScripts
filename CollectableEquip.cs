@@ -14,12 +14,14 @@ public class CollectableEquip : Collectable
     public int poison_resist = 0;
     public int magic_resist = 0;
     public int divine_resist = 0;
-    private SpriteRenderer spriterenderer;
     public List<Sprite> equipment_sprites;
     // Make the sprite move slightly to increase visibility.
     private float time_to_direction_shift = 1.0f;
     private float last_direction_shift;
     private bool shifting_up = true;
+    // Make the sprite viewable for a time before it can be picked up.
+    private float time_before_pickup = 0.6f;
+    private float spawn_time;
 
     protected override void Update()
     {
@@ -68,26 +70,63 @@ public class CollectableEquip : Collectable
         switch (rarity)
         {
             case 1:
-                spriterenderer.color = new Color(0.2f,0.2f,0.2f,1.0f);
+                spriterenderer.color = new Color(1.0f,0.0f,0.2f,1.0f);
                 break;
             case 2:
-                spriterenderer.color = new Color(0.3f,0.2f,0.2f,1.0f);
+                spriterenderer.color = new Color(1.0f,0.0f,0.4f,1.0f);
                 break;
             case 3:
-                spriterenderer.color = new Color(0.4f,0.2f,0.2f,1.0f);
+                spriterenderer.color = new Color(1.0f,0.0f,0.6f,1.0f);
                 break;
             case 4:
-                spriterenderer.color = new Color(0.5f,0.2f,0.2f,1.0f);
+                spriterenderer.color = new Color(1.0f,0.0f,0.8f,1.0f);
                 break;
             case 5:
-                spriterenderer.color = new Color(0.2f,0.2f,0.5f,1.0f);
+                spriterenderer.color = new Color(1.0f,0.0f,1.0f,1.0f);
                 break;
+            case 6:
+                spriterenderer.color = new Color(1.0f,0.2f,1.0f,1.0f);
+                break;
+            case 7:
+                spriterenderer.color = new Color(1.0f,0.4f,1.0f,1.0f);
+                break;
+            case 8:
+                spriterenderer.color = new Color(1.0f,0.6f,1.0f,1.0f);
+                break;
+            case 9:
+                spriterenderer.color = new Color(1.0f,0.8f,1.0f,1.0f);
+                break;
+            case 10:
+                spriterenderer.color = new Color(1.0f,1.0f,1.0f,1.0f);
+                break;
+        }
+    }
+
+    protected virtual void DetermineRarity(int max_rarity)
+    {
+        rarity = 1;
+        if (max_rarity > 1)
+        {
+            int rolls = max_rarity;
+            while (rolls > 0)
+            {
+                rolls--;
+                int roll = Random.Range(0, 2);
+                if (roll == 0)
+                {
+                    rolls = 0;
+                }
+                else if (rolls == 1)
+                {
+                    rarity++;
+                }
+            }
         }
     }
 
     protected virtual void RandomizeStats()
     {
-        int stats = rarity + 3;
+        int stats = 2*rarity + 6;
         while (stats > 0)
         {
             stats--;
@@ -117,22 +156,16 @@ public class CollectableEquip : Collectable
 
     public virtual void MakeEquipment(int tier = 1)
     {
-        if (tier <= 1)
-        {
-            rarity = 1;
-        }
-        else
-        {
-            rarity = Random.Range(1, tier+1);
-        }
+        DetermineRarity(tier);
         type_id = Random.Range(1,6);
         UpdateSprite();
         RandomizeStats();
+        spawn_time = Time.time;
     }
 
     protected override void OnCollect()
     {
-        if (!collected)
+        if (!collected && Time.time - spawn_time > time_before_pickup)
         {
             collected = true;
             GameManager.instance.all_equipment.CollectEquipmentDrop(this);

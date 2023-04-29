@@ -121,14 +121,6 @@ public class MenuManager : MonoBehaviour
         // Weapon.
         int weapon_level = GameManager.instance.weapon.weaponLevel;
         weapon_level_text.text = weapon_level.ToString();
-        if (GameManager.instance.weapon.weaponLevel >= GameManager.instance.weaponSprites.Count)
-        {
-            weapon_sprite.sprite = GameManager.instance.weaponSprites[GameManager.instance.weaponSprites.Count-1];
-        }
-        else
-        {
-            weapon_sprite.sprite = GameManager.instance.weaponSprites[GameManager.instance.weapon.weaponLevel];
-        }
         upgrade_cost.text = GameManager.instance.DeterminePrice("weapon").ToString();
         // Meta.
         health_text.text = GameManager.instance.player.health.ToString()+" / "+GameManager.instance.player.max_health.ToString();

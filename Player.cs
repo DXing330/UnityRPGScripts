@@ -180,7 +180,8 @@ public class Player : Mover
 
     public void SetMaxHealth()
     {
-        max_health = playerLevel * health_per_level;
+        max_health = (playerLevel-1) * health_per_level;
+        max_health += 10;
     }
 
     public void SetHealth(int new_health)

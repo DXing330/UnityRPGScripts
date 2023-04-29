@@ -7,6 +7,10 @@ public class Collectable : Collideable
     // Logic.
     public bool collected;
     public bool one_time = true;
+    public bool mana_crystals = false;
+    public bool coins = true;
+    protected SpriteRenderer spriterenderer;
+    public List<Sprite> different_sprites;
 
     protected override void OnCollide(Collider2D coll)
     {
@@ -17,5 +21,9 @@ public class Collectable : Collideable
     protected virtual void OnCollect()
     {
         collected = true;
+        if (one_time && collected)
+        {
+            Destroy(gameObject);
+        }
     }
 }

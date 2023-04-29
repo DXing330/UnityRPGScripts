@@ -83,6 +83,11 @@ public class MenuManagerEquipment : MonoBehaviour
         selected_equip_index = -1;
     }
 
+    public void ResetPage()
+    {
+        current_page = 0;
+    }
+
     public void SwitchPage(bool right)
     {
         if (right)
@@ -90,13 +95,31 @@ public class MenuManagerEquipment : MonoBehaviour
             switch (equip_slot)
             {
                 case 1:
-                    if ((current_page+1)*6 <= equipment.equipment_one_stats.Count)
+                    if ((current_page+1)*6 < equipment.equipment_1_stats.Count)
                     {
                         current_page++;
                     }
                     break;
                 case 2:
-                    if ((current_page+1)*6 <= equipment.equipment_two_stats.Count)
+                    if ((current_page+1)*6 < equipment.equipment_2_stats.Count)
+                    {
+                        current_page++;
+                    }
+                    break;
+                case 3:
+                    if ((current_page+1)*6 < equipment.equipment_3_stats.Count)
+                    {
+                        current_page++;
+                    }
+                    break;
+                case 4:
+                    if ((current_page+1)*6 < equipment.equipment_4_stats.Count)
+                    {
+                        current_page++;
+                    }
+                    break;
+                case 5:
+                    if ((current_page+1)*6 < equipment.equipment_5_stats.Count)
                     {
                         current_page++;
                     }
@@ -117,9 +140,15 @@ public class MenuManagerEquipment : MonoBehaviour
         switch (equip_slot)
         {
             case 1:
-                return equipment.equipment_one_slot.Split("|");
+                return equipment.equipment_1_slot.Split("|");
             case 2:
-                return equipment.equipment_two_slot.Split("|");
+                return equipment.equipment_2_slot.Split("|");
+            case 3:
+                return equipment.equipment_3_slot.Split("|");
+            case 4:
+                return equipment.equipment_4_slot.Split("|");
+            case 5:
+                return equipment.equipment_5_slot.Split("|");
         }
         return null;
     }
@@ -129,9 +158,15 @@ public class MenuManagerEquipment : MonoBehaviour
         switch (equip_slot)
         {
             case 1:
-                return equipment.equipment_one_stats[selected_equip_index].Split("|");
+                return equipment.equipment_1_stats[selected_equip_index].Split("|");
             case 2:
-                return equipment.equipment_two_stats[selected_equip_index].Split("|");
+                return equipment.equipment_2_stats[selected_equip_index].Split("|");
+            case 3:
+                return equipment.equipment_3_stats[selected_equip_index].Split("|");
+            case 4:
+                return equipment.equipment_4_stats[selected_equip_index].Split("|");
+            case 5:
+                return equipment.equipment_5_stats[selected_equip_index].Split("|");
         }
         return null;
     }
@@ -141,9 +176,15 @@ public class MenuManagerEquipment : MonoBehaviour
         switch (equip_slot)
         {
             case 1:
-                return equipment.equipment_one_stats.Count;
+                return equipment.equipment_1_stats.Count;
             case 2:
-                return equipment.equipment_two_stats.Count;
+                return equipment.equipment_2_stats.Count;
+            case 3:
+                return equipment.equipment_3_stats.Count;
+            case 4:
+                return equipment.equipment_4_stats.Count;
+            case 5:
+                return equipment.equipment_5_stats.Count;
         }
         return 0;
     }
@@ -151,12 +192,24 @@ public class MenuManagerEquipment : MonoBehaviour
     public void UpdateEquippedInfo()
     {
         string[] equipped_stats = GetEquippedInfo();
-        current_stat_1.text = equipped_stats[4];
-        current_stat_2.text = equipped_stats[5];
-        current_stat_3.text = equipped_stats[6];
-        current_stat_4.text = equipped_stats[7];
-        current_stat_5.text = equipped_stats[8];
-        current_stat_6.text = equipped_stats[9];
+        if (equipped_stats.Length > 8)
+        {
+            current_stat_1.text = equipped_stats[4];
+            current_stat_2.text = equipped_stats[5];
+            current_stat_3.text = equipped_stats[6];
+            current_stat_4.text = equipped_stats[7];
+            current_stat_5.text = equipped_stats[8];
+            current_stat_6.text = equipped_stats[9];
+        }
+        else
+        {
+            current_stat_1.text = "0";
+            current_stat_2.text = "0";
+            current_stat_3.text = "0";
+            current_stat_4.text = "0";
+            current_stat_5.text = "0";
+            current_stat_6.text = "0";
+        }
     }
 
     public void UpdateSelectedInfo()

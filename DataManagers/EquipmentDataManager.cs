@@ -8,12 +8,18 @@ using UnityEngine;
 public class EquipmentDataManager : MonoBehaviour
 {
     public Player player;
-    public int different_slots = 2;
+    public int different_slots = 5;
     public List<string> all_equipment_stats;
-    public List<string> equipment_one_stats;
-    public List<string> equipment_two_stats;
-    public string equipment_one_slot = null;
-    public string equipment_two_slot = null;
+    public List<string> equipment_1_stats;
+    public List<string> equipment_2_stats;
+    public List<string> equipment_3_stats;
+    public List<string> equipment_4_stats;
+    public List<string> equipment_5_stats;
+    public string equipment_1_slot = null;
+    public string equipment_2_slot = null;
+    public string equipment_3_slot = null;
+    public string equipment_4_slot = null;
+    public string equipment_5_slot = null;
 
 
     [ContextMenu("Save")]
@@ -33,8 +39,11 @@ public class EquipmentDataManager : MonoBehaviour
             }
         }
         File.WriteAllText("Assets/Saves/EquipmentData/equip_string.txt", equipment_string);
-        File.WriteAllText("Assets/Saves/EquipmentData/slot_one.txt", equipment_one_slot);
-        File.WriteAllText("Assets/Saves/EquipmentData/slot_two.txt", equipment_two_slot);
+        File.WriteAllText("Assets/Saves/EquipmentData/slot_1.txt", equipment_1_slot);
+        File.WriteAllText("Assets/Saves/EquipmentData/slot_2.txt", equipment_2_slot);
+        File.WriteAllText("Assets/Saves/EquipmentData/slot_3.txt", equipment_3_slot);
+        File.WriteAllText("Assets/Saves/EquipmentData/slot_4.txt", equipment_4_slot);
+        File.WriteAllText("Assets/Saves/EquipmentData/slot_5.txt", equipment_5_slot);
     }
 
     [ContextMenu("Load")]
@@ -52,8 +61,11 @@ public class EquipmentDataManager : MonoBehaviour
                     SeperateEquipmentLists(loaded_equip_stats[i]);
                 }
             }
-            equipment_one_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_one.txt");
-            equipment_two_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_two.txt");
+            equipment_1_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_1.txt");
+            equipment_2_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_2.txt");
+            equipment_3_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_3.txt");
+            equipment_4_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_4.txt");
+            equipment_5_slot = File.ReadAllText("Assets/Saves/EquipmentData/slot_5.txt");
         }
         AddStatsFromEquips();
         player.SetStats();
@@ -64,20 +76,31 @@ public class EquipmentDataManager : MonoBehaviour
         string new_equipment_stats = equipment.ConvertSelftoString();
         all_equipment_stats.Add(new_equipment_stats);
         SeperateEquipmentLists(new_equipment_stats);
-        SaveData();
     }
 
     public void SeperateEquipmentLists(string equipment)
     {
         string[] chars = equipment.Split("|");
-        switch (int.Parse(chars[0].ToString()))
+        if (chars.Length > 5)
         {
-            case 1:
-                equipment_one_stats.Add(equipment);
-                break;
-            case 2:
-                equipment_two_stats.Add(equipment);
-                break;
+            switch (int.Parse(chars[0]))
+            {
+                case 1:
+                    equipment_1_stats.Add(equipment);
+                    break;
+                case 2:
+                    equipment_2_stats.Add(equipment);
+                    break;
+                case 3:
+                    equipment_3_stats.Add(equipment);
+                    break;
+                case 4:
+                    equipment_4_stats.Add(equipment);
+                    break;
+                case 5:
+                    equipment_5_stats.Add(equipment);
+                    break;
+            }
         }
     }
 
@@ -86,13 +109,6 @@ public class EquipmentDataManager : MonoBehaviour
         string new_equipment_stats = equipment.ConvertSelftoString();
         all_equipment_stats.Add(new_equipment_stats);
         SeperateEquipmentLists(new_equipment_stats);
-        SaveData();
-    }
-
-    public void RemoveEquipment(int i)
-    {
-        all_equipment_stats.RemoveAt(i);
-        SaveData();
     }
 
     // Try to remove an equipment of a specific type at a specific index.
@@ -121,6 +137,7 @@ public class EquipmentDataManager : MonoBehaviour
                 }
             }
         }
+        SaveData();
     }
 
     public void RemoveEquipmentatSlot(int slot, int i)
@@ -128,15 +145,15 @@ public class EquipmentDataManager : MonoBehaviour
         switch (slot)
         {
             case 1:
-                if (equipment_one_stats.Count > i && i >= 0)
+                if (equipment_1_stats.Count > i && i >= 0)
                 {
-                    equipment_one_stats.RemoveAt(i);
+                    equipment_1_stats.RemoveAt(i);
                 }
                 break;
             case 2:
-                if (equipment_two_stats.Count > i && i >= 0)
+                if (equipment_2_stats.Count > i && i >= 0)
                 {
-                    equipment_two_stats.RemoveAt(i);
+                    equipment_2_stats.RemoveAt(i);
                 }
                 break;
         }
@@ -147,9 +164,9 @@ public class EquipmentDataManager : MonoBehaviour
         switch (equipment_type)
         {
             case 1:
-                return (equipment_one_stats[i]);
+                return (equipment_1_stats[i]);
             case 2:
-                return (equipment_two_stats[i]);
+                return (equipment_2_stats[i]);
         }
         return null;
     }
@@ -159,10 +176,10 @@ public class EquipmentDataManager : MonoBehaviour
         switch (slot)
         {
             case 1:
-                equipment_one_slot = equipment_one_stats[index];
+                equipment_1_slot = equipment_1_stats[index];
                 break;
             case 2:
-                equipment_two_slot = equipment_two_stats[index];
+                equipment_2_slot = equipment_2_stats[index];
                 break;
         }
         AddStatsFromEquips();
@@ -174,10 +191,10 @@ public class EquipmentDataManager : MonoBehaviour
         switch (slot)
         {
             case 1:
-                equipment_one_slot = null;
+                equipment_1_slot = null;
                 break;
             case 2:
-                equipment_two_slot = null;
+                equipment_2_slot = null;
                 break;
         }
     }
@@ -197,8 +214,9 @@ public class EquipmentDataManager : MonoBehaviour
         {
             string[] e_stats = GetEquipSlotStats(j);
             // If a slot has an equipment add the appropriate resistance.
-            if (e_stats != null)
+            if (e_stats != null && e_stats.Length > 8)
             {
+                Debug.Log("Tried adding stats");
                 physical_resist += int.Parse(e_stats[5]);
                 fire_resist += int.Parse(e_stats[6]);
                 poison_resist += int.Parse(e_stats[7]);
@@ -219,15 +237,15 @@ public class EquipmentDataManager : MonoBehaviour
         switch (slot)
         {
             case 0:
-                if (equipment_one_slot != null)
+                if (equipment_1_slot != null)
                 {
-                    return equipment_one_slot.Split("|");
+                    return equipment_1_slot.Split("|");
                 }
                 return null;
             case 1:
-                if (equipment_two_slot != null)
+                if (equipment_2_slot != null)
                 {
-                    return equipment_two_slot.Split("|");
+                    return equipment_2_slot.Split("|");
                 }
                 return null;
         }

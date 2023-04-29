@@ -65,27 +65,10 @@ public class Weapon : Collideable
     public void UpgradeWeapon()
     {
         weaponLevel++;
-        if (weaponLevel >= GameManager.instance.weaponSprites.Count)
-        {
-            spriteRenderer.sprite = GameManager.instance.weaponSprites[GameManager.instance.weaponSprites.Count-1];
-        }
-        else
-        {
-            spriteRenderer.sprite = GameManager.instance.weaponSprites[weaponLevel];
-        }
     }
 
     public void SetLevel(int level)
     {
         weaponLevel = level;
-        if (weaponLevel >= GameManager.instance.weaponSprites.Count)
-        {
-            spriteRenderer.sprite = GameManager.instance.weaponSprites[GameManager.instance.weaponSprites.Count-1];
-        }
-        else
-        {
-            spriteRenderer.sprite = GameManager.instance.weaponSprites[GameManager.instance.weapon.weaponLevel];
-        }
-        damage_multiplier = GameManager.instance.player.damage_multiplier;
     }
 }

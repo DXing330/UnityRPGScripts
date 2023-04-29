@@ -23,11 +23,9 @@ public class GameManager : MonoBehaviour
     }
 
     // Resources.
-    public List<Sprite> weaponSprites;
     public int weaponPrice;
     public int expLevelUp;
     public int familiar_upgrade_cost_scaling;
-    public int levelLimit;
 
     // References
     public Player player;
@@ -163,11 +161,8 @@ public class GameManager : MonoBehaviour
     public int GetExptoLevel()
     {
         int exp = 0;
-        if (player.playerLevel < levelLimit)
-        {
-            int level = player.playerLevel + 1;
-            exp = expLevelUp * level * level;
-        }
+        int level = player.playerLevel + 1;
+        exp = expLevelUp * level * level;
 
         return exp;
     }
@@ -176,7 +171,7 @@ public class GameManager : MonoBehaviour
     {
         experience += exp;
         ShowText("+" + exp + "exp", 20, Color.cyan, player.transform.position, Vector3.up*40, 1.0f);
-        if(experience >= GetExptoLevel() && player.playerLevel < levelLimit)
+        if(experience >= GetExptoLevel())
         {
             experience -= GetExptoLevel();
             PlayerLevelUp();
@@ -260,7 +255,6 @@ public class GameManager : MonoBehaviour
             string save_data = File.ReadAllText("Assets/Saves/save_data.json");
             SaveDataWrapper loaded_data = JsonUtility.FromJson<SaveDataWrapper>(save_data);
             player.SetLevel(loaded_data.player_level);
-            player.SetHealth(loaded_data.player_health);
             weapon.SetLevel(loaded_data.weapon_level);
             coins = loaded_data.coins;
             mana_crystals = loaded_data.mana_crystals;
