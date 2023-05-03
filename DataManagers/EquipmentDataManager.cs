@@ -156,6 +156,24 @@ public class EquipmentDataManager : MonoBehaviour
                     equipment_2_stats.RemoveAt(i);
                 }
                 break;
+            case 3:
+                if (equipment_3_stats.Count > i && i >= 0)
+                {
+                    equipment_3_stats.RemoveAt(i);
+                }
+                break;
+            case 4:
+                if (equipment_4_stats.Count > i && i >= 0)
+                {
+                    equipment_4_stats.RemoveAt(i);
+                }
+                break;
+            case 5:
+                if (equipment_5_stats.Count > i && i >= 0)
+                {
+                    equipment_5_stats.RemoveAt(i);
+                }
+                break;
         }
     }
 
@@ -167,6 +185,12 @@ public class EquipmentDataManager : MonoBehaviour
                 return (equipment_1_stats[i]);
             case 2:
                 return (equipment_2_stats[i]);
+            case 3:
+                return (equipment_3_stats[i]);
+            case 4:
+                return (equipment_4_stats[i]);
+            case 5:
+                return (equipment_5_stats[i]);
         }
         return null;
     }
@@ -180,6 +204,15 @@ public class EquipmentDataManager : MonoBehaviour
                 break;
             case 2:
                 equipment_2_slot = equipment_2_stats[index];
+                break;
+            case 3:
+                equipment_3_slot = equipment_3_stats[index];
+                break;
+            case 4:
+                equipment_4_slot = equipment_4_stats[index];
+                break;
+            case 5:
+                equipment_5_slot = equipment_5_stats[index];
                 break;
         }
         AddStatsFromEquips();
@@ -196,11 +229,20 @@ public class EquipmentDataManager : MonoBehaviour
             case 2:
                 equipment_2_slot = null;
                 break;
+            case 3:
+                equipment_3_slot = null;
+                break;
+            case 4:
+                equipment_4_slot = null;
+                break;
+            case 5:
+                equipment_5_slot = null;
+                break;
         }
     }
 
-    // Total resistances obtained from all equipment.
-    public int[] SumEquipmentResistances()
+    // Total bonus_stats obtained from all equipment.
+    public int[] SumEquipmentStats()
     {
         // Resistance starts at 0.
         int physical_resist = 0;
@@ -208,9 +250,18 @@ public class EquipmentDataManager : MonoBehaviour
         int poison_resist = 0;
         int magic_resist = 0;
         int divine_resist = 0;
-        int[] resistances = new int[5];
+        int damage_multiplier = 0;
+        int damage_reduction = 0;
+        int i_frames = 0;
+        int dodge_chance = 0;
+        int dodge_reduction = 0;
+        int move_speed = 0;
+        int dash_distance = 0;
+        int attack_speed = 0;
+        int knockback_resist = 0;
+        int[] bonus_stats = new int[15];
         // Go through all the equipped equipment.
-        for (int j = 0; j < different_slots; j++)
+        for (int j = 1; j <= different_slots; j++)
         {
             string[] e_stats = GetEquipSlotStats(j);
             // If a slot has an equipment add the appropriate resistance.
@@ -222,30 +273,89 @@ public class EquipmentDataManager : MonoBehaviour
                 poison_resist += int.Parse(e_stats[7]);
                 magic_resist += int.Parse(e_stats[8]);
                 divine_resist += int.Parse(e_stats[9]);
+                switch (int.Parse(e_stats[3]))
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        damage_multiplier += int.Parse(e_stats[4]);
+                        break;
+                    case 2:
+                        damage_reduction += int.Parse(e_stats[4]);
+                        break;
+                    case 3:
+                        i_frames += int.Parse(e_stats[4]);
+                        break;
+                    case 4:
+                        dodge_chance += int.Parse(e_stats[4]);
+                        break;
+                    case 5:
+                        dodge_reduction += int.Parse(e_stats[4]);
+                        break;
+                    case 6:
+                        move_speed += int.Parse(e_stats[4]);
+                        break;
+                    case 7:
+                        dash_distance += int.Parse(e_stats[4]);
+                        break;
+                    case 8:
+                        attack_speed += int.Parse(e_stats[4]);
+                        break;
+                    case 9:
+                        knockback_resist += int.Parse(e_stats[4]);
+                        break;
+                }
             }
         }
-        resistances[0] = physical_resist;
-        resistances[1] = fire_resist;
-        resistances[2] = poison_resist;
-        resistances[3] = magic_resist;
-        resistances[4] = divine_resist;
-        return resistances;
+        bonus_stats[0] = physical_resist;
+        bonus_stats[1] = fire_resist;
+        bonus_stats[2] = poison_resist;
+        bonus_stats[3] = magic_resist;
+        bonus_stats[4] = divine_resist;
+        bonus_stats[5] = damage_multiplier;
+        bonus_stats[6] = damage_reduction;
+        bonus_stats[7] = i_frames;
+        bonus_stats[8] = dodge_chance;
+        bonus_stats[9] = dodge_reduction;
+        bonus_stats[10] = move_speed;
+        bonus_stats[11] = dash_distance;
+        bonus_stats[12] = attack_speed;
+        bonus_stats[13] = knockback_resist;
+        return bonus_stats;
     }
 
     public string[] GetEquipSlotStats(int slot)
     {
         switch (slot)
         {
-            case 0:
+            case 1:
                 if (equipment_1_slot != null)
                 {
                     return equipment_1_slot.Split("|");
                 }
                 return null;
-            case 1:
+            case 2:
                 if (equipment_2_slot != null)
                 {
                     return equipment_2_slot.Split("|");
+                }
+                return null;
+            case 3:
+                if (equipment_3_slot != null)
+                {
+                    return equipment_3_slot.Split("|");
+                }
+                return null;
+            case 4:
+                if (equipment_4_slot != null)
+                {
+                    return equipment_4_slot.Split("|");
+                }
+                return null;
+            case 5:
+                if (equipment_5_slot != null)
+                {
+                    return equipment_5_slot.Split("|");
                 }
                 return null;
         }
@@ -255,11 +365,21 @@ public class EquipmentDataManager : MonoBehaviour
     public void AddStatsFromEquips()
     {
         player.resistances.ResetResistances();
-        int[] bonus_resists = SumEquipmentResistances();
-        player.resistances.bonus_physical_resist += bonus_resists[0];
-        player.resistances.bonus_fire_resist += bonus_resists[1];
-        player.resistances.bonus_poison_resist += bonus_resists[2];
-        player.resistances.bonus_magic_resist += bonus_resists[3];
-        player.resistances.bonus_divine_resist += bonus_resists[4];
+        int[] bonus_stats = SumEquipmentStats();
+        player.resistances.bonus_physical_resist += bonus_stats[0];
+        player.resistances.bonus_fire_resist += bonus_stats[1];
+        player.resistances.bonus_poison_resist += bonus_stats[2];
+        player.resistances.bonus_magic_resist += bonus_stats[3];
+        player.resistances.bonus_divine_resist += bonus_stats[4];
+        player.equipment_stats.ResetBonuses();
+        player.equipment_stats.bonus_damage_multiplier += bonus_stats[5];
+        player.equipment_stats.bonus_damage_reduction += bonus_stats[6];
+        player.equipment_stats.bonus_i_frames += bonus_stats[7];
+        player.equipment_stats.bonus_dodge_chance += bonus_stats[8];
+        player.equipment_stats.bonus_dodge_reduction += bonus_stats[9];
+        player.equipment_stats.bonus_move_speed += bonus_stats[10];
+        player.equipment_stats.bonus_dash_distance += bonus_stats[11];
+        player.equipment_stats.bonus_attack_speed += bonus_stats[12];
+        player.equipment_stats.bonus_knockback_resist += bonus_stats[13];
     }
 }

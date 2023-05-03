@@ -7,7 +7,7 @@ public abstract class Mover : Fighter
     // Actors can be under the effects of slow.
     // Actors have a slightly variable movespeed.
     public float base_move_speed;
-    protected float dash_distance;
+    public float dash_distance = 0.6f;
     public float move_speed;
     protected float move_speed_slow;
     protected bool slowed = false;
@@ -72,7 +72,9 @@ public abstract class Mover : Fighter
 
     protected virtual void UpdateMotor(Vector3 input)
     {
-        // Reset MoveDelta.
+        // Normalize movement so diagonals aren't OP.
+        input.Normalize();
+        // Reset moveDelta.
         moveDelta = new Vector3(input.x * move_speed, input.y * move_speed, 0);
 
         // Swap sprite direction, depending on direction.
@@ -114,6 +116,7 @@ public abstract class Mover : Fighter
     // Want to have a sudden burst of speed.
     protected virtual void Dash(Vector3 input)
     {
+        input.Normalize();
         moveDelta = new Vector3(input.x * dash_distance, input.y * dash_distance, 0);
 
         while (moveDelta.x != 0 || moveDelta.y != 0)

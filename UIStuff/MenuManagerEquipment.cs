@@ -194,6 +194,7 @@ public class MenuManagerEquipment : MonoBehaviour
         string[] equipped_stats = GetEquippedInfo();
         if (equipped_stats.Length > 8)
         {
+            current_stat_1.text = DetermineRareStat(int.Parse(equipped_stats[3]));
             current_stat_1.text = equipped_stats[4];
             current_stat_2.text = equipped_stats[5];
             current_stat_3.text = equipped_stats[6];
@@ -203,6 +204,7 @@ public class MenuManagerEquipment : MonoBehaviour
         }
         else
         {
+            current_stat_0.text = "None";
             current_stat_1.text = "0";
             current_stat_2.text = "0";
             current_stat_3.text = "0";
@@ -218,6 +220,7 @@ public class MenuManagerEquipment : MonoBehaviour
         if (selected_equip_index < count && selected_equip_index >= 0)
         {
             string[] selected_stats = GetSelectedInfo();
+            selected_stat_0.text = DetermineRareStat(int.Parse(selected_stats[3]));
             selected_stat_1.text = selected_stats[4];
             selected_stat_2.text = selected_stats[5];
             selected_stat_3.text = selected_stats[6];
@@ -227,6 +230,7 @@ public class MenuManagerEquipment : MonoBehaviour
         }
         else
         {
+            selected_stat_0.text = "None";
             selected_stat_1.text = "0";
             selected_stat_2.text = "0";
             selected_stat_3.text = "0";
@@ -234,6 +238,35 @@ public class MenuManagerEquipment : MonoBehaviour
             selected_stat_5.text = "0";
             selected_stat_6.text = "0";
         }
+    }
+
+    public string DetermineRareStat(int stat)
+    {
+        switch (stat)
+        {
+            case 0:
+                return "None";
+            case 1:
+                return "DMG+";
+            case 2:
+                return "DMG-";
+            case 3:
+                return "I_F+";
+            case 4:
+                return "Dodge+";
+            case 5:
+                return "DodgeCD-";
+            case 6:
+                return "Speed+";
+            case 7:
+                return "Dash+";
+            case 8:
+                return "AtkSpeed+";
+            case 9:
+                return "KnockBkRcv+";
+            
+        }
+        return "None";
     }
 
     public void EnlargeSelected()

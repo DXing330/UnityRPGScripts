@@ -37,6 +37,7 @@ public class Fighter : MonoBehaviour
             if (CheckDodge(damage))
             {
                 last_dodge = Time.time;
+                GameManager.instance.ShowText("Dodged", 20, Color.white, transform.position, Vector3.up*25, 1.0f);
             }
             else
             {

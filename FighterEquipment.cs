@@ -9,7 +9,7 @@ public class FighterEquipment : MonoBehaviour
     public int base_damage_multiplier = 0;
     public int base_damage_reduction = 0;
     public int base_i_frames = 25;
-    public int base_dodge_chance = 0;
+    public int base_dodge_chance = 5;
     public int base_dodge_cooldown = 100;
     public int base_move_speed = 100;
     public int base_dash_distance = 60;

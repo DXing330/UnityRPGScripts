@@ -133,6 +133,23 @@ public class CollectableEquip : Collectable
             int stat_to_gain = Random.Range(1,5);
             AddStatFromRNG(stat_to_gain);
         }
+        if (special_effect_id != 0)
+        {
+            int max_special_stat = 2*rarity + 6;
+            while (max_special_stat > 0)
+            {
+                max_special_stat--;
+                int roll = Random.Range(0,3);
+                if (roll == 0)
+                {
+                    max_special_stat--;
+                }
+                else
+                {
+                    special_effect_strength++;
+                }
+            }
+        }
     }
 
     protected virtual void AddStatFromRNG(int i)
@@ -158,9 +175,48 @@ public class CollectableEquip : Collectable
     {
         DetermineRarity(tier);
         type_id = Random.Range(1,6);
+        special_effect_id = DetermineRareStat(type_id);
         UpdateSprite();
         RandomizeStats();
         spawn_time = Time.time;
+    }
+
+    public virtual int DetermineRareStat(int type)
+    {
+        switch (type)
+        {
+            // Helmets can give damage+, damage-, dodge or nothing so 0, 1, 2 or 4.
+            case 1:
+                int bonus_stat = Random.Range(0, 4);
+                if (bonus_stat == 3)
+                {
+                    return 4;
+                }
+                return (bonus_stat);
+            // Chest armor can give knockback resist, damage+, damage- or nothing so 0, 1, 2 or 9.
+            case 2:
+                int bonus_stat = Random.Range(0, 4);
+                if (bonus_stat == 3)
+                {
+                    return 9;
+                }
+                return bonus_stat;
+            // Boots give dodge, move speed or dash.
+            case 3:
+                return Random.Range(4, 8);
+            // Gloves can give attack speed, damage+, dmg- or nothing.
+            case 4:
+                int bonus_stat = Random.Range(0, 4);
+                if (bonus_stat == 3)
+                {
+                    return 8;
+                }
+                return bonus_stat;
+            // Magic rings can give anything.
+            case 5:
+                return Random.Range(0, 10);
+        }
+        return 0;
     }
 
     protected override void OnCollect()

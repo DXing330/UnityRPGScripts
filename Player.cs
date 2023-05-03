@@ -176,6 +176,7 @@ public class Player : Mover
         dash_distance = equipment_stats.dash_distance;
         attack_cooldown = equipment_stats.attack_cooldown;
         recovery_speed = equipment_stats.knockback_resist;
+        player_weapon.damage_multiplier = damage_multiplier;
     }
 
     public void SetMaxHealth()
