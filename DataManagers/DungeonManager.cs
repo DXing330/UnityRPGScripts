@@ -6,7 +6,7 @@ using UnityEngine;
 public class DungeonManager : MonoBehaviour
 {
     public List<Destructible> destructibles;
-    public List<Collectable> collectables;
+    public List<Chest> chests;
     public string dungeon_ID;
     protected string string_path;
 

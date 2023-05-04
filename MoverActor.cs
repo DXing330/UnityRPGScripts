@@ -68,6 +68,22 @@ public class MoverActor : Mover
         target_transform = target;
     }
 
+    protected virtual void AlertSurroundingEnemies(Transform target)
+    {
+        detection_range.OverlapCollider(filter, hits);
+        for (int k = 0; k < hits.Length; k++)
+        {
+            if (hits[k] == null)
+            {
+                continue;
+            }
+            if (hits[k].tag == "Enemy")
+            {
+                hits[k].SendMessage("Alert", target);
+            }
+            hits[k] = null;
+        }
+    }
     protected virtual void FixedUpdate()
     {
         // Push the enemy around if they have been pushed.
@@ -75,7 +91,8 @@ public class MoverActor : Mover
         {
             UpdateMotor(Vector3.zero);
         }
-        if (target_transform == null)
+        // While idle, check around for enemies.
+        if (target_transform == null && !dead)
         {
             if (chasing)
             {
@@ -91,31 +108,15 @@ public class MoverActor : Mover
                 if (hits[j].tag == "Fighter")
                 {
                     target_transform = hits[j].transform;
+                    chasing = true;
+                    // If you find an enemy, immediately alert others one time.
+                    AlertSurroundingEnemies(target_transform);
                     return;
                 }
                 hits[j] = null;
             }
         }
-        else if (target_transform != null && !dead)
-        {
-            if (!chasing)
-            {
-                chasing = true;
-            }
-            detection_range.OverlapCollider(filter, hits);
-            for (int k = 0; k < hits.Length; k++)
-            {
-                if (hits[k] == null)
-                {
-                    continue;
-                }
-                if (hits[k].tag == "Enemy")
-                {
-                    hits[k].SendMessage("Alert", target_transform);
-                }
-                hits[k] = null;
-            }
-        }
+        // While chasing, follow the target.
         if (chasing && !dead)
         {
             if (!attacking)

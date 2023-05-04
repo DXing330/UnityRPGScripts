@@ -183,11 +183,12 @@ public class CollectableEquip : Collectable
 
     public virtual int DetermineRareStat(int type)
     {
+        int bonus_stat = 0;
         switch (type)
         {
             // Helmets can give damage+, damage-, dodge or nothing so 0, 1, 2 or 4.
             case 1:
-                int bonus_stat = Random.Range(0, 4);
+                bonus_stat = Random.Range(0, 4);
                 if (bonus_stat == 3)
                 {
                     return 4;
@@ -195,7 +196,7 @@ public class CollectableEquip : Collectable
                 return (bonus_stat);
             // Chest armor can give knockback resist, damage+, damage- or nothing so 0, 1, 2 or 9.
             case 2:
-                int bonus_stat = Random.Range(0, 4);
+                bonus_stat = Random.Range(0, 4);
                 if (bonus_stat == 3)
                 {
                     return 9;
@@ -206,7 +207,7 @@ public class CollectableEquip : Collectable
                 return Random.Range(4, 8);
             // Gloves can give attack speed, damage+, dmg- or nothing.
             case 4:
-                int bonus_stat = Random.Range(0, 4);
+                bonus_stat = Random.Range(0, 4);
                 if (bonus_stat == 3)
                 {
                     return 8;

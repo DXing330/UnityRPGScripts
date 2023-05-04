@@ -8,7 +8,7 @@ public class Chest : Collectable
     public CollectableEquip dropped_equip;
     public bool equipment_drop = false;
     public int dropped_rarity = 1;
-    public int mana_amount = 0;
+    public int mana_amount = 1;
     public int coins_amount = 10;
 
     protected override void OnCollect()
@@ -34,5 +34,19 @@ public class Chest : Collectable
                 drops.MakeEquipment(dropped_rarity);
             }
         }
+    }
+
+    protected virtual void ChangeEquipRarity(int new_rarity)
+    {
+        dropped_rarity = new_rarity;
+        equipment_drop = true;
+        mana_crystals = false;
+    }
+
+    protected virtual void ChangeManaDrop(int new_mana)
+    {
+        mana_amount = new_mana;
+        equipment_drop = false;
+        mana_crystals = true;
     }
 }

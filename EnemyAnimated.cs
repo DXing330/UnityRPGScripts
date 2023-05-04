@@ -13,24 +13,28 @@ public class EnemyAnimated : MoverActor
         {
             attacking = false;
         }
-        int enemies_in_range = 0;
-        hitbox.OverlapCollider(filter,hits);
-        for (int i = 0; i < hits.Length; i++)
+        // Don't look for new targets unless you're not attacking.
+        if (!attacking)
         {
-            if (hits[i] == null)
-                continue;
-            
-            if (hits[i].tag == "Fighter")
+            int enemies_in_range = 0;
+            hitbox.OverlapCollider(filter,hits);
+            for (int i = 0; i < hits.Length; i++)
             {
-                enemies_in_range++;
-            }
+                if (hits[i] == null)
+                    continue;
+                
+                if (hits[i].tag == "Fighter")
+                {
+                    enemies_in_range++;
+                }
 
-            // Clear the array after you're done.
-            hits[i] = null;
-        }
-        if (enemies_in_range > 0 && !dead && !attacking)
-        {
-            Attack();
+                // Clear the array after you're done.
+                hits[i] = null;
+            }
+            if (enemies_in_range > 0 && !dead)
+            {
+                Attack();
+            }
         }
         // While chasing the player, use the move animation.
         if (chasing && !moving && !dead)

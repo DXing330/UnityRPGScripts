@@ -8,25 +8,6 @@ public class Enemy : MoverActor
     public bool death_spawner = false;
     public int amount_to_spawn;
     public Enemy enemy_to_spawn;
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-        attacking = false;
-        hitbox.OverlapCollider(filter, hits);
-        for (int i = 0; i < hits.Length; i++)
-        {
-            if (hits[i] == null)
-                continue;
-            
-            if (hits[i].tag == "Fighter")
-            {
-                attacking = true;
-            }
-
-            // Clear the array after you're done.
-            hits[i] = null;
-        }
-    }
 
     protected override void Death()
     {
