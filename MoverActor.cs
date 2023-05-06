@@ -60,12 +60,14 @@ public class MoverActor : Mover
         if (target_transform == null)
         {
             target_transform = target;
+            AlertSurroundingEnemies(target);
         }
     }
 
     protected virtual void Taunt(Transform target)
     {
         target_transform = target;
+        AlertSurroundingEnemies(target);
     }
 
     protected virtual void AlertSurroundingEnemies(Transform target)

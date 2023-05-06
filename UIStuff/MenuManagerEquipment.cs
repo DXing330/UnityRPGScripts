@@ -22,7 +22,9 @@ public class MenuManagerEquipment : MonoBehaviour
     public Text stat_3;
     public Text stat_4;
     public Text stat_5;
+    public Text stat_6;
     // Individual equip stats.
+    public Text current_type_of_equipment;
     public int equip_slot;
     public int selected_equip_index;
     public int current_page = 0;
@@ -57,6 +59,7 @@ public class MenuManagerEquipment : MonoBehaviour
         stat_3.text = player.dodge_chance.ToString()+"%";
         stat_4.text = (player.move_speed*100).ToString()+"%";
         stat_5.text = (1/player.attack_cooldown).ToString()+"/s";
+        stat_6.text = (player.i_frames).ToString()+"s";
     }
 
     public void UpdateResistanceTexts()
@@ -124,6 +127,12 @@ public class MenuManagerEquipment : MonoBehaviour
                         current_page++;
                     }
                     break;
+                case 6:
+                    if ((current_page+1)*6 < equipment.equipment_6_stats.Count)
+                    {
+                        current_page++;
+                    }
+                    break;
             }
         }
         else
@@ -149,6 +158,8 @@ public class MenuManagerEquipment : MonoBehaviour
                 return equipment.equipment_4_slot.Split("|");
             case 5:
                 return equipment.equipment_5_slot.Split("|");
+            case 6:
+                return equipment.equipment_6_slot.Split("|");
         }
         return null;
     }
@@ -167,6 +178,8 @@ public class MenuManagerEquipment : MonoBehaviour
                 return equipment.equipment_4_stats[selected_equip_index].Split("|");
             case 5:
                 return equipment.equipment_5_stats[selected_equip_index].Split("|");
+            case 6:
+                return equipment.equipment_6_stats[selected_equip_index].Split("|");
         }
         return null;
     }
@@ -185,12 +198,35 @@ public class MenuManagerEquipment : MonoBehaviour
                 return equipment.equipment_4_stats.Count;
             case 5:
                 return equipment.equipment_5_stats.Count;
+            case 6:
+                return equipment.equipment_6_stats.Count;
         }
         return 0;
     }
 
     public void UpdateEquippedInfo()
     {
+        switch (equip_slot)
+        {
+            case 1:
+                current_type_of_equipment.text = "Current Helmet";
+                break;
+            case 2:
+                current_type_of_equipment.text = "Current Armor";
+                break;
+            case 3:
+                current_type_of_equipment.text = "Current Boots";
+                break;
+            case 4:
+                current_type_of_equipment.text = "Current Gauntlets";
+                break;
+            case 5:
+                current_type_of_equipment.text = "Current Ring";
+                break;
+            case 6:
+                current_type_of_equipment.text = "Current Necklace";
+                break;
+        }
         string[] equipped_stats = GetEquippedInfo();
         if (equipped_stats.Length > 8)
         {
@@ -251,7 +287,7 @@ public class MenuManagerEquipment : MonoBehaviour
             case 2:
                 return "DMG-";
             case 3:
-                return "I_F+";
+                return "MistForm+";
             case 4:
                 return "Dodge+";
             case 5:

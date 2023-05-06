@@ -10,13 +10,16 @@ public class Player : Mover
     protected float dash_cooldown = 0.6f;
     protected float last_dash;
     protected int health_per_level = 6;
+    public int max_mana;
+    public int current_mana;
+    protected int mana_per_level = 6;
     // Melee Attack.
     public Weapon player_weapon;
     public float attack_cooldown;
     public int damage_multiplier;
     protected float last_attack;
     // Ranged Attack.
-    public PlayerProjectile projectile;
+    protected int projectile_index;
     protected bool facing_right = true;
     protected float ranged_attack_cooldown = 0.6f;
     protected float last_ranged_attack;
@@ -51,7 +54,7 @@ public class Player : Mover
         if (Time.time - last_attack > attack_cooldown)
         {
             last_attack = Time.time;
-            player_weapon.animator.SetTrigger("Swing");
+            player_weapon.Swing();
         }
     }
 
@@ -59,31 +62,41 @@ public class Player : Mover
     {
         if (Time.time - last_ranged_attack > ranged_attack_cooldown)
         {
-            last_ranged_attack = Time.time;
-            PayHealth((GameManager.instance.familiar.bonus_damage/2)+1);
-            PlayerProjectile clone = Instantiate(projectile, transform.position, new Quaternion(0, 0, 0, 0));
-            clone.SetStats(GameManager.instance.familiar);
-            if (facing_right)
+            // Need to change these costs.
+            PayHealth(GameManager.instance.spells.DetermineCastingCost(projectile_index));
+            if (PayMana(GameManager.instance.spells.DetermineCastingCost(projectile_index)))
             {
-                Vector3 direction = new Vector3(1, 0, 0);
-                clone.UpdateForce(direction);
-            }
-            else
-            {
-                Vector3 direction = new Vector3(-1, 0, 0);
-                clone.UpdateForce(direction);
+                last_ranged_attack = Time.time;
+                ProjectileHitbox clone = Instantiate(GameManager.instance.spells.projectile_spells[projectile_index], transform.position, new Quaternion(0, 0, 0, 0));
+                if (facing_right)
+                {
+                    Vector3 direction = new Vector3(1, 0, 0);
+                    clone.UpdateForce(direction);
+                }
+                else
+                {
+                    Vector3 direction = new Vector3(-1, 0, 0);
+                    clone.UpdateForce(direction);
+                }
             }
         }
     }
 
     public virtual void SummonAlly()
     {
+        Debug.Log(summon_limit);
         if (summon_limit > 0 && Time.time - last_summon > summon_cooldown)
         {
-            last_summon = Time.time;
-            PlayerAlly clone = Instantiate(summonables[summon_index], transform.position, new Quaternion(0, 0, 0, 0));
-            PayHealth(clone.summon_cost);
-            summon_limit--;
+            // Pay health first to try to summon.
+            PayHealth(GameManager.instance.summons.DetermineSummoningCost(summon_index));
+            // Then pay mana to try to summon.
+            if (PayMana(GameManager.instance.summons.DetermineSummoningCost(summon_index)))
+            {
+                last_summon = Time.time;
+                PlayerAlly clone = Instantiate(GameManager.instance.summons.summonables[summon_index], transform.position, new Quaternion(0, 0, 0, 0));
+                //PayHealth(clone.summon_cost);
+                summon_limit--;
+            }
         }
     }
 
@@ -91,15 +104,18 @@ public class Player : Mover
     {
         if (Time.time - last_dash > dash_cooldown)
         {
-            float x = Input.GetAxisRaw("Horizontal");
-            float joy_x = joystick.Horizontal;
-            x += joy_x;
-            float y = Input.GetAxisRaw("Vertical");
-            float joy_y = joystick.Vertical;
-            y += joy_y;
-            Dash(new Vector3(x,y,0));
-            last_dash = Time.time;
             PayHealth(1);
+            if (PayMana(1))
+            {
+                float x = Input.GetAxisRaw("Horizontal");
+                float joy_x = joystick.Horizontal;
+                x += joy_x;
+                float y = Input.GetAxisRaw("Vertical");
+                float joy_y = joystick.Vertical;
+                y += joy_y;
+                Dash(new Vector3(x,y,0));
+                last_dash = Time.time;
+            }
         }
     }
     
@@ -161,7 +177,12 @@ public class Player : Mover
     {
         playerLevel = level;
         summon_limit = playerLevel/6;
+        if (summon_limit <= 0)
+        {
+            summon_limit = 1;
+        }
         SetMaxHealth();
+        SetMaxMana();
     }
 
     public void SetStats()
@@ -185,10 +206,32 @@ public class Player : Mover
         max_health += 10;
     }
 
+    public void SetMaxMana()
+    {
+        max_mana = (playerLevel-1) * mana_per_level;
+        max_mana += 10;
+    }
+
     public void SetHealth(int new_health)
     {
         health = new_health;
         GameManager.instance.OnHealthChange();
+    }
+
+    public void SetMana(int new_mana)
+    {
+        current_mana = new_mana;
+        GameManager.instance.OnManaChange();
+    }
+
+    public void SetSummonIndex(int i)
+    {
+        summon_index = i;
+    }
+
+    public void SetProjectileIndex(int i)
+    {
+        projectile_index = i;
     }
 
     protected void PayHealth(int cost)
@@ -200,6 +243,22 @@ public class Player : Mover
             health = 0;
             Death();
         }
+    }
+
+    protected bool PayMana(int cost)
+    {
+        current_mana -= cost;
+        GameManager.instance.OnManaChange();
+        if (current_mana >= 0)
+        {
+            return true;
+        }
+        else if (current_mana < 0)
+        {
+            current_mana = 0;
+            GameManager.instance.OnManaChange();
+        }
+        return false;
     }
 
     protected override void Death()

@@ -76,6 +76,7 @@ public class SaveDataWrapper
 {
     public int player_level;
     public int player_health;
+    public int player_mana;
     public int weapon_level;
     public int coins;
     public int mana_crystals;
@@ -88,6 +89,7 @@ public class SaveDataWrapper
     {
         player_level = GameManager.instance.player.playerLevel;
         player_health = GameManager.instance.player.health;
+        player_mana = GameManager.instance.player.current_mana;
         weapon_level = GameManager.instance.weapon.weaponLevel;
         coins = GameManager.instance.coins;
         mana_crystals = GameManager.instance.mana_crystals;
@@ -140,19 +142,48 @@ public class WeaponStatsWrapper
     }
 }
 
-/*public class ProjectileStatsWrapper
+public class SpellStatsWrapper
 {
-    public int bonus_damage;
-    public int bonus_speed;
-    public int bonus_weight;
+    public int cost = 1;
+    public int damage = 2;
+    public string effect = "None";
+    public int cost_per_upgrade = 1;
+    public int damage_per_upgrade = 2;
+
+    public string ConvertSelfToString()
+    {
+        string stats = "";
+        stats += cost.ToString()+"|";
+        stats += damage.ToString()+"|";
+        stats += effect+"|";
+        stats += cost_per_upgrade.ToString()+"|";
+        stats += damage_per_upgrade.ToString()+"|";
+        return stats;
+    }
+
+    public void UpdateStatsFromString(string stat_string)
+    {
+        string[] stats = stat_string.Split("|");
+        cost = int.Parse(stats[0]);
+        damage = int.Parse(stats[1]);
+        effect = stats[2];
+        cost_per_upgrade = int.Parse(stats[3]);
+        damage_per_upgrade = int.Parse(stats[4]);
+    }
 
     public void UpdateData()
     {
-        bonus_damage = GameManager.instance.projectile.bonus_damage;
-        bonus_speed = GameManager.instance.projectile.bonus_speed;
-        bonus_weight = GameManager.instance.projectile.bonus_weight;
+
     }
-}*/
+
+    public void ResetData()
+    {
+        cost = 1;
+        damage = 2;
+        cost_per_upgrade = 1;
+        damage_per_upgrade = 2;
+    }
+}
 
 public class SummonStatsWrapper
 {

@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
         DontDestroyOnLoad(gameObject);
-        OnHealthChange();
     }
 
     // Resources.
@@ -32,11 +31,14 @@ public class GameManager : MonoBehaviour
     public Weapon weapon;
     public Familiar familiar;
     public SummonDataManager summons;
+    public SpellDataManager spells;
     public EquipmentDataManager all_equipment;
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
     public RectTransform healthBar;
     public Text healthText;
+    public RectTransform manaBar;
+    public Text manaText;
 
     // Logic.
     public int coins;
@@ -198,14 +200,16 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDefeated()
     {
-        coins -= player.max_health;
+        coins -= player.max_health + player.max_mana;
         player.health = player.max_health;
+        player.current_mana = player.max_mana;
         OnHealthChange();
+        OnManaChange();
         if (coins < 0)
         {
             coins = 0;
         }
-        experience -= player.max_health;
+        experience -= player.max_health + player.max_mana;
         if (experience < 0)
         {
             experience = 0;
@@ -227,6 +231,13 @@ public class GameManager : MonoBehaviour
         healthText.text = player.health.ToString()+" / "+player.max_health.ToString();
     }
 
+    public void OnManaChange()
+    {
+        float ratio = (float)player.current_mana / (float)player.max_mana;
+        manaBar.localScale = new Vector3(ratio, 1, 1);
+        manaText.text = player.current_mana.ToString()+" / "+player.max_mana.ToString();
+    }
+
     // Saving and loading.
     public void SaveState()
     {
@@ -244,6 +255,7 @@ public class GameManager : MonoBehaviour
         File.WriteAllText("Assets/Saves/familiar_stats.json", familiar_stats_json);
         Debug.Log("Saved");
         summons.SaveData();
+        spells.SaveData();
         all_equipment.SaveData();
     }
 
@@ -255,6 +267,8 @@ public class GameManager : MonoBehaviour
             string save_data = File.ReadAllText("Assets/Saves/save_data.json");
             SaveDataWrapper loaded_data = JsonUtility.FromJson<SaveDataWrapper>(save_data);
             player.SetLevel(loaded_data.player_level);
+            player.SetHealth(loaded_data.player_health);
+            player.SetMana(loaded_data.player_mana);
             weapon.SetLevel(loaded_data.weapon_level);
             coins = loaded_data.coins;
             mana_crystals = loaded_data.mana_crystals;
@@ -269,6 +283,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Load failed");
         }
         summons.LoadData();
+        spells.LoadData();
         all_equipment.LoadData();
     }
 

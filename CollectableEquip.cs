@@ -174,7 +174,7 @@ public class CollectableEquip : Collectable
     public virtual void MakeEquipment(int tier = 1)
     {
         DetermineRarity(tier);
-        type_id = Random.Range(1,6);
+        type_id = Random.Range(1,7);
         special_effect_id = DetermineRareStat(type_id);
         UpdateSprite();
         RandomizeStats();
@@ -215,6 +215,9 @@ public class CollectableEquip : Collectable
                 return bonus_stat;
             // Magic rings can give anything.
             case 5:
+                return Random.Range(0, 10);
+            // Magic necklaces can give anything.
+            case 6:
                 return Random.Range(0, 10);
         }
         return 0;

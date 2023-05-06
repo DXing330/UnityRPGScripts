@@ -13,13 +13,19 @@ public class EnemyHitbox : Collideable
     public bool slowing = false;
     public float slow_percentage;
     public float slow_duration;
+    public bool stunning = false;
+    public float stun_duration = 0f;
 
-    protected virtual void SlowOnHit(Collider2D coll)
+    protected virtual void EffectOnHit(Collider2D coll)
     {
         if (slowing)
         {
             coll.SendMessage("SlowEffect", slow_percentage);
             coll.SendMessage("StartSlow", slow_duration);
+        }
+        if (stunning)
+        {
+            //coll.SendMessage("StartStun", stun_duration);
         }
     }
 
@@ -47,7 +53,7 @@ public class EnemyHitbox : Collideable
             {
                 Damage damage = MakeDamage();
                 coll.SendMessage("ReceiveDamage", damage);
-                SlowOnHit(coll);
+                EffectOnHit(coll);
             }
         }
         else if (ally)
@@ -56,7 +62,7 @@ public class EnemyHitbox : Collideable
             {
                 Damage damage = MakeDamage();
                 coll.SendMessage("ReceiveDamage", damage);
-                SlowOnHit(coll);
+                EffectOnHit(coll);
             }
         }
         else if (neutral)
@@ -65,7 +71,7 @@ public class EnemyHitbox : Collideable
             {
                 Damage damage = MakeDamage();
                 coll.SendMessage("ReceiveDamage", damage);
-                SlowOnHit(coll);
+                EffectOnHit(coll);
             }
         }
     }

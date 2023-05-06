@@ -85,11 +85,23 @@ public class SummonDataManager : MonoBehaviour
     public int DetermineCost()
     {
         int cost = base_upgrade_cost;
-        if (summon_to_upgrade == "wolf")
+        switch (summon_to_upgrade)
         {
-            cost += wolf_data.summon_cost * wolf_data.summon_cost;
+            case ("wolf"):
+                cost += wolf_data.summon_cost * wolf_data.summon_cost;
+                break;
         }
         return cost;
+    }
+
+    public int DetermineSummoningCost(int summoning_index)
+    {
+        switch (summoning_index)
+        {
+            case 0:
+                return wolf_data.summon_cost;
+        }
+        return 0;
     }
 
     public bool CheckCost(int cost)

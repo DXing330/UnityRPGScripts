@@ -8,18 +8,26 @@ using UnityEngine;
 public class EquipmentDataManager : MonoBehaviour
 {
     public Player player;
-    public int different_slots = 5;
+    public int different_slots = 6;
     public List<string> all_equipment_stats;
+    // Helmets.
     public List<string> equipment_1_stats;
+    // Armors.
     public List<string> equipment_2_stats;
+    // Boots.
     public List<string> equipment_3_stats;
+    // Gloves.
     public List<string> equipment_4_stats;
+    // Rings.
     public List<string> equipment_5_stats;
+    // Necklaces.
+    public List<string> equipment_6_stats;
     public string equipment_1_slot = null;
     public string equipment_2_slot = null;
     public string equipment_3_slot = null;
     public string equipment_4_slot = null;
     public string equipment_5_slot = null;
+    public string equipment_6_slot = null;
 
 
     [ContextMenu("Save")]
@@ -100,6 +108,9 @@ public class EquipmentDataManager : MonoBehaviour
                 case 5:
                     equipment_5_stats.Add(equipment);
                     break;
+                case 6:
+                    equipment_6_stats.Add(equipment);
+                    break;
             }
         }
     }
@@ -174,6 +185,12 @@ public class EquipmentDataManager : MonoBehaviour
                     equipment_5_stats.RemoveAt(i);
                 }
                 break;
+            case 6:
+                if (equipment_6_stats.Count > i && i >= 0)
+                {
+                    equipment_6_stats.RemoveAt(i);
+                }
+                break;
         }
     }
 
@@ -191,6 +208,8 @@ public class EquipmentDataManager : MonoBehaviour
                 return (equipment_4_stats[i]);
             case 5:
                 return (equipment_5_stats[i]);
+            case 6:
+                return (equipment_6_stats[i]);
         }
         return null;
     }
@@ -213,6 +232,9 @@ public class EquipmentDataManager : MonoBehaviour
                 break;
             case 5:
                 equipment_5_slot = equipment_5_stats[index];
+                break;
+            case 6:
+                equipment_6_slot = equipment_6_stats[index];
                 break;
         }
         AddStatsFromEquips();
@@ -237,6 +259,9 @@ public class EquipmentDataManager : MonoBehaviour
                 break;
             case 5:
                 equipment_5_slot = null;
+                break;
+            case 6:
+                equipment_6_slot = null;
                 break;
         }
     }
@@ -356,6 +381,12 @@ public class EquipmentDataManager : MonoBehaviour
                 if (equipment_5_slot != null)
                 {
                     return equipment_5_slot.Split("|");
+                }
+                return null;
+            case 6:
+                if (equipment_6_slot != null)
+                {
+                    return equipment_6_slot.Split("|");
                 }
                 return null;
         }

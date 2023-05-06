@@ -62,6 +62,11 @@ public class Weapon : Collideable
         animator.SetTrigger("BackSwing");
     }
 
+    public void Swing()
+    {
+        animator.SetTrigger("Swing");
+    }
+
     public void UpgradeWeapon()
     {
         weaponLevel++;
