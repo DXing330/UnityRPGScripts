@@ -8,6 +8,7 @@ public class MenuManager : MonoBehaviour
     // Text fields.
     public Text level_text;
     public Text health_text;
+    public Text mana_points_text;
     public Text coin_text;
     public Text mana_text;
     // Weapon stuff.
@@ -125,6 +126,7 @@ public class MenuManager : MonoBehaviour
         // Meta.
         health_text.text = GameManager.instance.player.health.ToString()+" / "+GameManager.instance.player.max_health.ToString();
         coin_text.text = GameManager.instance.coins.ToString();
+        mana_points_text.text = GameManager.instance.player.current_mana.ToString()+" / "+GameManager.instance.player.max_mana.ToString();
         mana_text.text = GameManager.instance.mana_crystals.ToString();
         int current_level = GameManager.instance.player.playerLevel;
         level_text.text = current_level.ToString();
@@ -149,12 +151,18 @@ public class MenuManager : MonoBehaviour
         bonus_weight.text = GameManager.instance.familiar.bonus_push_force.ToString();
     }
 
-    public void PressFamiliarUpgradeButton(string upgraded_stat)
+    public void PressFamiliarUpgradeButton()
     {
-        if (GameManager.instance.UpgradeFamiliarStats(upgraded_stat))
+        /*if (GameManager.instance.UpgradeFamiliarStats(upgraded_stat))
         {
             UpdateFamiliarMenu();
-        }
+        }*/
+        GameManager.instance.FeedFamiliarMana();
+    }
+
+    public void PressEatManaButton()
+    {
+        GameManager.instance.EatMana();
     }
 
     public void UpdateSummonMenu()

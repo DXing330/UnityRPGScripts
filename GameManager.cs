@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
     public int experience;
     public int stat_points;
     public int danger_level;
+    public int current_depth;
+    public int current_max_depth;
 
     // Floating text.
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
@@ -95,6 +97,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void EatMana()
+    {
+        Debug.Log("Eating Mana");
+        if (mana_crystals > 0)
+        {
+            mana_crystals--;
+            player.EatMana();
+            OnManaChange();
+            GrantExp(1);
+        }
+    }
+
+    public void FeedFamiliarMana()
+    {
+        Debug.Log("Feeding Mana");
+        if (mana_crystals > 0)
+        {
+            mana_crystals--;
+            familiar.GainExp(1);
+        }
+    }
 
     public bool UpgradeFamiliarStats(string upgraded_stat)
     {
@@ -164,7 +187,8 @@ public class GameManager : MonoBehaviour
     {
         int exp = 0;
         int level = player.playerLevel + 1;
-        exp = expLevelUp * level * level;
+        exp = level * level;
+        exp += Random.Range(-level, level);
 
         return exp;
     }
@@ -173,9 +197,10 @@ public class GameManager : MonoBehaviour
     {
         experience += exp;
         ShowText("+" + exp + "exp", 20, Color.cyan, player.transform.position, Vector3.up*40, 1.0f);
-        if(experience >= GetExptoLevel())
+        int exp_to_level = GetExptoLevel();
+        if(experience >= exp_to_level)
         {
-            experience -= GetExptoLevel();
+            experience -= exp_to_level;
             PlayerLevelUp();
             ShowText("Leveled Up!", 30, Color.green, player.transform.position, Vector3.up*33, 2.0f);
         }
@@ -183,14 +208,18 @@ public class GameManager : MonoBehaviour
 
     public void GrantCoins(int money)
     {
-        coins += money;
-        ShowText("+ "+money+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
+        int gained_gold = money;
+        gained_gold += Random.Range(0, current_depth*2);
+        coins += gained_gold;
+        ShowText("+ "+gained_gold+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
     }
 
     public void GrantMana(int crystals)
     {
-        mana_crystals += crystals;
-        ShowText("+ "+crystals+" crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
+        int gained_mana = crystals;
+        gained_mana += Random.Range(0, current_depth);
+        mana_crystals += gained_mana;
+        ShowText("+ "+gained_mana+" crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
     }
     public void PlayerLevelUp()
     {
@@ -202,7 +231,7 @@ public class GameManager : MonoBehaviour
     {
         coins -= player.max_health + player.max_mana;
         player.health = player.max_health;
-        player.current_mana = player.max_mana;
+        player.current_mana = 0;
         OnHealthChange();
         OnManaChange();
         if (coins < 0)
@@ -290,5 +319,27 @@ public class GameManager : MonoBehaviour
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+    }
+
+    public void ResetDepth()
+    {
+        current_depth = 0;
+        current_max_depth = 0;
+    }
+
+    public void AdjustDepth(int depth_change)
+    {
+        current_depth += depth_change;
+        // If you backtrack, maybe you reached a new max depth.
+        if (depth_change < 0)
+        {
+            int potential_max_depth = current_depth - depth_change;
+            if (potential_max_depth > current_max_depth)
+            {
+                current_max_depth = potential_max_depth;
+            }
+        }
+        Debug.Log(current_depth);
+        Debug.Log(current_max_depth);
     }
 }

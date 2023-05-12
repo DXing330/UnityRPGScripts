@@ -116,6 +116,8 @@ public class SaveDataWrapper
 
 public class FamiliarStatsWrapper
 {
+    public int level;
+    public int exp;
     public int bonus_speed;
     public int heal_threshold_increase;
     public int bonus_damage;
@@ -124,6 +126,8 @@ public class FamiliarStatsWrapper
 
     public void UpdateData()
     {
+        level = GameManager.instance.familiar.level;
+        exp = GameManager.instance.familiar.exp;
         bonus_speed = GameManager.instance.familiar.bonus_rotate_speed;
         heal_threshold_increase = GameManager.instance.familiar.heal_threshold_increase;
         bonus_damage = GameManager.instance.familiar.bonus_damage;

@@ -27,4 +27,15 @@ public class MenuManagerSummons : MonoBehaviour
         wolf_bonus_damage.text = summon_data.wolf_data.bonus_damage.ToString();
         wolf_bonus_time.text = summon_data.wolf_data.bonus_time.ToString();
     }
+
+    public void PressUpgradeButton(string summon_to_upgrade)
+    {
+        GameManager.instance.summons.SetSummon(summon_to_upgrade);
+        GameManager.instance.summons.UpgradeSummon();
+    }
+
+    public void PressSelectSummonButton(int index)
+    {
+        GameManager.instance.player.SetSummonIndex(index);
+    }
 }

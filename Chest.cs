@@ -16,14 +16,11 @@ public class Chest : Collectable
         if (!collected)
         {
             collected = true;
-            coins_amount = Random.Range(coins_amount, coins_amount*2);
-            GetComponent<SpriteRenderer>().sprite = emptyChest;
-            GameManager.instance.GrantCoins(coins_amount);
             if (mana_crystals)
             {
                 GameManager.instance.GrantMana(mana_amount);
             }
-            if (equipment_drop)
+            else if (equipment_drop)
             {
                 int vertical_shift = Random.Range(-1,2);
                 int horizontal_shift = Random.Range(-1,2);
@@ -33,17 +30,23 @@ public class Chest : Collectable
                 CollectableEquip drops = Instantiate(dropped_equip, position, new Quaternion(0, 0, 0, 0));
                 drops.MakeEquipment(dropped_rarity);
             }
+            else
+            {
+                coins_amount = Random.Range(coins_amount, coins_amount*2);
+                GetComponent<SpriteRenderer>().sprite = emptyChest;
+                GameManager.instance.GrantCoins(coins_amount);
+            }
         }
     }
 
-    protected virtual void ChangeEquipRarity(int new_rarity)
+    public virtual void ChangeEquipRarity(int new_rarity)
     {
         dropped_rarity = new_rarity;
         equipment_drop = true;
         mana_crystals = false;
     }
 
-    protected virtual void ChangeManaDrop(int new_mana)
+    public virtual void ChangeManaDrop(int new_mana)
     {
         mana_amount = new_mana;
         equipment_drop = false;

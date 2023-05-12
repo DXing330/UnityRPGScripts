@@ -15,6 +15,9 @@ public class MoverActor : Mover
     protected float last_attack;
     protected bool dead = false;
     protected float last_alive;
+    protected Vector3 direction = Vector3.zero;
+    protected float last_direction_change;
+    protected float direction_change_cd = 3.6f;
     public float corpse_linger_time;
     protected Animator animator;
     protected NavMeshAgent agent;
@@ -32,6 +35,32 @@ public class MoverActor : Mover
 		agent.updateUpAxis = false;
         animator = GetComponent<Animator>();
         StartSpeed();
+    }
+
+    protected virtual void RandomizeDirection()
+    {
+        if (Time.time - last_direction_change > direction_change_cd)
+        {
+            last_direction_change = Time.time;
+            int new_direction = Random.Range(0, 4);
+            direction = PickDirection(new_direction);
+        }
+    }
+
+    protected virtual Vector3 PickDirection(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                return Vector3.up;
+            case 1:
+                return Vector3.right;
+            case 2:
+                return Vector3.down;
+            case 3:
+                return Vector3.left;
+        }
+        return Vector3.zero;
     }
 
     protected override void StartSpeed()
@@ -100,6 +129,8 @@ public class MoverActor : Mover
             {
                 chasing = false;
             }
+            RandomizeDirection();
+            UpdateMotor(direction);
             detection_range.OverlapCollider(filter, hits);
             for (int j = 0; j < hits.Length; j++)
             {
@@ -156,7 +187,6 @@ public class MoverActor : Mover
         {
             if (Time.time - last_alive > corpse_linger_time)
             {
-                GameManager.instance.GrantExp(exp_value);
                 Destroy(gameObject);
             }
         }

@@ -28,6 +28,11 @@ public class Fighter : MonoBehaviour
     // Push.
     protected Vector3 push_direction;
 
+    public virtual void DungeonBuff()
+    {
+        health += Random.Range(0, GameManager.instance.current_depth);
+    }
+
     // All fighters can take damage and die.
     protected virtual void ReceiveDamage(Damage damage)
     {

@@ -170,7 +170,9 @@ public class Player : Mover
         playerLevel++;
         max_health += health_per_level;
         health = max_health;
+        SetMaxMana();
         GameManager.instance.OnHealthChange();
+        GameManager.instance.OnManaChange();
     }
 
     public void SetLevel(int level)
@@ -259,6 +261,15 @@ public class Player : Mover
             GameManager.instance.OnManaChange();
         }
         return false;
+    }
+
+    public void EatMana()
+    {
+        current_mana += playerLevel;
+        if (current_mana > max_mana)
+        {
+            current_mana = max_mana;
+        }
     }
 
     protected override void Death()

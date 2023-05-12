@@ -32,6 +32,9 @@ public class Familiar : MonoBehaviour
     public int bonus_damage = 0;
     public int bonus_push_force = 0;
     public int bonus_heal = 0;
+    // Stats where the player feeds mana and the familiar levels up.
+    public int level;
+    public int exp;
 
     protected void Start()
     {
@@ -119,11 +122,35 @@ public class Familiar : MonoBehaviour
 
     public void SetStats(FamiliarStatsWrapper loaded_stats)
     {
-        bonus_rotate_speed = loaded_stats.bonus_speed;
+        level = loaded_stats.level;
+        exp = loaded_stats.exp;
+        bonus_rotate_speed = level;
         bonus_rotate_speed_float = bonus_rotate_speed * 1.0f;
-        heal_threshold_increase = loaded_stats.heal_threshold_increase;
-        bonus_damage = loaded_stats.bonus_damage;
-        bonus_push_force = loaded_stats.bonus_push_force;
-        bonus_heal = loaded_stats.bonus_heal;
+        heal_threshold_increase = level;
+        bonus_damage = level;
+        bonus_push_force = level;
+        bonus_heal = level;
+    }
+
+    public void GainExp(int exp_points)
+    {
+        exp += exp_points;
+        LevelUp();
+    }
+
+    public void LevelUp()
+    {
+        int variance = Random.Range(-level, level);
+        if (exp >= level*level + variance)
+        {
+            exp -= level*level + variance;
+            level++;
+            bonus_rotate_speed++;
+            bonus_rotate_speed_float = bonus_rotate_speed * 1.0f;
+            heal_threshold_increase++;
+            bonus_damage++;
+            bonus_push_force++;
+            bonus_heal++;
+        }
     }
 }

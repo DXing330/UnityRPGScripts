@@ -31,14 +31,17 @@ public class SummoningPortal : MonoBehaviour
             if (normal)
             {
                 Enemy clone = Instantiate(enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
+                clone.DungeonBuff();
             }
             else if (animated)
             {
                 EnemyAnimated clone = Instantiate(animated_enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
+                clone.DungeonBuff();
             }
             else if (ranged)
             {
                 EnemyRanged clone = Instantiate(ranged_enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
+                clone.DungeonBuff();
             }
         }
         if (spawn_limit <= 0)

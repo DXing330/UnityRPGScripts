@@ -30,4 +30,16 @@ public class MenuManagerSpells : MonoBehaviour
                 break;
         }
     }
+
+    public void PressUpgradeButton(int index)
+    {
+        GameManager.instance.spells.SetUpgradeIndex(index);
+        GameManager.instance.spells.TryUpgrading();
+        UpdateText(index);
+    }
+
+    public void PressSelectButton(int index)
+    {
+        GameManager.instance.player.SetProjectileIndex(index);
+    }
 }
