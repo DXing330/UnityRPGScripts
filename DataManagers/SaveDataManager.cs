@@ -81,7 +81,7 @@ public class SaveDataWrapper
     public int coins;
     public int mana_crystals;
     public int experience;
-    public int stat_points;
+    public int days_passed;
     public int danger_level;
     public string random_stuff;
 
@@ -94,7 +94,7 @@ public class SaveDataWrapper
         coins = GameManager.instance.coins;
         mana_crystals = GameManager.instance.mana_crystals;
         experience = GameManager.instance.experience;
-        stat_points = GameManager.instance.stat_points;
+        days_passed = GameManager.instance.days_passed;
         danger_level = GameManager.instance.danger_level;
     }
 }

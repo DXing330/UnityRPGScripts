@@ -18,14 +18,20 @@ public class MenuManagerSummons : MonoBehaviour
         UpdateText();
     }
 
-    public void UpdateText()
+    public void UpdateText(int index=0)
     {
-        wolf_cost.text = summon_data.wolf_data.summon_cost.ToString();
-        string w_upgrade_cost = (summon_data.wolf_data.summon_cost * summon_data.wolf_data.summon_cost).ToString();
-        wolf_upgrade_cost.text = "Upgrade (" + w_upgrade_cost + ")";
-        wolf_bonus_health.text = summon_data.wolf_data.bonus_health.ToString();
-        wolf_bonus_damage.text = summon_data.wolf_data.bonus_damage.ToString();
-        wolf_bonus_time.text = summon_data.wolf_data.bonus_time.ToString();
+        switch (index)
+        {
+            case 0:
+                string[] loaded_stats = summon_data.ReturnDataList(index);
+                wolf_cost.text = loaded_stats[0];
+                string w_u_cost = (int.Parse(loaded_stats[0])*int.Parse(loaded_stats[0])).ToString();
+                wolf_upgrade_cost.text = "Upgrade (" + w_u_cost + " Mana)";
+                wolf_bonus_health.text = loaded_stats[1];
+                wolf_bonus_damage.text = loaded_stats[2];
+                wolf_bonus_time.text = loaded_stats[3];
+                break;
+        }
     }
 
     public void PressUpgradeButton(string summon_to_upgrade)

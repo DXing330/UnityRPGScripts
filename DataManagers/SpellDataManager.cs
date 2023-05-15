@@ -35,6 +35,7 @@ public class SpellDataManager : MonoBehaviour
             blood_bullet_stats = File.ReadAllText("Assets/Saves/Spells/bb_data.txt");
             if (blood_bullet_stats.Length <= 5)
             {
+                // Cost/Damage/Effect/Increase Cost/Increase Damage
                 blood_bullet_stats = "1|2|None|1|2";
                 SaveData();
             }

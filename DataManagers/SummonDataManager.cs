@@ -6,23 +6,26 @@ using UnityEngine;
 public class SummonDataManager : MonoBehaviour
 {
     // references
-    public int base_upgrade_cost;
-    public int summon_cost_low;
-    public int summon_cost_medium;
-    public int summon_cost_high;
-    public int summon_health_low;
-    public int summon_health_medium;
-    public int summon_health_high;
-    public int summon_damage_low;
-    public int summon_damage_medium;
-    public int summon_damage_high;
-    public int summon_time_low;
-    public int summon_time_medium;
-    public int summon_time_high;
     public List<PlayerAlly> summonables;
     public MenuManagerSummons summon_menu;
     protected string summon_to_upgrade;
-    public SummonStatsWrapper wolf_data;
+    public string wolf_data;
+    protected string[] wolf_data_list;
+
+    public void PrepareDataLists()
+    {
+        wolf_data_list = wolf_data.Split("|");
+    }
+
+    public string[] ReturnDataList(int index = 0)
+    {
+        switch (index)
+        {
+            case 0:
+                return wolf_data_list;
+        }
+        return null;
+    }
 
     public void UpdateSummonStats()
     {
@@ -38,25 +41,31 @@ public class SummonDataManager : MonoBehaviour
         {
             Directory.CreateDirectory("Assets/Saves/SummonData");
         }
-        string wolf_json = JsonUtility.ToJson(wolf_data, true);
-        File.WriteAllText("Assets/Saves/SummonData/wolf_data.json", wolf_json);
+        string new_wolf_data = "";
+        for (int i = 0; i < wolf_data_list.Length; i++)
+        {
+            new_wolf_data += wolf_data_list[i];
+            if (i < wolf_data_list.Length - 1)
+            {
+                new_wolf_data += "|";
+            }
+        }
+        File.WriteAllText("Assets/Saves/SummonData/wolf_data.txt", new_wolf_data);
     }
 
     public void LoadData()
     {
-        if (File.Exists("Assets/Saves/SummonData/wolf_data.json"))
+        if (File.Exists("Assets/Saves/SummonData/wolf_data.txt"))
         {
-            string wolf_json = File.ReadAllText("Assets/Saves/SummonData/wolf_data.json");
-            wolf_data = JsonUtility.FromJson<SummonStatsWrapper>(wolf_json);
-            if (wolf_data.summon_cost < summon_cost_low)
-            {
-                wolf_data.summon_cost = summon_cost_low;
-            }
+            wolf_data = File.ReadAllText("Assets/Saves/SummonData/wolf_data.txt");
         }
         else
         {
-            Debug.Log("Load failed");
+            // Set the stats manually.
+            // Cost/Health/Damage/Time/Effect/Cost+/Health+/Damage+/Time+
+            wolf_data = "5|10|5|5|None|1|1|1|1";
         }
+        PrepareDataLists();
         UpdateSummonStats();
     }
 
@@ -68,27 +77,29 @@ public class SummonDataManager : MonoBehaviour
     public void UpgradeSummon()
     {
         int cost = DetermineCost();
-        if (summon_to_upgrade == "wolf")
+        if (CheckCost(cost))
         {
-            if (CheckCost(cost))
+            ApplyCost(cost);
+            switch (summon_to_upgrade)
             {
-                ApplyCost(cost);
-                wolf_data.summon_cost += summon_cost_low;
-                wolf_data.bonus_health += summon_health_low;
-                wolf_data.bonus_damage += summon_damage_medium;
-                wolf_data.bonus_time += summon_time_medium;
-                summon_menu.UpdateText();
+                case "wolf":
+                    wolf_data_list[0] = (int.Parse(wolf_data_list[0])+int.Parse(wolf_data_list[5])).ToString();
+                    wolf_data_list[1] = (int.Parse(wolf_data_list[1])+int.Parse(wolf_data_list[6])).ToString();
+                    wolf_data_list[2] = (int.Parse(wolf_data_list[2])+int.Parse(wolf_data_list[7])).ToString();
+                    wolf_data_list[3] = (int.Parse(wolf_data_list[3])+int.Parse(wolf_data_list[8])).ToString();
+                    summon_menu.UpdateText();
+                    break;
             }
         }
     }
 
     public int DetermineCost()
     {
-        int cost = base_upgrade_cost;
+        int cost = 1;
         switch (summon_to_upgrade)
         {
             case ("wolf"):
-                cost += wolf_data.summon_cost * wolf_data.summon_cost;
+                cost = int.Parse(wolf_data_list[0])*int.Parse(wolf_data_list[0]);
                 break;
         }
         return cost;
@@ -99,7 +110,7 @@ public class SummonDataManager : MonoBehaviour
         switch (summoning_index)
         {
             case 0:
-                return wolf_data.summon_cost;
+                return int.Parse(wolf_data_list[0]);
         }
         return 0;
     }

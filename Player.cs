@@ -173,11 +173,13 @@ public class Player : Mover
         SetMaxMana();
         GameManager.instance.OnHealthChange();
         GameManager.instance.OnManaChange();
+        player_weapon.SetLevel(playerLevel);
     }
 
     public void SetLevel(int level)
     {
         playerLevel = level;
+        player_weapon.SetLevel(playerLevel);
         summon_limit = playerLevel/6;
         if (summon_limit <= 0)
         {

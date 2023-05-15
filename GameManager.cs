@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
     public int coins;
     public int mana_crystals;
     public int experience;
-    public int stat_points;
+    public int days_passed;
     public int danger_level;
     public int current_depth;
     public int current_max_depth;
@@ -224,13 +224,12 @@ public class GameManager : MonoBehaviour
     public void PlayerLevelUp()
     {
         player.LevelUp();
-        stat_points += player.playerLevel;
     }
 
     public void PlayerDefeated()
     {
         coins -= player.max_health + player.max_mana;
-        player.health = player.max_health;
+        player.health = 1;
         player.current_mana = 0;
         OnHealthChange();
         OnManaChange();
@@ -238,7 +237,7 @@ public class GameManager : MonoBehaviour
         {
             coins = 0;
         }
-        experience -= player.max_health + player.max_mana;
+        experience -= player.max_health;
         if (experience < 0)
         {
             experience = 0;
@@ -250,7 +249,7 @@ public class GameManager : MonoBehaviour
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         SaveState();
-        ShowFixedText("Spirit Guardian Blaty", "You were defeated but I brought you back.");
+        ShowFixedText("Spirit Guardian Blaty", "You were defeated but I dragged you back, a few weeks regenerating in your coffin and you're as good as new.");
     }
 
     public void OnHealthChange()
@@ -302,7 +301,7 @@ public class GameManager : MonoBehaviour
             coins = loaded_data.coins;
             mana_crystals = loaded_data.mana_crystals;
             experience = loaded_data.experience;
-            stat_points = loaded_data.stat_points;
+            days_passed = loaded_data.days_passed;
             string familiar_stats = File.ReadAllText("Assets/Saves/familiar_stats.json");
             FamiliarStatsWrapper loaded_familiar_stats = JsonUtility.FromJson<FamiliarStatsWrapper>(familiar_stats);
             familiar.SetStats(loaded_familiar_stats);

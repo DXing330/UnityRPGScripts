@@ -56,17 +56,14 @@ public class PlayerAlly : Mover
         }
     }
 
-    protected virtual void UpdateStats(SummonStatsWrapper loaded_stats)
+    protected virtual void UpdateStats(string loaded_string)
     {
-        summon_cost = loaded_stats.summon_cost;
-        if (summon_cost < GameManager.instance.summons.summon_cost_low)
-        {
-            summon_cost = GameManager.instance.summons.summon_cost_low;
-        }
-        max_health += loaded_stats.bonus_health;
+        string[] loaded_stats = loaded_string.Split("|");
+        summon_cost = int.Parse(loaded_stats[0]);
+        max_health += int.Parse(loaded_stats[1]);
         health = max_health;
-        time_limit += loaded_stats.bonus_time;
-        attack_hitbox.damage_per_hit += loaded_stats.bonus_damage;
+        attack_hitbox.damage_per_hit += int.Parse(loaded_stats[2]);
+        time_limit += int.Parse(loaded_stats[3]);
     }
 
     protected virtual void Update()
