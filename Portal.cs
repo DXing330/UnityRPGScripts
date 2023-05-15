@@ -30,6 +30,7 @@ public class Portal : Collideable
                 GameManager.instance.SaveState();
             }
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+            GameManager.instance.hud.Unfade();
         }
     }
 }

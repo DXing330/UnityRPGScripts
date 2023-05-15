@@ -33,8 +33,10 @@ public class GameManager : MonoBehaviour
     public SummonDataManager summons;
     public SpellDataManager spells;
     public EquipmentDataManager all_equipment;
+    // UI Stuff
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
+    public HUD hud;
     public RectTransform healthBar;
     public Text healthText;
     public RectTransform manaBar;
@@ -44,7 +46,7 @@ public class GameManager : MonoBehaviour
     public int coins;
     public int mana_crystals;
     public int experience;
-    public int days_passed;
+    public int current_day;
     public int danger_level;
     public int current_depth;
     public int current_max_depth;
@@ -301,7 +303,7 @@ public class GameManager : MonoBehaviour
             coins = loaded_data.coins;
             mana_crystals = loaded_data.mana_crystals;
             experience = loaded_data.experience;
-            days_passed = loaded_data.days_passed;
+            current_day = loaded_data.current_day;
             string familiar_stats = File.ReadAllText("Assets/Saves/familiar_stats.json");
             FamiliarStatsWrapper loaded_familiar_stats = JsonUtility.FromJson<FamiliarStatsWrapper>(familiar_stats);
             familiar.SetStats(loaded_familiar_stats);

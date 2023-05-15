@@ -23,19 +23,16 @@ public class DungeonManager : MonoBehaviour
         // Don't give more mana unless the player goes deeper.
         if (GameManager.instance.current_depth >= GameManager.instance.current_max_depth)
         {
-            Debug.Log("Buffing Drops");
             for (int i = 0; i < chests.Count; i++)
             {
                 int drop = Random.Range(0, 6);
                 if (drop == 0)
                 {
-                    Debug.Log("Dropping Equipment");
                     chests[i].ChangeEquipRarity(GameManager.instance.current_depth);
                 }
                 else if (drop <= 3)
                 {
                     chests[i].ChangeManaDrop(1);
-                    Debug.Log("Dropping Mana");
                 }
             }
         }
