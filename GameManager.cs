@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public Familiar familiar;
     public SummonDataManager summons;
     public SpellDataManager spells;
+    public VillageDataManager villages;
     public EquipmentDataManager all_equipment;
     // UI Stuff
     public FloatingTextManager floatingTextManager;
@@ -287,6 +288,7 @@ public class GameManager : MonoBehaviour
         summons.SaveData();
         spells.SaveData();
         all_equipment.SaveData();
+        villages.SaveData();
     }
 
     public void LoadState(Scene scene, LoadSceneMode mode)
@@ -315,6 +317,7 @@ public class GameManager : MonoBehaviour
         summons.LoadData();
         spells.LoadData();
         all_equipment.LoadData();
+        villages.LoadData();
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)

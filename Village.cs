@@ -6,46 +6,73 @@ using UnityEngine;
 // Also provides misc bonuses depending on various factors.
 public class Village : MonoBehaviour
 {
-    protected int current_day;
+    public int current_day;
+    public int village_number;
     // Affects how often you can feed and how much you regen from feeding.
     public int population;
     // Affected by the local area, determines how many buildings there can be.
     public int buildable_areas;
     // Affects rebellions and productivity.
-    protected int fear;
+    public int fear;
     protected int last_fear_estimate;
     public int estimated_fear;
-    protected int discontentment;
+    public int discontentment;
     protected int last_discontentment_estimate;
     public int estimated_discontment;
     // Affects population growth.
     public int food_supply;
-    // Affects efficiency.
-    public int productivity;
+    // Accumulated resources;
+    public int accumulated_gold;
+    public int accumulated_mana;
     // Affects technology and efficiency.
     public int education_level;
     // Building things takes time.
     public int building_cost;
     public string new_building;
     // Learning things take time.
-    // Every village has their own things, we don't want them to share knowledge, since they may get some ideas.
     public int research_cost;
     public string new_research;
-    // Determines their main product, ie food, science, etc.
-    public string focus;
-    public int gathered_food;
-    public int gathered_gold;
-    public int gathered_mana;
+    // Daily gathered things.
+    protected int gathered_discontentment;
+    protected int gathered_production;
+    protected int gathered_research;
+    protected int gathered_food;
+    protected int gathered_gold;
+    protected int gathered_mana;
+    // Determines who they trade with.
+    public string[] connected_villages;
     // Determines what kind of resources are accessable.
     public string[] surroundings;
     // Buildings allow for village specialization.
     public string[] buildings;
+    // Assign population to buildings for more specialization.
+    public string[] assigned_buildings;
     // Technology allows for more buildings and specialization.
     public string[] technologies;
+    // Various problems that afflict the village, ex. bandits, monsters, etc.
+    public string[] problems;
+    private VillageBuilding villagebuilding;
+
+    public void Save()
+    {
+        GameManager.instance.villages.SaveVillage(this);
+    }
+
+    public void Load(int ID)
+    {
+        village_number = ID;
+        GameManager.instance.villages.LoadVillage(this);
+    }
+
+    public void RandomizeNewVillage()
+    {
+
+    }
 
     protected void Start()
     {
         current_day = GameManager.instance.current_day;
+        villagebuilding = GetComponent<VillageBuilding>();
     }
 
     // Drinking blood kills people and makes them angry.
@@ -63,6 +90,7 @@ public class Village : MonoBehaviour
     // If there's enough food, more people are made, otherwise people die.
     public void PopulationChange()
     {
+        // Population changes quickly with food, since if there's lots of food, people come in, if not enough, people flee.
         if (food_supply > population)
         {
             population++;
@@ -71,12 +99,15 @@ public class Village : MonoBehaviour
         else if (food_supply < population)
         {
             population--;
+            discontentment++;
         }
     }
 
     // Taking from them makes them very angry.
     public void PlunderGold()
     {
+        // Adjust how much depending on fear and discontentment.
+        // They may try to hide their earnings from you.
         GameManager.instance.GrantCoins(gathered_gold);
         discontentment += gathered_gold;
         gathered_gold = 0;
@@ -155,29 +186,45 @@ public class Village : MonoBehaviour
 
     public void DetermineVillageStats()
     {
-        // From buildings, technology and surroundings.
+        // Reset gathered supply every day.
+        gathered_food = 0;
+        gathered_gold = 0;
+        gathered_mana = 0;
+        gathered_discontentment = 0;
+        gathered_production = 0;
+        gathered_research = 0;
+        GetBuildingProducts();
+        // Feed the population every day.
+        food_supply -= population;
+        food_supply += gathered_food;
+        PopulationChange();
+        // Accumulate resources;
+        accumulated_gold += gathered_gold;
+        accumulated_mana += gathered_mana;
+        discontentment += Random.Range(0, population) + gathered_discontentment;
+        research_cost -= gathered_research * education_level;
+        building_cost -= gathered_production * education_level;
     }
 
-    public int DailyProduction()
+    public void GetBuildingProducts()
     {
-        int production = productivity * population;
-        production -= Random.Range(0, 2*(fear + discontentment));
-        if (production < 0)
+        for (int i = 0; i < assigned_buildings.Length; i++)
         {
-            production = 1;
+            string new_products = villagebuilding.DetermineProducts(assigned_buildings[i]);
+            AddBuildingProducts(new_products);
         }
-        return production;
     }
 
-    public int DailyResearch()
+    protected void AddBuildingProducts(string products)
     {
-        int research = education_level * population;
-        research -= Random.Range(0, 2*(fear + discontentment));
-        if (research < 0)
-        {
-            research = 1;
-        }
-        return research;
+        string[] all_products = products.Split("|");
+        population += int.Parse(all_products[0]);
+        gathered_production += int.Parse(all_products[1]);
+        gathered_food += int.Parse(all_products[2]);
+        gathered_discontentment += int.Parse(all_products[3]);
+        gathered_research += int.Parse(all_products[4]);
+        gathered_gold += int.Parse(all_products[5]);
+        gathered_mana += int.Parse(all_products[6]);
     }
 
     public void OrcAttack()
@@ -189,4 +236,5 @@ public class Village : MonoBehaviour
         gathered_gold = 0;
         gathered_mana = 0;
     }
+
 }
