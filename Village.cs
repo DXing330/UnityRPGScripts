@@ -305,6 +305,18 @@ public class Village : MonoBehaviour
 
     protected void AssignToBuilding(string building)
     {
+        int limit = villagebuilding.DetermineWorkerLimit(building);
+        for (int i = 0; i < assigned_buildings.Count; i++)
+        {
+            if (assigned_buildings[i] == building)
+            {
+                limit--;
+            }
+        }
+        if (limit <= 0)
+        {
+            return;
+        }
         assigned_buildings.Add(building);
     }
 
@@ -333,7 +345,7 @@ public class Village : MonoBehaviour
     {
         for (int i = 0; i < assigned_buildings.Count; i++)
         {
-            string new_products = villagebuilding.DetermineProducts(assigned_buildings[i]);
+            string new_products = villagebuilding.DetermineAllProducts(assigned_buildings[i]);
             AddBuildingProducts(new_products);
         }
     }

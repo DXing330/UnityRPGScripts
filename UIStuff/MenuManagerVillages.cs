@@ -29,6 +29,7 @@ public class MenuManagerVillages : MonoBehaviour
     public Text select_6;
     public Text area;
     public Text workers_in_area;
+    public Text max_workers_in_area;
     public Text product;
     public Text output;
     protected int page = 0;
@@ -194,6 +195,7 @@ public class MenuManagerVillages : MonoBehaviour
             }
         }
         workers_in_area.text = workers.ToString();
+        max_workers_in_area.text = village.villagebuilding.DetermineWorkerLimit(area.text).ToString();
         product.text = village.villagebuilding.DetermineMainProduct(area.text);
         output.text = (village.villagebuilding.DetermineMainProductAmount(area.text)*workers).ToString();
     }
