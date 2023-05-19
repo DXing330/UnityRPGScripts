@@ -9,6 +9,74 @@ public class VillageBuilding : MonoBehaviour
     protected int mid_tier = 2;
     protected int high_tier = 3;
 
+    public string DetermineMainProduct(string building_name)
+    {
+        switch (building_name)
+        {
+            case "plains":
+                return "Food";
+            case "forest":
+                return "Food";
+            case "hills":
+                return "Food";
+            case "lake":
+                return "Food";
+            case "mountain":
+                return "Materials";
+            case "cave":
+                return "Mana";
+            case "desert":
+                return "None";
+        }
+        return "None";
+    }
+
+    public int DetermineMainProductAmount(string building_name)
+    {
+        switch (building_name)
+        {
+            case "plains":
+                return 2;
+            case "forest":
+                return 1;
+            case "hills":
+                return 1;
+            case "lake":
+                return 1;
+            case "mountain":
+                return 2;
+            case "cave":
+                return 1;
+            case "desert":
+                return 0;
+        }
+        return 0;
+    }
+
+    // order population|materials|food|anger|research|gold|mana
+    public string DetermineAllProducts(string building_name)
+    {
+        // Behold the horrors of hard coding.
+        switch (building_name)
+        {
+            case "plains":
+                return "0|0|2|0|0|0|0";
+            case "forest":
+                return "0|1|1|0|0|0|0";
+            case "hills":
+                return "0|0|1|0|0|0|0";
+            case "lake":
+                return "0|0|1|-1|0|0|0";
+            case "mountain":
+                return "0|2|0|0|0|0|0";
+            case "cave":
+                return "-1|0|0|0|0|0|1";
+            case "desert":
+                return "0|0|0|0|0|0|0";
+        }
+        return "0|0|0|0|0|0|0";
+    }
+
     public string DetermineProducts(string building_name)
     {
         string products = "";
@@ -80,8 +148,6 @@ public class VillageBuilding : MonoBehaviour
     {
         switch (building_name)
         {
-            case "market":
-                return low_tier;
             case "smithy":
                 return low_tier;
         }
@@ -99,6 +165,8 @@ public class VillageBuilding : MonoBehaviour
                 return mid_tier;
             case "market":
                 return low_tier;
+            case "mine":
+                return -low_tier;
         }
         return 0;
     }

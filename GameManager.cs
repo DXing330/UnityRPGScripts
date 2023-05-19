@@ -251,6 +251,7 @@ public class GameManager : MonoBehaviour
             danger_level = 0;
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+        NewWeek();
         SaveState();
         ShowFixedText("Spirit Guardian Blaty", "You were defeated but I dragged you back, a few weeks regenerating in your coffin and you're as good as new.");
     }
@@ -325,6 +326,16 @@ public class GameManager : MonoBehaviour
         player.transform.position = GameObject.Find("SpawnPoint").transform.position;
     }
 
+    public void NewDay()
+    {
+        current_day++;
+    }
+
+    public void NewWeek()
+    {
+        current_day += 7;
+    }
+
     public void ResetDepth()
     {
         current_depth = 0;
@@ -343,7 +354,5 @@ public class GameManager : MonoBehaviour
                 current_max_depth = potential_max_depth;
             }
         }
-        Debug.Log(current_depth);
-        Debug.Log(current_max_depth);
     }
 }

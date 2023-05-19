@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class Village : MonoBehaviour
     public int fear;
     protected int last_fear_estimate;
     public int estimated_fear;
+    // If discontentment is greater than your level + fear, they may rebel.
     public int discontentment;
     protected int last_discontentment_estimate;
     public int estimated_discontment;
@@ -27,11 +29,13 @@ public class Village : MonoBehaviour
     // Affects technology and efficiency.
     public int education_level;
     // Building things takes time.
-    public int building_cost;
-    public string new_building;
+    public int accumulated_materials;
     // Learning things take time.
-    public int research_cost;
-    public string new_research;
+    // Handle research on a nationwide level, not a village level.
+    // Take research from each village to work towards the larger research goal.
+    public int accumulated_research;
+    // Keep track of time.
+    public int last_update_day;
     // Daily gathered things.
     protected int gathered_discontentment;
     protected int gathered_production;
@@ -40,18 +44,19 @@ public class Village : MonoBehaviour
     protected int gathered_gold;
     protected int gathered_mana;
     // Determines who they trade with.
-    public string[] connected_villages;
+    public List<string> connected_villages;
     // Determines what kind of resources are accessable.
-    public string[] surroundings;
+    public List<string> surroundings;
     // Buildings allow for village specialization.
-    public string[] buildings;
+    public List<string> buildings;
     // Assign population to buildings for more specialization.
-    public string[] assigned_buildings;
+    public List<string> assigned_buildings;
     // Technology allows for more buildings and specialization.
-    public string[] technologies;
+    public List<string> technologies;
     // Various problems that afflict the village, ex. bandits, monsters, etc.
-    public string[] problems;
-    private VillageBuilding villagebuilding;
+    public List<string> problems;
+    public VillageBuilding villagebuilding;
+    public VillageBuildingManager villagebuildingmanager;
 
     public void Save()
     {
@@ -64,9 +69,50 @@ public class Village : MonoBehaviour
         GameManager.instance.villages.LoadVillage(this);
     }
 
+    protected string RandomSurrounding(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                buildable_areas++;
+                return "plains";
+            case 1:
+                buildable_areas++;
+                return "forest";
+            case 2:
+                buildable_areas++;
+                return "hills";
+            case 3:
+                return "lake";
+            case 4:
+                buildable_areas++;
+                return "mountain";
+            case 5:
+                buildable_areas++;
+                return "cave";
+            case 6:
+                buildable_areas++;
+                return "desert";
+        }
+        buildable_areas++;
+        return "plains";
+    }
+
     public void RandomizeNewVillage()
     {
-
+        village_number = GameManager.instance.villages.total_villages;
+        int rng = 0;
+        while (surroundings.Count < 8)
+        {
+            rng = Random.Range(0, 7);
+            surroundings.Add(RandomSurrounding(rng));
+            buildings.Add(RandomSurrounding(rng));
+        }
+        // Starter village.
+        population = 1;
+        food_supply = 1;
+        last_update_day = current_day;
+        Save();
     }
 
     protected void Start()
@@ -88,36 +134,103 @@ public class Village : MonoBehaviour
     }
 
     // If there's enough food, more people are made, otherwise people die.
-    public void PopulationChange()
+    protected void PopulationChange()
     {
-        // Population changes quickly with food, since if there's lots of food, people come in, if not enough, people flee.
-        if (food_supply > population)
+        // Population adjusts every month based on food supply.
+        if (last_update_day%28==0)
         {
-            population++;
-            food_supply--;
+            if (food_supply > population)
+            {
+                population++;
+                food_supply--;
+            }
+            else if (food_supply < population)
+            {
+                population--;
+                discontentment++;
+            }
         }
-        else if (food_supply < population)
+        // If there are not enough people to work.
+        while (population < assigned_buildings.Count)
         {
-            population--;
-            discontentment++;
+            assigned_buildings.RemoveAt(assigned_buildings.Count - 1);
         }
     }
 
     // Taking from them makes them very angry.
-    public void PlunderGold()
+    public void Plunder(string type)
     {
-        // Adjust how much depending on fear and discontentment.
-        // They may try to hide their earnings from you.
-        GameManager.instance.GrantCoins(gathered_gold);
-        discontentment += gathered_gold;
-        gathered_gold = 0;
+        switch (type)
+        {
+            case "food":
+                if (food_supply > 0)
+                {
+                    GameManager.instance.villages.CollectTax(type);
+                    food_supply--;
+                    discontentment += 2;
+                }
+                break;
+            case "materials":
+                if (accumulated_materials > 0)
+                {
+                    GameManager.instance.villages.CollectTax(type);
+                    accumulated_materials--;
+                    discontentment += 2;
+                }
+                break;
+            case "gold":
+                if (accumulated_gold > 0)
+                {
+                    GameManager.instance.villages.CollectTax(type);
+                    accumulated_gold--;
+                    discontentment += 2;
+                }
+                break;
+            case "mana":
+                if (accumulated_mana > 0)
+                {
+                    GameManager.instance.villages.CollectTax(type);
+                    accumulated_mana--;
+                    discontentment += 2;
+                }
+                break;
+        }
     }
-
-    public void PlunderMana()
+    
+    // Giving stuff makes them happier.
+    public void GiveAssistance(string type)
     {
-        GameManager.instance.GrantMana(gathered_mana);
-        discontentment += education_level * gathered_mana;
-        gathered_mana = 0;
+        switch (type)
+        {
+            case "food":
+                if (GameManager.instance.villages.GiveAssistance(type))
+                {
+                    discontentment--;
+                    food_supply++;
+                }
+                break;
+            case "materials":
+                if (GameManager.instance.villages.GiveAssistance(type))
+                {
+                    discontentment--;
+                    accumulated_materials++;
+                }
+                break;
+            case "gold":
+                if (GameManager.instance.villages.GiveAssistance(type))
+                {
+                    discontentment--;
+                    accumulated_gold++;
+                }
+                break;
+            case "mana":
+                if (GameManager.instance.villages.GiveAssistance(type))
+                {
+                    discontentment--;
+                    accumulated_mana++;
+                }
+                break;
+        }
     }
 
     // It's diffcult for you to accurately determine human feelings.
@@ -139,52 +252,38 @@ public class Village : MonoBehaviour
         }
     }
 
-    protected void AddBuilding()
+    public void Craft()
     {
-        string all_buildings = "";
-        for (int i = 0; i < buildings.Length; i++)
-        {
-            all_buildings += buildings[i]+"|";
-        }
-        all_buildings += new_building;
-        buildings = all_buildings.Split("|");
+
     }
 
-    public void Build(string[] next_building)
+
+    public void UpdateVillage()
     {
-        if (building_cost < 0)
+        current_day = GameManager.instance.current_day;
+        while (current_day > last_update_day)
         {
-            AddBuilding();
-            if (buildings.Length < buildable_areas)
+            last_update_day++;
+            if (last_update_day%7==0)
             {
-                new_building = next_building[0];
-                building_cost = int.Parse(next_building[1]);
+                DetermineVillageStats();
             }
         }
+        Save();
     }
 
-    protected void AddTecn()
+    protected void PayUpkeepCosts()
     {
-        string all_tech = "";
-        for (int i = 0; i < technologies.Length; i++)
+        food_supply -= population;
+        PopulationChange();
+        accumulated_gold -= buildings.Count;
+        if (accumulated_gold < 0 && buildings.Count > 0)
         {
-            all_tech += technologies[i]+"|";
-        }
-        all_tech += new_research;
-        technologies = all_tech.Split("|");
-    }
-
-    public void Research(string[] next_research)
-    {
-        if (research_cost < 0)
-        {
-            AddTecn();
-            new_research = next_research[0];
-            research_cost = int.Parse(next_research[0]);
+            buildings.RemoveAt(buildings.Count - 1);
         }
     }
 
-    public void DetermineVillageStats()
+    protected void DetermineVillageStats()
     {
         // Reset gathered supply every day.
         gathered_food = 0;
@@ -194,21 +293,45 @@ public class Village : MonoBehaviour
         gathered_production = 0;
         gathered_research = 0;
         GetBuildingProducts();
-        // Feed the population every day.
-        food_supply -= population;
-        food_supply += gathered_food;
-        PopulationChange();
         // Accumulate resources;
+        food_supply += gathered_food;
         accumulated_gold += gathered_gold;
         accumulated_mana += gathered_mana;
         discontentment += Random.Range(0, population) + gathered_discontentment;
-        research_cost -= gathered_research * education_level;
-        building_cost -= gathered_production * education_level;
+        accumulated_research += gathered_research * (education_level+1);
+        accumulated_materials += gathered_production * (education_level+1);
+        PayUpkeepCosts();
     }
 
-    public void GetBuildingProducts()
+    protected void AssignToBuilding(string building)
     {
-        for (int i = 0; i < assigned_buildings.Length; i++)
+        assigned_buildings.Add(building);
+    }
+
+    public void RemoveFromBuilding(string building)
+    {
+        for (int i = 0; i < assigned_buildings.Count; i++)
+        {
+            if (assigned_buildings[i] == building)
+            {
+                assigned_buildings.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+    public void SelectAssignedBuilding(int index)
+    {
+        // If there are still people who haven't been assigned.
+        if (assigned_buildings.Count <= population)
+        {
+            AssignToBuilding(buildings[index]);
+        }
+    }
+
+    protected void GetBuildingProducts()
+    {
+        for (int i = 0; i < assigned_buildings.Count; i++)
         {
             string new_products = villagebuilding.DetermineProducts(assigned_buildings[i]);
             AddBuildingProducts(new_products);
