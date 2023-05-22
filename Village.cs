@@ -28,6 +28,8 @@ public class Village : MonoBehaviour
     public int accumulated_mana;
     // Affects technology and efficiency.
     public int education_level;
+    public List<string> facility_level;
+    public List<string> facility_experience;
     // Building things takes time.
     public int accumulated_materials;
     // Learning things take time.
@@ -98,7 +100,7 @@ public class Village : MonoBehaviour
         return "plains";
     }
 
-    public void RandomizeNewVillage()
+    public void RandomizeNewVillage(string base_surrounding = "village")
     {
         village_number = GameManager.instance.villages.total_villages;
         int rng = 0;

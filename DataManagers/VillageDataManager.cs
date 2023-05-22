@@ -7,6 +7,7 @@ using UnityEngine;
 // Handles villages and keeps track of things shared between villages.
 public class VillageDataManager : MonoBehaviour
 {
+    public OverworldTilesDataManager tiles;
     public int total_villages;
     public string next_research = "None";
     public int research_cost;
@@ -18,7 +19,6 @@ public class VillageDataManager : MonoBehaviour
     public int collected_gold;
     // Mana can be used to fund research.
     public int collected_mana;
-    public List<string> village_locations;
     protected string loaded_data;
     // Need to make a tech tree.
     public List<string> learned_tech;
@@ -51,14 +51,13 @@ public class VillageDataManager : MonoBehaviour
         village_data += "||";
         village_data += total_villages.ToString();
         village_data += "||";
-        village_data += ConvertListToString(village_locations);
-        village_data += "||";
         village_data += next_research;
         village_data += "||";
         village_data += research_cost.ToString();
         village_data += "||";
         village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString();
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
+        tiles.SaveData();
     }
 
     public void LoadData()
@@ -72,14 +71,21 @@ public class VillageDataManager : MonoBehaviour
             learned_magic = loaded_data_blocks[2].Split("|").ToList();
             village_skills = loaded_data_blocks[3].Split("|").ToList();
             total_villages = int.Parse(loaded_data_blocks[4]);
-            village_locations = loaded_data_blocks[5].Split("|").ToList();
-            next_research = loaded_data_blocks[6];
-            research_cost = int.Parse(loaded_data_blocks[7]);
-            string[] collected_taxes = loaded_data_blocks[8].Split("|");
+            next_research = loaded_data_blocks[5];
+            research_cost = int.Parse(loaded_data_blocks[6]);
+            string[] collected_taxes = loaded_data_blocks[7].Split("|");
             collected_food = int.Parse(collected_taxes[0]);
             collected_materials = int.Parse(collected_taxes[1]);
             collected_gold = int.Parse(collected_taxes[2]);
             collected_mana = int.Parse(collected_taxes[3]);
+        }
+        if (File.Exists("Assets/Saves/Villages/overworld_data.txt"))
+        {
+            loaded_data = File.ReadAllText("Assets/Saves/Villages/overworld_data.txt");
+            string[] loaded_data_blocks = loaded_data.Split("||");
+            tiles.tile_type = loaded_data_blocks[0].Split("|").ToList();
+            tiles.tile_owner = loaded_data_blocks[1].Split("|").ToList();
+            tiles.tiles_explored = loaded_data_blocks[2].Split("|").ToList();
         }
     }
 
@@ -185,17 +191,12 @@ public class VillageDataManager : MonoBehaviour
         }
     }
 
-    public void NewVillage(string coordinates)
+    public void NewVillage(string base_surroundings)
     {
-        // Don't build a village in the same location.
-        if (village_locations.Contains(coordinates))
-        {
-            return;
-        }
-        village_locations.Add(coordinates);
         total_villages++;
+        // Change this so the village ID is the tile number its own and you can access that village from the overworld map.
         current_village.village_number = total_villages;
-        LoadVillage(current_village);
+        current_village.RandomizeNewVillage(base_surroundings);
         SaveVillage(current_village);
         SaveData();
     }
