@@ -8,14 +8,31 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> tile_type;
     public List<string> tile_owner;
     public List<string> tiles_explored;
+    public List<string> tile_events;
+    public bool new_events = false;
     protected int grid_size = 9;
+
+    public void TrimEvents()
+    {
+        // Keep track of a year's worth or so.
+        while (tile_events.Count > 12)
+        {
+            // Remove old news.
+            tile_events.RemoveAt(0);
+        }
+    }
+
+    public void AddEvent(string new_event)
+    {
+        tile_events.Add(new_event);
+        new_events = true;
+    }
 
     public void SaveData()
     {
         if (tile_type.Count < grid_size*grid_size)
         {
             ResetTiles();
-            GenerateTiles();
         }
         string overworld_data = "";
         overworld_data += GameManager.instance.villages.ConvertListToString(tile_type);
@@ -28,7 +45,7 @@ public class OverworldTilesDataManager : MonoBehaviour
 
     protected void ResetTiles()
     {
-        tile_type.Clear();
+        GenerateTiles();
         tile_owner.Clear();
         tiles_explored.Clear();
         for (int i = 0; i < grid_size*grid_size; i++)
@@ -36,6 +53,9 @@ public class OverworldTilesDataManager : MonoBehaviour
             tiles_explored.Add("No");
             tile_owner.Add("Unknown");
         }
+        tiles_explored[40] = "Yes";
+        tile_owner[40] = "None";
+        ClaimTile(40);
     }
 
     protected void GenerateTiles()
@@ -161,9 +181,10 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             tile_owner[tile_num] = "You";
         }
-        GameManager.instance.villages.NewVillage(tile_type[tile_num]);
+        GameManager.instance.villages.NewVillage(tile_type[tile_num], tile_num);
     }
 
+    // Need to explore a tile to see what kind of terrain it is and who lives there.
     public void ExploreTile(int tile_num)
     {
         tiles_explored[tile_num] = "Yes";
@@ -177,10 +198,66 @@ public class OverworldTilesDataManager : MonoBehaviour
         }
     }
 
+    // Need a process of clearing out a tile before you can claim it.  Basically clear a dungeon.
     public void ClearTile(int tile_num)
     {
-        tile_owner[tile_num] = "None";
+        if (tile_owner[tile_num] == "Unknown")
+        {
+            tile_owner[tile_num] = "None";
+        }
     }
 
+    // Generate events on certain tiles, like mana surges or orc attacks.
+    public void PassTime()
+    {
+        // Every month an orc encampment spawns nearby.
+        if (GameManager.instance.current_day%28 == 0)
+        {
+            bool orcs = false;
+            int index = 0;
+            int rng = 0;
+            while (!orcs && index < (grid_size*grid_size))
+            {
+                if (tiles_explored[index] == "Yes" && tile_owner[index] != "You")
+                {
+                    rng = Random.Range(0, 3);
+                    if (rng >= 2)
+                    {
+                        tile_owner[index] = "Orc";
+                        orcs = true;
+                        AddEvent("Orcs appeared at zone "+index.ToString());
+                        break;
+                    }
+                    index++;
+                }
+            }
+        }
+    }
 
+    public void MoveOrcs()
+    {
+        // Orcs only move and attack within the area they spawned in.
+        for (int i = 0; i < tile_owner.Count; i++)
+        {
+            if (tile_owner[i] == "Orc")
+            {
+                if ((i%9)+1 < 9 && tile_owner[i+1] == "You")
+                {
+                    AddEvent("Orcs attacking village "+(i+1).ToString());
+                }
+                else if ((i%9)-1 > 0 && tile_owner[i-1] == "You")
+                {
+                    AddEvent("Orcs attacking village "+(i-1).ToString());
+                }
+                else if ((i%9)+3 < 9 && tile_owner[i+3] == "You")
+                {
+                    AddEvent("Orcs attacking village "+(i+3).ToString());
+                }
+                else if ((i%9)-3 > 0 && tile_owner[i-3] == "You")
+                {
+                    AddEvent("Orcs attacking village "+(i-3).ToString());
+                }
+            }
+        }
+    }
 }

@@ -115,7 +115,7 @@ public class MoverActor : Mover
             hits[k] = null;
         }
     }
-    protected virtual void FixedUpdate()
+    protected virtual void Update()
     {
         // Push the enemy around if they have been pushed.
         if (push_direction.magnitude > 0 && !dead)

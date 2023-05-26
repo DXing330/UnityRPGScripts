@@ -49,4 +49,98 @@ public class VillageBuildingManager : MonoBehaviour
         }
         return potential_buildings;
     }
+
+    public void DetermineSurroundings(Village village, string base_surrounding)
+    {
+        int rng = 0;
+        while (village.surroundings.Count < 8)
+        {
+            rng = Random.Range(0, 5);
+            village.surroundings.Add(MakeSurrounding(rng, base_surrounding));
+            village.buildings.Add(MakeSurrounding(rng, base_surrounding));
+        }
+    }
+
+    public string MakeSurrounding(int i, string b_surr)
+    {
+        switch (b_surr)
+        {
+            case "plains":
+                switch (i)
+                {
+                    case 0:
+                        return "plains";
+                    case 1:
+                        return "plains";
+                    case 2:
+                        return "forest";
+                    case 3:
+                        return "hills";
+                    case 4:
+                        return "lake";
+                }
+                return "plains";
+            case "hills":
+                switch (i)
+                {
+                    case 0:
+                        return "hills";
+                    case 1:
+                        return "hills";
+                    case 2:
+                        return "plains";
+                    case 3:
+                        return "forest";
+                    case 4:
+                        return "mountain";
+                }
+                return "plains";
+            case "forest":
+                switch (i)
+                {
+                    case 0:
+                        return "forest";
+                    case 1:
+                        return "forest";
+                    case 2:
+                        return "plains";
+                    case 3:
+                        return "plains";
+                    case 4:
+                        return "lake";
+                }
+                return "forest";
+            case "desert":
+                switch (i)
+                {
+                    case 0:
+                        return "desert";
+                    case 1:
+                        return "desert";
+                    case 2:
+                        return "desert";
+                    case 3:
+                        return "plains";
+                    case 4:
+                        return "lake";
+                }
+                return "desert";
+            case "mountain":
+                switch (i)
+                {
+                    case 0:
+                        return "mountain";
+                    case 1:
+                        return "lake";
+                    case 2:
+                        return "hills";
+                    case 3:
+                        return "cave";
+                    case 4:
+                        return "desert";
+                }
+                return "mountain";
+        }
+        return "plains";
+    }
 }

@@ -125,9 +125,9 @@ public class MenuManager : MonoBehaviour
         upgrade_cost.text = GameManager.instance.DeterminePrice("weapon").ToString();
         // Meta.
         health_text.text = GameManager.instance.player.health.ToString()+" / "+GameManager.instance.player.max_health.ToString();
-        coin_text.text = GameManager.instance.coins.ToString();
+        coin_text.text = GameManager.instance.villages.collected_gold.ToString();
         mana_points_text.text = GameManager.instance.player.current_mana.ToString()+" / "+GameManager.instance.player.max_mana.ToString();
-        mana_text.text = GameManager.instance.mana_crystals.ToString();
+        mana_text.text = GameManager.instance.villages.collected_mana.ToString();
         int current_level = GameManager.instance.player.playerLevel;
         level_text.text = current_level.ToString();
         // EXP Bar.

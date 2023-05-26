@@ -213,7 +213,7 @@ public class GameManager : MonoBehaviour
     {
         int gained_gold = money;
         gained_gold += Random.Range(0, current_depth*2);
-        coins += gained_gold;
+        villages.collected_gold += gained_gold;
         ShowText("+ "+gained_gold+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
     }
 
@@ -221,7 +221,7 @@ public class GameManager : MonoBehaviour
     {
         int gained_mana = crystals;
         gained_mana += Random.Range(0, current_depth);
-        mana_crystals += gained_mana;
+        villages.collected_mana += gained_mana;
         ShowText("+ "+gained_mana+" crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
     }
     public void PlayerLevelUp()

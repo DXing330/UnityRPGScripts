@@ -131,7 +131,8 @@ public class VillageDataManager : MonoBehaviour
         village_data += village.education_level.ToString()+"|";
         village_data += village.accumulated_materials.ToString()+"|";
         village_data += village.accumulated_research.ToString()+"|";
-        village_data += village.last_update_day.ToString();
+        village_data += village.last_update_day.ToString()+"|";
+        village_data += village.max_population.ToString();
         village_data += "||";
         village_data += ConvertListToString(village.connected_villages)+"||";
         village_data += ConvertListToString(village.surroundings)+"||";
@@ -158,6 +159,7 @@ public class VillageDataManager : MonoBehaviour
         village.accumulated_materials = int.Parse(village_int_data[9]);
         village.accumulated_research = int.Parse(village_int_data[10]);
         village.last_update_day = int.Parse(village_int_data[11]);
+        village.max_population = int.Parse(village_int_data[12]);
         village.connected_villages = village_data_blocks[1].Split("|").ToList();
         village.surroundings = village_data_blocks[2].Split("|").ToList();
         village.buildings = village_data_blocks[3].Split("|").ToList();
@@ -191,11 +193,11 @@ public class VillageDataManager : MonoBehaviour
         }
     }
 
-    public void NewVillage(string base_surroundings)
+    public void NewVillage(string base_surroundings, int index)
     {
         total_villages++;
         // Change this so the village ID is the tile number its own and you can access that village from the overworld map.
-        current_village.village_number = total_villages;
+        current_village.village_number = index;
         current_village.RandomizeNewVillage(base_surroundings);
         SaveVillage(current_village);
         SaveData();

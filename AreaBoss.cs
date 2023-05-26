@@ -10,9 +10,9 @@ public class AreaBoss : EnemyAnimated
     public Door locked_door;
     public Door unlocked_door;
 
-    protected override void FixedUpdate()
+    protected override void Update()
     {
-        base.FixedUpdate();
+        base.Update();
         if (!active)
         {
             if (target_transform != null)

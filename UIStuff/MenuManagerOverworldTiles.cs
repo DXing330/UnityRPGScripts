@@ -23,13 +23,16 @@ public class MenuManagerOverworldTiles : MonoBehaviour
     public Image bot_left_i;
     public Image bot_mid_i;
     public Image bot_right_i;
+    public Text tile_type;
+    public Text tile_owner;
+    public Text tile_number;
     public Animator animator;
-    private OverworldTilesDataManager overworld_tiles;
+    public OverworldTilesDataManager overworld_tiles;
 
     // Switch between inner and outer tiles.
     protected bool inner_tiles = false;
-    protected int visited_area = -1;
-    protected int visited_tile = -1;
+    public int visited_area = -1;
+    public int visited_tile = -1;
 
     public void Start()
     {
@@ -42,6 +45,8 @@ public class MenuManagerOverworldTiles : MonoBehaviour
         {
             inner_tiles = false;
             ResetTiles();
+            visited_area = -1;
+            visited_tile = -1;
         }
         else
         {
@@ -60,8 +65,30 @@ public class MenuManagerOverworldTiles : MonoBehaviour
         else if (inner_tiles)
         {
             visited_tile = i;
-            // Update stuff.
+            UpdateTileInfo();
         }
+    }
+
+    protected void UpdateTileInfo()
+    {
+        int index = visited_tile + (visited_area*9);
+        tile_number.text = (index).ToString();
+        tile_owner.text = overworld_tiles.tile_owner[index];
+        if (overworld_tiles.tiles_explored[index] == "Yes")
+        {
+            tile_type.text = overworld_tiles.tile_type[index];
+        }
+        else
+        {
+            tile_type.text = "Unknown";
+        }
+    }
+
+    protected void ResetTileInfo()
+    {
+        tile_number.text = "-1";
+        tile_owner.text = "Unknown";
+        tile_type.text = "Unknown";
     }
 
     public void ExploreAll()
@@ -69,7 +96,7 @@ public class MenuManagerOverworldTiles : MonoBehaviour
         overworld_tiles.ExploreAll();
     }
 
-    public void ResetTiles()
+    protected void ResetTiles()
     {
         ResetTile(top_left_i, top_left, 1);
         ResetTile(top_mid_i, top_mid, 2);
@@ -88,7 +115,7 @@ public class MenuManagerOverworldTiles : MonoBehaviour
         text.text = "Area "+i.ToString();
     }
 
-    public void UpdateTiles()
+    protected void UpdateTiles()
     {
         UpdateTile(top_left_i, top_left, 0+(visited_area*9));
         UpdateTile(top_mid_i, top_mid, 1+(visited_area*9));
@@ -101,7 +128,7 @@ public class MenuManagerOverworldTiles : MonoBehaviour
         UpdateTile(bot_right_i, bot_right, 8+(visited_area*9));
     }
 
-    public void UpdateTile(Image image, Text text, int i)
+    protected void UpdateTile(Image image, Text text, int i)
     {
         if (overworld_tiles.tiles_explored[i] == "No")
         {

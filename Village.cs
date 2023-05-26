@@ -38,6 +38,7 @@ public class Village : MonoBehaviour
     public int accumulated_research;
     // Keep track of time.
     public int last_update_day;
+    public int max_population;
     // Daily gathered things.
     protected int gathered_discontentment;
     protected int gathered_production;
@@ -71,45 +72,9 @@ public class Village : MonoBehaviour
         GameManager.instance.villages.LoadVillage(this);
     }
 
-    protected string RandomSurrounding(int i)
+    public void RandomizeNewVillage(string base_surrounding = "plains")
     {
-        switch (i)
-        {
-            case 0:
-                buildable_areas++;
-                return "plains";
-            case 1:
-                buildable_areas++;
-                return "forest";
-            case 2:
-                buildable_areas++;
-                return "hills";
-            case 3:
-                return "lake";
-            case 4:
-                buildable_areas++;
-                return "mountain";
-            case 5:
-                buildable_areas++;
-                return "cave";
-            case 6:
-                buildable_areas++;
-                return "desert";
-        }
-        buildable_areas++;
-        return "plains";
-    }
-
-    public void RandomizeNewVillage(string base_surrounding = "village")
-    {
-        village_number = GameManager.instance.villages.total_villages;
-        int rng = 0;
-        while (surroundings.Count < 8)
-        {
-            rng = Random.Range(0, 7);
-            surroundings.Add(RandomSurrounding(rng));
-            buildings.Add(RandomSurrounding(rng));
-        }
+        villagebuildingmanager.DetermineSurroundings(this, base_surrounding);
         // Starter village.
         population = 1;
         food_supply = 1;
@@ -143,8 +108,11 @@ public class Village : MonoBehaviour
         {
             if (food_supply > population)
             {
-                population++;
-                food_supply--;
+                if (population < max_population)
+                {
+                    population++;
+                    food_supply--;
+                }
             }
             else if (food_supply < population)
             {
@@ -305,12 +273,25 @@ public class Village : MonoBehaviour
         PayUpkeepCosts();
     }
 
-    protected void AssignToBuilding(string building)
+    public void UpgradeVillageSize()
     {
-        int limit = villagebuilding.DetermineWorkerLimit(building);
+        // Let's set six as the baseline cost for a new house.
+        // Other builds can cost most.
+        // It can be low since it's simple to make a house.
+        // Also for gameplay its ok if they expand their population a lot since it'll cause problems later.
+        if (accumulated_materials >= 6)
+        {
+            accumulated_materials -= 6;
+            max_population++;
+            Save();
+        }
+    }
+    protected void AssignToBuilding(int index)
+    {
+        int limit = villagebuilding.DetermineWorkerLimit(buildings[index]);
         for (int i = 0; i < assigned_buildings.Count; i++)
         {
-            if (assigned_buildings[i] == building)
+            if (assigned_buildings[i] == index.ToString())
             {
                 limit--;
             }
@@ -319,14 +300,14 @@ public class Village : MonoBehaviour
         {
             return;
         }
-        assigned_buildings.Add(building);
+        assigned_buildings.Add(index.ToString());
     }
 
-    public void RemoveFromBuilding(string building)
+    public void RemoveFromBuilding(int index)
     {
         for (int i = 0; i < assigned_buildings.Count; i++)
         {
-            if (assigned_buildings[i] == building)
+            if (assigned_buildings[i] == index.ToString())
             {
                 assigned_buildings.RemoveAt(i);
                 return;
@@ -339,7 +320,7 @@ public class Village : MonoBehaviour
         // If there are still people who haven't been assigned.
         if (assigned_buildings.Count <= population)
         {
-            AssignToBuilding(buildings[index]);
+            AssignToBuilding(index);
         }
     }
 
@@ -347,7 +328,7 @@ public class Village : MonoBehaviour
     {
         for (int i = 0; i < assigned_buildings.Count; i++)
         {
-            string new_products = villagebuilding.DetermineAllProducts(assigned_buildings[i]);
+            string new_products = villagebuilding.DetermineAllProducts(buildings[int.Parse(assigned_buildings[i])]);
             AddBuildingProducts(new_products);
         }
     }

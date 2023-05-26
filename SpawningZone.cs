@@ -17,11 +17,14 @@ public class SpawningZone : MonoBehaviour
     public ContactFilter2D filter;
     private BoxCollider2D spawn_zone;
     protected Collider2D[] hits = new Collider2D[10];
+    protected float check_cooldown = 6.0f;
+    protected float last_check;
 
     protected virtual void Start()
     {
         spawn_zone = GetComponent<BoxCollider2D>();
         spawn_limit = Random.Range(0, GameManager.instance.current_depth) + 1;
+        last_check = -check_cooldown;
     }
 
     protected virtual void Spawn()
@@ -63,22 +66,26 @@ public class SpawningZone : MonoBehaviour
 
     protected virtual void Update()
     {
-        current_spawns = 0;
-        // Collision work.
-        spawn_zone.OverlapCollider(filter,hits);
-        for (int i = 0; i < hits.Length; i++)
+        if (Time.time - last_check > check_cooldown)
         {
-            if (hits[i] == null)
-                continue;
-            
-            OnCollide(hits[i]);
+            last_check = Time.time;
+            current_spawns = 0;
+            // Collision work.
+            spawn_zone.OverlapCollider(filter,hits);
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i] == null)
+                    continue;
+                
+                OnCollide(hits[i]);
 
-            // Clear the array after you're done.
-            hits[i] = null;
-        }
-        if (current_spawns < spawn_limit)
-        {
-            Spawn();
+                // Clear the array after you're done.
+                hits[i] = null;
+            }
+            if (current_spawns < spawn_limit)
+            {
+                Spawn();
+            }
         }
     }
 }

@@ -9,8 +9,9 @@ public class Boss : Enemy
     public Transform[] fireballs;
     public int mana_crystals = 5;
 
-    private void Update()
+    private void FixedUpdate()
     {
+        // MOve this into a floating fireball class.
         for (int i = 0; i < fireballs.Length; i++)
         {
             fireballs[i].position = transform.position + new Vector3(-Mathf.Cos(Time.time*fireballSpeed[i])*distance, Mathf.Sin(Time.time*fireballSpeed[i])*distance, 0);

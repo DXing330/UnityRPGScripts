@@ -38,15 +38,15 @@ public class VillageBuilding : MonoBehaviour
         switch (building_name)
         {
             case "plains":
-                return "Food";
+                return "F";
             case "forest":
-                return "Food";
+                return "F|M";
             case "hills":
-                return "Food";
+                return "F";
             case "lake":
-                return "Food";
+                return "F";
             case "mountain":
-                return "Materials";
+                return "M";
             case "cave":
                 return "Mana";
             case "desert":
@@ -55,26 +55,26 @@ public class VillageBuilding : MonoBehaviour
         return "None";
     }
 
-    public int DetermineMainProductAmount(string building_name)
+    public string DetermineMainProductAmount(string building_name)
     {
         switch (building_name)
         {
             case "plains":
-                return 2;
+                return "2";
             case "forest":
-                return 1;
+                return "1|1";
             case "hills":
-                return 1;
+                return "1";
             case "lake":
-                return 1;
+                return "1";
             case "mountain":
-                return 2;
+                return "2";
             case "cave":
-                return 1;
+                return "1";
             case "desert":
-                return 0;
+                return "0";
         }
-        return 0;
+        return "0";
     }
 
     // order population|materials|food|anger|research|gold|mana
@@ -84,15 +84,15 @@ public class VillageBuilding : MonoBehaviour
         switch (building_name)
         {
             case "plains":
-                return "0|0|1|0|0|0|0";
+                return "0|0|2|0|0|0|0";
             case "forest":
-                return "0|0|1|0|0|0|0";
+                return "0|1|1|0|0|0|0";
             case "hills":
                 return "0|0|1|0|0|0|0";
             case "lake":
                 return "0|0|1|-1|0|0|0";
             case "mountain":
-                return "0|1|0|0|0|0|0";
+                return "0|2|0|0|0|0|0";
             case "cave":
                 return "-1|0|0|0|0|0|1";
             case "desert":

@@ -6,9 +6,9 @@ using UnityEngine.AI;
 public class EnemyAnimated : MoverActor
 {
 
-    protected override void FixedUpdate()
+    protected override void Update()
     {
-        base.FixedUpdate();
+        base.Update();
         if (attacking && Time.time - last_attack > attack_cooldown)
         {
             attacking = false;
