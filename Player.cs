@@ -274,6 +274,14 @@ public class Player : Mover
         }
     }
 
+    public void DrinkBlood()
+    {
+        if (health < max_health)
+        {
+            health = max_health;
+        }
+    }
+
     protected override void Death()
     {
         last_i_frame = Time.time;

@@ -67,11 +67,9 @@ public class SpellDataManager : MonoBehaviour
     public void TryUpgrading()
     {
         int upgrade_cost = DetermineUpgradeCost();
-        Debug.Log(upgrade_cost);
-        Debug.Log(GameManager.instance.mana_crystals);
-        if (upgrade_cost <= GameManager.instance.mana_crystals)
+        if (upgrade_cost <= GameManager.instance.villages.collected_mana)
         {
-            GameManager.instance.mana_crystals -= upgrade_cost;
+            GameManager.instance.villages.collected_mana -= upgrade_cost;
             UpgradeSpell();
         }
     }

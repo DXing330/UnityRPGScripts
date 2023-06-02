@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MenuManagerVillagePanel : MonoBehaviour
 {
+    public List<Sprite> village_sprites;
+    public List<Image> village_panels;
     public Text population;
     public Text max_pop;
     public Text food_supply;
@@ -27,6 +29,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
 
     public void UpdateVillageInformation()
     {
+        SetColors();
         village.EstimateFear();
         village.EstimateDiscontentment();
         population.text = village.population.ToString();
@@ -54,5 +57,34 @@ public class MenuManagerVillagePanel : MonoBehaviour
         max_workers_in_area.text = village.villagebuilding.DetermineWorkerLimit(area.text).ToString();
         product.text = village.villagebuilding.DetermineMainProduct(area.text);
         output.text = (village.villagebuilding.DetermineMainProductAmount(area.text)).ToString();
+    }
+
+    public void SetColors()
+    {
+        for (int i = 0; i < village_panels.Count; i++)
+        {
+            Debug.Log(i);
+            village_panels[i].color = DetermineColor(village.buildings[i]);
+        }
+    }
+
+    protected Color DetermineColor(string building)
+    {
+        switch (building)
+        {
+            case "plains":
+                return Color.green;
+            case "desert":
+                return Color.yellow;
+            case "mountains":
+                return Color.grey;
+            case "lake":
+                return Color.blue;
+            case "forest":
+                return Color.green;
+            case "hills":
+                return Color.green;
+        }
+        return Color.white;
     }
 }

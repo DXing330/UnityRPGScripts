@@ -44,8 +44,6 @@ public class GameManager : MonoBehaviour
     public Text manaText;
 
     // Logic.
-    public int coins;
-    public int mana_crystals;
     public int experience;
     public int current_day;
     public int danger_level;
@@ -83,31 +81,27 @@ public class GameManager : MonoBehaviour
         return cost;
     }
 
-    // Upgrade Weapon.
-    public bool TryUpgradeWeapon()
-    {
-        int cost = DeterminePrice("weapon");
-        if (coins >= cost)
-        {
-            coins -= cost;
-            weapon.UpgradeWeapon();
-            return true;
-        }
-
-        else
-        {
-            return false;
-        }
-    }
 
     public void EatMana()
     {
         Debug.Log("Eating Mana");
-        if (mana_crystals > 0)
+        if (villages.collected_mana > 0)
         {
-            mana_crystals--;
+            villages.collected_mana--;
             player.EatMana();
             OnManaChange();
+            GrantExp(1);
+        }
+    }
+
+    public void DrinkBlood()
+    {
+        Debug.Log("Drinking Blood");
+        if (villages.collected_blood > 0)
+        {
+            villages.collected_blood--;
+            player.DrinkBlood();
+            OnHealthChange();
             GrantExp(1);
         }
     }
@@ -115,77 +109,23 @@ public class GameManager : MonoBehaviour
     public void FeedFamiliarMana()
     {
         Debug.Log("Feeding Mana");
-        if (mana_crystals > 0)
+        if (villages.collected_mana > 0)
         {
-            mana_crystals--;
+            villages.collected_mana--;
             familiar.GainExp(1);
         }
     }
 
-    public bool UpgradeFamiliarStats(string upgraded_stat)
+    public void FeedFamiliarBlood()
     {
-        int cost = UpgradeFamiliarCost(upgraded_stat);
-        if (mana_crystals >= cost)
+        Debug.Log("Feeding Blood");
+        if (villages.collected_blood > 0)
         {
-            mana_crystals -= cost;
-            if (upgraded_stat == "bonus_rotate_speed")
-            {
-                familiar.bonus_rotate_speed++;
-                return true;
-            }
-            else if (upgraded_stat == "heal_threshold_increase")
-            {
-                familiar.heal_threshold_increase++;
-                return true;
-            }
-            else if (upgraded_stat == "bonus_damage")
-            {
-                familiar.bonus_damage++;
-                return true;
-            }
-            else if (upgraded_stat == "bonus_push_force")
-            {
-                familiar.bonus_push_force++;
-                return true;
-            }
-            else if (upgraded_stat == "bonus_heal")
-            {
-                familiar.bonus_heal++;
-                return true;
-            }
-            else
-            {
-                mana_crystals += cost;
-                return false;
-            }
+            villages.collected_blood--;
+            familiar.DrinkBlood();
         }
-        return false;
     }
-    public int UpgradeFamiliarCost(string upgraded_stat)
-    {
-        int cost = 0;
-        if (upgraded_stat == "bonus_rotate_speed")
-        {
-            cost = familiar.bonus_rotate_speed * familiar.bonus_rotate_speed;
-        }
-        else if  (upgraded_stat == "heal_threshold_increase")
-        {
-            cost = familiar.heal_threshold_increase * familiar.heal_threshold_increase;
-        }
-        else if  (upgraded_stat == "bonus_damage")
-        {
-            cost = familiar.bonus_damage * familiar.bonus_damage;
-        }
-        else if  (upgraded_stat == "bonus_push_force")
-        {
-            cost = familiar.bonus_push_force * familiar.bonus_push_force;
-        }
-        else if  (upgraded_stat == "bonus_heal")
-        {
-            cost = familiar.bonus_heal * familiar.bonus_heal;
-        }
-        return cost;
-    }
+
     public int GetExptoLevel()
     {
         int exp = 0;
@@ -231,14 +171,14 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDefeated()
     {
-        coins -= player.max_health + player.max_mana;
+        villages.collected_gold -= player.max_health + player.max_mana;
         player.health = 1;
         player.current_mana = 0;
         OnHealthChange();
         OnManaChange();
-        if (coins < 0)
+        if (villages.collected_gold < 0)
         {
-            coins = 0;
+            villages.collected_gold = 0;
         }
         experience -= player.max_health;
         if (experience < 0)
@@ -303,8 +243,6 @@ public class GameManager : MonoBehaviour
             player.SetHealth(loaded_data.player_health);
             player.SetMana(loaded_data.player_mana);
             weapon.SetLevel(loaded_data.weapon_level);
-            coins = loaded_data.coins;
-            mana_crystals = loaded_data.mana_crystals;
             experience = loaded_data.experience;
             current_day = loaded_data.current_day;
             string familiar_stats = File.ReadAllText("Assets/Saves/familiar_stats.json");

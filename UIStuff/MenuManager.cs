@@ -11,28 +11,20 @@ public class MenuManager : MonoBehaviour
     public Text mana_points_text;
     public Text coin_text;
     public Text mana_text;
+    public Text blood_text;
     // Weapon stuff.
     public Text weapon_level_text;
     public Text upgrade_cost;
-    // Player stuff.
-    public Text exp_text;
     // Familiar stuff.
     public Text familiar_damage;
     public Text familiar_heal;
-    public Text familiar_heal_threshold;
-    public Text mana_crystal_text;
-    public Text bonus_speed;
-    public Text bonus_damage;
-    public Text bonus_heal;
-    public Text bonus_urgency;
-    public Text bonus_weight;
+    public Text familiar_blood_bank;
     // Summon stuff.
     public MenuManagerSummons summon_menu_info;
     public MenuManagerEquipment equip_menu_info;
 
     // Logic.
     public Image weapon_sprite;
-    public RectTransform exp_bar;
     private bool showing;
     private bool showing_inner_screen;
 
@@ -94,75 +86,91 @@ public class MenuManager : MonoBehaviour
         showing_inner_screen = false;
     }
 
-    public void Update()
+    /*public void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
             ShowOrHideMenu();
         }
-    }
+    }*/
 
     // Weapon Upgrade
     public void OnWeaponUpgrade()
     {
-        if (GameManager.instance.TryUpgradeWeapon())
-        {
-            UpdateMenu();
-        }
     }
 
     // Character info.
     public void UpdateMenu()
     {
         // Use the game manager to get the information.
-        // Familiar.
-        familiar_damage.text =  (1 + GameManager.instance.familiar.bonus_damage).ToString();
-        familiar_heal.text = (1 + GameManager.instance.familiar.bonus_heal).ToString();
-        familiar_heal_threshold.text = ((GameManager.instance.player.max_health - GameManager.instance.familiar.heal_threshold_increase)/3).ToString();
-        // Weapon.
+        UpdateFamiliarMenu();
+        UpdateCharacterMenu();
+        UpdateItemMenu();
+        /*/ Weapon.
         int weapon_level = GameManager.instance.weapon.weaponLevel;
         weapon_level_text.text = weapon_level.ToString();
         upgrade_cost.text = GameManager.instance.DeterminePrice("weapon").ToString();
-        // Meta.
-        health_text.text = GameManager.instance.player.health.ToString()+" / "+GameManager.instance.player.max_health.ToString();
-        coin_text.text = GameManager.instance.villages.collected_gold.ToString();
-        mana_points_text.text = GameManager.instance.player.current_mana.ToString()+" / "+GameManager.instance.player.max_mana.ToString();
-        mana_text.text = GameManager.instance.villages.collected_mana.ToString();
-        int current_level = GameManager.instance.player.playerLevel;
-        level_text.text = current_level.ToString();
         // EXP Bar.
         int currect_exp = GameManager.instance.experience;
         int exp_to_level = GameManager.instance.GetExptoLevel();
 
         float exp_ratio = (float)currect_exp / (float)exp_to_level;
         exp_bar.localScale = new Vector3(exp_ratio, 1, 1);
-        exp_text.text = currect_exp.ToString() + " / " + exp_to_level.ToString();
+        exp_text.text = currect_exp.ToString() + " / " + exp_to_level.ToString();*/
     }
 
     // Character stats.
+    public void UpdateCharacterMenu()
+    {
+        int current_level = GameManager.instance.player.playerLevel;
+        level_text.text = current_level.ToString();
+        health_text.text = GameManager.instance.player.health.ToString()+" / "+GameManager.instance.player.max_health.ToString();
+        mana_points_text.text = GameManager.instance.player.current_mana.ToString()+" / "+GameManager.instance.player.max_mana.ToString();
+    }
 
     public void UpdateFamiliarMenu()
     {
-        mana_crystal_text.text = GameManager.instance.mana_crystals.ToString();
-        bonus_speed.text = GameManager.instance.familiar.bonus_rotate_speed.ToString();
-        bonus_damage.text = GameManager.instance.familiar.bonus_damage.ToString();
-        bonus_heal.text = GameManager.instance.familiar.bonus_heal.ToString();
-        bonus_urgency.text = GameManager.instance.familiar.heal_threshold_increase.ToString();
-        bonus_weight.text = GameManager.instance.familiar.bonus_push_force.ToString();
+        familiar_damage.text =  (1 + GameManager.instance.familiar.bonus_damage).ToString();
+        familiar_heal.text = (1 + GameManager.instance.familiar.bonus_heal).ToString();
+        familiar_blood_bank.text = (GameManager.instance.familiar.current_blood).ToString()+" / "+(GameManager.instance.familiar.max_blood).ToString();
     }
 
-    public void PressFamiliarUpgradeButton()
+    public void UpdateItemMenu()
     {
-        /*if (GameManager.instance.UpgradeFamiliarStats(upgraded_stat))
+        coin_text.text = GameManager.instance.villages.collected_gold.ToString();
+        blood_text.text = GameManager.instance.villages.collected_blood.ToString();
+        mana_text.text = GameManager.instance.villages.collected_mana.ToString();   
+    }
+
+    public void PressFamiliarUpgradeButton(bool blood)
+    {
+        if (blood)
         {
-            UpdateFamiliarMenu();
-        }*/
-        GameManager.instance.FeedFamiliarMana();
+            GameManager.instance.FeedFamiliarBlood();
+        }
+        else
+        {
+            GameManager.instance.FeedFamiliarMana();
+        }
+        UpdateFamiliarMenu();
     }
 
-    public void PressEatManaButton()
+    public void PressEatButton(bool blood)
     {
-        GameManager.instance.EatMana();
+        if (blood)
+        {
+            GameManager.instance.DrinkBlood();
+        }
+        else
+        {
+            GameManager.instance.EatMana();
+        }
+        UpdateCharacterMenu();
+    }
+
+    public void PressSave()
+    {
+        GameManager.instance.SaveState();
     }
 
     public void UpdateSummonMenu()
@@ -173,5 +181,6 @@ public class MenuManager : MonoBehaviour
     public void UpdateEquipMenu()
     {
         equip_menu_info.UpdateResistanceTexts();
+        equip_menu_info.UpdateStatTexts();
     }
 }

@@ -13,7 +13,7 @@ public class MenuManagerVillages : MonoBehaviour
     public Text collected_mats;
     public Text collected_gold;
     public Text collected_mana;
-    private Animator animator;
+    public Animator animator;
     public Village village;
     protected int page = 0;
     protected int total_villages;
@@ -21,7 +21,6 @@ public class MenuManagerVillages : MonoBehaviour
 
     protected void Start()
     {
-        animator = GetComponent<Animator>();
         villagedatamanager = GameManager.instance.villages;
         total_villages = villagedatamanager.total_villages;
     }
@@ -35,10 +34,12 @@ public class MenuManagerVillages : MonoBehaviour
     public void SaveVillage()
     {
         village.Save();
+        GameManager.instance.SaveState();
     }
 
     public void Show()
     {
+        Debug.Log("Showing");
         animator.SetTrigger("Show");
     }
 
@@ -49,7 +50,7 @@ public class MenuManagerVillages : MonoBehaviour
 
     public void ShowVillage()
     {
-        animator.SetTrigger("ShowVillage");
+        animator.SetTrigger("Village");
         villagepanel.UpdateVillageInformation();
     }
 

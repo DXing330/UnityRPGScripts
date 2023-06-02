@@ -32,6 +32,8 @@ public class Familiar : MonoBehaviour
     public int bonus_damage = 0;
     public int bonus_push_force = 0;
     public int bonus_heal = 0;
+    public int current_blood = 0;
+    public int max_blood = 0;
     // Stats where the player feeds mana and the familiar levels up.
     public int level;
     public int exp;
@@ -95,8 +97,17 @@ public class Familiar : MonoBehaviour
     }
     protected void HealMaster()
     {
-        GameManager.instance.player.SendMessage("ReceiveHealing", bonus_heal+1);
-        GameManager.instance.ShowText("Blood for Master.", 15, Color.white, transform.position, Vector3.up*25, 0.66f);
+        if (current_blood >= bonus_heal+1)
+        {
+            current_blood -= bonus_heal+1;
+            GameManager.instance.player.SendMessage("ReceiveHealing", bonus_heal+1);
+            GameManager.instance.ShowText("Blood for Master.", 15, Color.white, transform.position, Vector3.up*25, 0.66f);
+        }
+        else
+        {
+            GameManager.instance.player.SendMessage("ReceiveHealing", 1);
+            GameManager.instance.ShowText("We're low on BLOOD.", 25, Color.white, transform.position, Vector3.up*25, 0.66f);
+        }
     }
 
     protected virtual void OnCollide(Collider2D coll)
@@ -123,6 +134,10 @@ public class Familiar : MonoBehaviour
     public void SetStats(FamiliarStatsWrapper loaded_stats)
     {
         level = loaded_stats.level;
+        if (level < 1)
+        {
+            level = 1;
+        }
         exp = loaded_stats.exp;
         bonus_rotate_speed = level;
         bonus_rotate_speed_float = bonus_rotate_speed * 1.0f;
@@ -130,11 +145,23 @@ public class Familiar : MonoBehaviour
         bonus_damage = level;
         bonus_push_force = level;
         bonus_heal = level;
+        current_blood = loaded_stats.current_blood;
+        max_blood = level * 6;
     }
 
     public void GainExp(int exp_points)
     {
         exp += exp_points;
+        LevelUp();
+    }
+
+    public void DrinkBlood()
+    {
+        if (current_blood < max_blood)
+        {
+            current_blood = max_blood;
+        }
+        exp++;
         LevelUp();
     }
 
@@ -151,6 +178,7 @@ public class Familiar : MonoBehaviour
             bonus_damage++;
             bonus_push_force++;
             bonus_heal++;
+            max_blood += 6;
         }
     }
 }

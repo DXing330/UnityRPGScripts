@@ -117,7 +117,7 @@ public class SummonDataManager : MonoBehaviour
 
     public bool CheckCost(int cost)
     {
-        if (GameManager.instance.mana_crystals >= cost)
+        if (GameManager.instance.villages.collected_mana >= cost)
         {
             return true;
         }
@@ -126,6 +126,6 @@ public class SummonDataManager : MonoBehaviour
 
     public void ApplyCost(int cost)
     {
-        GameManager.instance.mana_crystals -= cost;
+        GameManager.instance.villages.collected_mana -= cost;
     }
 }

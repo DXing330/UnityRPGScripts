@@ -19,6 +19,8 @@ public class VillageDataManager : MonoBehaviour
     public int collected_gold;
     // Mana can be used to fund research.
     public int collected_mana;
+    // Blood can be used to heal and grants exp.
+    public int collected_blood;
     protected string loaded_data;
     // Need to make a tech tree.
     public List<string> learned_tech;
@@ -55,7 +57,7 @@ public class VillageDataManager : MonoBehaviour
         village_data += "||";
         village_data += research_cost.ToString();
         village_data += "||";
-        village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString();
+        village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString()+"|"+collected_blood.ToString();
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
         tiles.SaveData();
     }
@@ -78,6 +80,7 @@ public class VillageDataManager : MonoBehaviour
             collected_materials = int.Parse(collected_taxes[1]);
             collected_gold = int.Parse(collected_taxes[2]);
             collected_mana = int.Parse(collected_taxes[3]);
+            collected_blood = int.Parse(collected_taxes[4]);
         }
         if (File.Exists("Assets/Saves/Villages/overworld_data.txt"))
         {

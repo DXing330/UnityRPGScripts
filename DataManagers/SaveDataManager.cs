@@ -61,8 +61,6 @@ public class SaveDataManager
             SaveDataWrapper loaded_data = JsonUtility.FromJson<SaveDataWrapper>(save_data);
             GameManager.instance.player.SetLevel(loaded_data.player_level);
             GameManager.instance.weapon.SetLevel(loaded_data.weapon_level);
-            GameManager.instance.coins = loaded_data.coins;
-            GameManager.instance.mana_crystals = loaded_data.mana_crystals;
             GameManager.instance.experience = loaded_data.experience;
         }
         else
@@ -78,8 +76,6 @@ public class SaveDataWrapper
     public int player_health;
     public int player_mana;
     public int weapon_level;
-    public int coins;
-    public int mana_crystals;
     public int experience;
     public int current_day;
     public int danger_level;
@@ -91,8 +87,6 @@ public class SaveDataWrapper
         player_health = GameManager.instance.player.health;
         player_mana = GameManager.instance.player.current_mana;
         weapon_level = GameManager.instance.weapon.weaponLevel;
-        coins = GameManager.instance.coins;
-        mana_crystals = GameManager.instance.mana_crystals;
         experience = GameManager.instance.experience;
         current_day = GameManager.instance.current_day;
         danger_level = GameManager.instance.danger_level;
@@ -123,6 +117,8 @@ public class FamiliarStatsWrapper
     public int bonus_damage;
     public int bonus_push_force;
     public int bonus_heal;
+    public int current_blood;
+    public int max_blood;
 
     public void UpdateData()
     {
@@ -133,6 +129,8 @@ public class FamiliarStatsWrapper
         bonus_damage = GameManager.instance.familiar.bonus_damage;
         bonus_push_force = GameManager.instance.familiar.bonus_push_force;
         bonus_heal = GameManager.instance.familiar.bonus_heal;
+        current_blood = GameManager.instance.familiar.current_blood;
+        max_blood = GameManager.instance.familiar.max_blood;
     }
 }
 

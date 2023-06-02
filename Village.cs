@@ -77,6 +77,7 @@ public class Village : MonoBehaviour
         villagebuildingmanager.DetermineSurroundings(this, base_surrounding);
         // Starter village.
         population = 1;
+        max_population = 1;
         food_supply = 1;
         last_update_day = current_day;
         Save();
@@ -91,12 +92,23 @@ public class Village : MonoBehaviour
     // Drinking blood kills people and makes them angry.
     public void SuckBlood()
     {
-        // As long as they're afraid they'll let you do as you please.
-        if (fear > discontentment)
+        // Can't get blood from a stone.
+        if (population <= 0)
         {
+            return;
+        }
+        // As long as they're afraid they'll let you do as you please.
+        if (fear >= discontentment)
+        {
+            GameManager.instance.villages.collected_blood++;
             population--;
             fear++;
             discontentment++;
+            if (population <= 0)
+            {
+                fear = 0;
+                discontentment = 0;
+            }
         }
     }
 
@@ -163,6 +175,9 @@ public class Village : MonoBehaviour
                     accumulated_mana--;
                     discontentment += 2;
                 }
+                break;
+            case "blood":
+                SuckBlood();
                 break;
         }
     }
@@ -233,11 +248,11 @@ public class Village : MonoBehaviour
         current_day = GameManager.instance.current_day;
         while (current_day > last_update_day)
         {
-            last_update_day++;
             if (last_update_day%7==0)
             {
                 DetermineVillageStats();
             }
+            last_update_day++;
         }
         Save();
     }
@@ -246,11 +261,6 @@ public class Village : MonoBehaviour
     {
         food_supply -= population;
         PopulationChange();
-        accumulated_gold -= buildings.Count;
-        if (accumulated_gold < 0 && buildings.Count > 0)
-        {
-            buildings.RemoveAt(buildings.Count - 1);
-        }
     }
 
     protected void DetermineVillageStats()
@@ -279,9 +289,10 @@ public class Village : MonoBehaviour
         // Other builds can cost most.
         // It can be low since it's simple to make a house.
         // Also for gameplay its ok if they expand their population a lot since it'll cause problems later.
-        if (accumulated_materials >= 6)
+        if (accumulated_materials >= 6 && accumulated_gold >= 6)
         {
             accumulated_materials -= 6;
+            accumulated_gold -= 6;
             max_population++;
             Save();
         }
