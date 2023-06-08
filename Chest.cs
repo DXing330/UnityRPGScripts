@@ -8,19 +8,15 @@ public class Chest : Collectable
     public CollectableEquip dropped_equip;
     public bool equipment_drop = false;
     public int dropped_rarity = 1;
-    public int mana_amount = 1;
-    public int coins_amount = 10;
+    public int drop_type = 3;
+    public int drop_amount = 1;
 
     protected override void OnCollect()
     {
         if (!collected)
         {
             collected = true;
-            if (mana_crystals)
-            {
-                GameManager.instance.GrantMana(mana_amount);
-            }
-            else if (equipment_drop)
+            if (equipment_drop)
             {
                 int vertical_shift = Random.Range(-1,2);
                 int horizontal_shift = Random.Range(-1,2);
@@ -32,9 +28,7 @@ public class Chest : Collectable
             }
             else
             {
-                coins_amount = Random.Range(coins_amount, coins_amount*2);
-                GetComponent<SpriteRenderer>().sprite = emptyChest;
-                GameManager.instance.GrantCoins(coins_amount);
+                GameManager.instance.GainResource(drop_type,drop_amount);
             }
         }
     }
@@ -43,13 +37,17 @@ public class Chest : Collectable
     {
         dropped_rarity = new_rarity;
         equipment_drop = true;
-        mana_crystals = false;
     }
 
-    public virtual void ChangeManaDrop(int new_mana)
+    public virtual void ChangeDropType(int new_type)
     {
-        mana_amount = new_mana;
         equipment_drop = false;
-        mana_crystals = true;
+        drop_type = new_type;
+    }
+
+    public virtual void ChangeDropAmount(int new_amount)
+    {
+        equipment_drop = false;
+        drop_amount = new_amount;
     }
 }

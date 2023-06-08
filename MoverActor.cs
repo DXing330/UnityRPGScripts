@@ -5,7 +5,8 @@ using UnityEngine.AI;
 
 public class MoverActor : Mover
 {
-    public int exp_value = 1;
+    public int drop_type = 0;
+    public int drop_value = 0;
     public bool facing_right = true;
     protected bool horizontal_flip = false;
     protected bool chasing;
@@ -26,6 +27,7 @@ public class MoverActor : Mover
     public BoxCollider2D hitbox;
     public CircleCollider2D detection_range;
     protected Transform target_transform = null;
+    protected Vector3 dVector;
 
     protected override void Start()
     {
@@ -42,7 +44,7 @@ public class MoverActor : Mover
         if (Time.time - last_direction_change > direction_change_cd)
         {
             last_direction_change = Time.time;
-            int new_direction = Random.Range(0, 4);
+            int new_direction = Random.Range(0, 8);
             direction = PickDirection(new_direction);
         }
     }
@@ -59,6 +61,18 @@ public class MoverActor : Mover
                 return Vector3.down;
             case 3:
                 return Vector3.left;
+            case 4:
+                dVector = new Vector3(0.5f,0.5f,0);
+                return dVector;
+            case 5:
+                dVector = new Vector3(-0.5f,0.5f,0);
+                return dVector;
+            case 6:
+                dVector = new Vector3(-0.5f,-0.5f,0);
+                return dVector;
+            case 7:
+                dVector = new Vector3(0.5f,-0.5f,0);
+                return dVector;
         }
         return Vector3.zero;
     }
@@ -115,6 +129,7 @@ public class MoverActor : Mover
             hits[k] = null;
         }
     }
+
     protected virtual void Update()
     {
         // Push the enemy around if they have been pushed.
@@ -155,38 +170,14 @@ public class MoverActor : Mover
             if (!attacking)
             {
                 agent.SetDestination(target_transform.position);
-                if (facing_right)
-                {
-                    if (target_transform.position.x - transform.position.x < 0 && !horizontal_flip)
-                    {
-                        horizontal_flip = true;
-                        transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
-                    }
-                    else if (target_transform.position.x - transform.position.x > 0 && horizontal_flip)
-                    {
-                        horizontal_flip = false;
-                        transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
-                    }
-                }
-                else
-                {
-                    if (target_transform.position.x - transform.position.x > 0 && !horizontal_flip)
-                    {
-                        horizontal_flip = true;
-                        transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
-                    }
-                    else if (target_transform.position.x - transform.position.x < 0 && horizontal_flip)
-                    {
-                        horizontal_flip = false;
-                        transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
-                    }
-                }
+                AdjustDirection();
             }
         }
         if (dead)
         {
             if (Time.time - last_alive > corpse_linger_time)
             {
+                DetermineDrops();
                 Destroy(gameObject);
             }
         }
@@ -197,5 +188,40 @@ public class MoverActor : Mover
                 ResetSpeed();
             }
         }
+    }
+
+    protected virtual void AdjustDirection()
+    {
+        if (facing_right)
+        {
+            if (target_transform.position.x - transform.position.x < 0 && !horizontal_flip)
+            {
+                horizontal_flip = true;
+                transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+            }
+            else if (target_transform.position.x - transform.position.x > 0 && horizontal_flip)
+            {
+                horizontal_flip = false;
+                transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+            }
+        }
+        else
+        {
+            if (target_transform.position.x - transform.position.x > 0 && !horizontal_flip)
+            {
+                horizontal_flip = true;
+                transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+            }
+            else if (target_transform.position.x - transform.position.x < 0 && horizontal_flip)
+            {
+                horizontal_flip = false;
+                transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+            }
+        }
+    }
+
+    protected virtual void DetermineDrops()
+    {
+        GameManager.instance.GainResource(drop_type,drop_value);
     }
 }

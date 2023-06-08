@@ -63,7 +63,6 @@ public class MenuManagerVillagePanel : MonoBehaviour
     {
         for (int i = 0; i < village_panels.Count; i++)
         {
-            Debug.Log(i);
             village_panels[i].color = DetermineColor(village.buildings[i]);
         }
     }

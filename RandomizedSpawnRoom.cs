@@ -2,15 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawningZone : MonoBehaviour
+public class RandomizedSpawnRoom : MonoBehaviour
 {
-    public Enemy enemy_to_spawn;
-    public EnemyAnimated animated_enemy_to_spawn;
-    public EnemyRanged ranged_enemy_to_spawn;
+    public List<Enemy> spawnable_enemies;
+    public List<EnemyAnimated> spawnable_a_enemies;
+    public List<EnemyRanged> spawnable_r_enemies;
+    private int spawn_index;
     public bool normal;
     public bool animated;
     public bool ranged;
-    public bool single_use = false;
+    public bool limited_use = false;
     public float spawn_cooldown;
     private int spawn_limit = 1;
     private int current_spawns = 0;
@@ -21,13 +22,18 @@ public class SpawningZone : MonoBehaviour
     protected float check_cooldown = 6.0f;
     protected float last_check;
 
-    protected virtual void Start()
+    void Start()
     {
         spawn_zone = GetComponent<BoxCollider2D>();
-        spawn_limit = Random.Range(0, GameManager.instance.current_depth) + 1;
         last_check = -check_cooldown;
     }
 
+    protected virtual void AdjustSpawnLimit(int new_limit)
+    {
+        spawn_limit = new_limit;
+        limited_use = true;
+    }
+    
     protected virtual void Spawn()
     {
         if (Time.time - last_spawn > spawn_cooldown)
@@ -35,22 +41,26 @@ public class SpawningZone : MonoBehaviour
             last_spawn = Time.time;
             if (normal)
             {
-                Enemy clone = Instantiate(enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
-                clone.DungeonBuff();
+                spawn_index = Random.Range(0, spawnable_enemies.Count);
+                Enemy clone = Instantiate(spawnable_enemies[spawn_index], transform.position, new Quaternion(0, 0, 0, 0));
             }
             else if (animated)
             {
-                EnemyAnimated clone = Instantiate(animated_enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
-                clone.DungeonBuff();
+                spawn_index = Random.Range(0, spawnable_a_enemies.Count);
+                EnemyAnimated clone = Instantiate(spawnable_a_enemies[spawn_index], transform.position, new Quaternion(0, 0, 0, 0));   
             }
             else if (ranged)
             {
-                EnemyRanged clone = Instantiate(ranged_enemy_to_spawn, transform.position, new Quaternion(0, 0, 0, 0));
-                clone.DungeonBuff();
+                spawn_index = Random.Range(0, spawnable_r_enemies.Count);
+                EnemyRanged clone = Instantiate(spawnable_r_enemies[spawn_index], transform.position, new Quaternion(0, 0, 0, 0));   
             }
-            if (single_use)
+            if (limited_use)
             {
-                Destroy(gameObject);
+                spawn_limit--;
+                if (spawn_limit <= 0)
+                {
+                    Destroy(gameObject);
+                }
             }
         }
     }
@@ -69,7 +79,7 @@ public class SpawningZone : MonoBehaviour
         }
     }
 
-    protected virtual void Update()
+    void Update()
     {
         if (Time.time - last_check > check_cooldown)
         {

@@ -13,6 +13,7 @@ public class MenuManagerVillages : MonoBehaviour
     public Text collected_mats;
     public Text collected_gold;
     public Text collected_mana;
+    public Text collected_blood;
     public Animator animator;
     public Village village;
     protected int page = 0;
@@ -60,6 +61,7 @@ public class MenuManagerVillages : MonoBehaviour
         collected_mats.text = villagedatamanager.collected_materials.ToString();
         collected_gold.text = villagedatamanager.collected_gold.ToString();
         collected_mana.text = villagedatamanager.collected_mana.ToString();
+        collected_blood.text = villagedatamanager.collected_blood.ToString();
     }
 
     protected void UpdateVillageInformation()
@@ -107,6 +109,15 @@ public class MenuManagerVillages : MonoBehaviour
         if (selected_area >= 0)
         {
             village.RemoveFromBuilding(selected_area);
+            UpdateSelectedArea();
+        }
+    }
+
+    public void DestroyBuilding()
+    {
+        if (selected_area >= 0)
+        {
+            village.DestroyBuilding(selected_area);
             UpdateSelectedArea();
         }
     }

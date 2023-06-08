@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class AreaBoss : EnemyAnimated
 {
-    public int mana_reward;
     // Boss will lock the door when activated.
     protected bool active = false;
     public Door locked_door;
@@ -40,7 +39,6 @@ public class AreaBoss : EnemyAnimated
             last_alive = Time.time;
             animator.SetBool("Moving", false);
             animator.SetTrigger("Dead");
-            GameManager.instance.GrantMana(mana_reward);
             if (!locked_door.active)
             {
                 locked_door.Activate();

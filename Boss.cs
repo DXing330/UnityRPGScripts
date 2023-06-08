@@ -7,7 +7,6 @@ public class Boss : Enemy
     public float[] fireballSpeed = {1.0f, -1.0f};
     public float distance = 0.4f;
     public Transform[] fireballs;
-    public int mana_crystals = 5;
 
     private void FixedUpdate()
     {
@@ -21,6 +20,5 @@ public class Boss : Enemy
     protected override void Death()
     {
         base.Death();
-        GameManager.instance.GrantMana(mana_crystals);
     }
 }

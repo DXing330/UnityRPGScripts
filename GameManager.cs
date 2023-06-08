@@ -81,7 +81,6 @@ public class GameManager : MonoBehaviour
         return cost;
     }
 
-
     public void EatMana()
     {
         Debug.Log("Eating Mana");
@@ -149,21 +148,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GrantCoins(int money)
+    // 0:Blood,1:EXP,2:Mana,3:Gold,4:Food,5:Mats
+    public void GainResource(int type, int amount)
     {
-        int gained_gold = money;
-        gained_gold += Random.Range(0, current_depth*2);
-        villages.collected_gold += gained_gold;
-        ShowText("+ "+gained_gold+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
+        switch (type)
+        {
+            case 0:
+                villages.collected_blood += amount;
+                ShowText("+ "+amount+" blood crystals", 25, Color.red, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 1:
+                GrantExp(amount);
+                break;
+            case 2:
+                villages.collected_mana += amount;
+                ShowText("+ "+amount+" mana crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 3:
+                villages.collected_gold += amount;
+                ShowText("+ "+amount+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 4:
+                villages.collected_food += amount;
+                ShowText("+ "+amount+" food", 20, Color.green, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 5:
+                villages.collected_materials += amount;
+                ShowText("+ "+amount+" materials", 20, Color.grey, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+        }
     }
 
-    public void GrantMana(int crystals)
-    {
-        int gained_mana = crystals;
-        gained_mana += Random.Range(0, current_depth);
-        villages.collected_mana += gained_mana;
-        ShowText("+ "+gained_mana+" crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
-    }
     public void PlayerLevelUp()
     {
         player.LevelUp();

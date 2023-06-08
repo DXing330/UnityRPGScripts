@@ -97,10 +97,10 @@ public class Village : MonoBehaviour
         {
             return;
         }
-        // As long as they're afraid they'll let you do as you please.
-        if (fear >= discontentment)
+        // As long as they're afraid or much weaker they'll let you do as you please.
+        if (fear >= discontentment || population <= GameManager.instance.player.playerLevel)
         {
-            GameManager.instance.villages.collected_blood++;
+            GameManager.instance.GainResource(0,1);
             population--;
             fear++;
             discontentment++;
@@ -112,7 +112,7 @@ public class Village : MonoBehaviour
         }
     }
 
-    // If there's enough food, more people are made, otherwise people die.
+    // If there's enough food, more people are made, otherwise people die/leave.
     protected void PopulationChange()
     {
         // Population adjusts every month based on food supply.
@@ -128,7 +128,8 @@ public class Village : MonoBehaviour
             }
             else if (food_supply < population)
             {
-                population--;
+                // Starving people don't stay long.
+                population = food_supply;
                 discontentment++;
             }
         }
@@ -152,7 +153,7 @@ public class Village : MonoBehaviour
                     discontentment += 2;
                 }
                 break;
-            case "materials":
+            case "mats":
                 if (accumulated_materials > 0)
                 {
                     GameManager.instance.villages.CollectTax(type);
@@ -194,7 +195,7 @@ public class Village : MonoBehaviour
                     food_supply++;
                 }
                 break;
-            case "materials":
+            case "mats":
                 if (GameManager.instance.villages.GiveAssistance(type))
                 {
                     discontentment--;
@@ -324,6 +325,20 @@ public class Village : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public void DestroyBuilding(int index)
+    {
+        // Remove any workers from the building first.
+        for (int i = 0; i < assigned_buildings.Count; i++)
+        {
+            if (int.Parse(assigned_buildings[i]) == index)
+            {
+                assigned_buildings.RemoveAt(i);
+            }
+        }
+        // Then replace the building with the original surrounding.
+        buildings[index] = surroundings[index];
     }
 
     public void SelectAssignedBuilding(int index)

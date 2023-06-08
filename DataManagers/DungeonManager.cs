@@ -30,10 +30,6 @@ public class DungeonManager : MonoBehaviour
                 {
                     chests[i].ChangeEquipRarity(GameManager.instance.current_depth);
                 }
-                else if (drop <= 3)
-                {
-                    chests[i].ChangeManaDrop(1);
-                }
             }
         }
     }
