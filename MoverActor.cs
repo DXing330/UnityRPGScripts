@@ -167,7 +167,7 @@ public class MoverActor : Mover
         // While chasing, follow the target.
         if (chasing && !dead)
         {
-            if (!attacking)
+            if (!attacking && push_direction.magnitude <= recovery_speed)
             {
                 agent.SetDestination(target_transform.position);
                 AdjustDirection();

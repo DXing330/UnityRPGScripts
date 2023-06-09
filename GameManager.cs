@@ -81,6 +81,24 @@ public class GameManager : MonoBehaviour
         return cost;
     }
 
+    public void PickWeaponType(int index)
+    {
+        weapon.SetType(index);
+    }
+
+    public bool UpgradeWeapon(int type)
+    {
+        int current_weapon_level = int.Parse(weapon.weapon_levels_list[type]);
+        int price = current_weapon_level * current_weapon_level;
+        if (villages.collected_materials >= price && villages.collected_gold >= price)
+        {
+            weapon.weapon_levels_list[type] = (current_weapon_level+1).ToString();
+            villages.collected_materials -= price;
+            villages.collected_gold -= price;
+            return true;
+        }
+        return false;
+    }
     public void EatMana()
     {
         Debug.Log("Eating Mana");
@@ -232,6 +250,8 @@ public class GameManager : MonoBehaviour
         {
             Directory.CreateDirectory("Assets/Saves/");
         }
+        weapon.UpdateLevels();
+        Debug.Log(weapon.weapon_levels);
         SaveDataWrapper save_data = new SaveDataWrapper();
         save_data.UpdateData();
         string save_json = JsonUtility.ToJson(save_data, true);
@@ -257,7 +277,8 @@ public class GameManager : MonoBehaviour
             player.SetLevel(loaded_data.player_level);
             player.SetHealth(loaded_data.player_health);
             player.SetMana(loaded_data.player_mana);
-            weapon.SetLevel(loaded_data.weapon_level);
+            weapon.SetLevels(loaded_data.weapon_levels);
+            weapon.SetType(loaded_data.weapon_type);
             experience = loaded_data.experience;
             current_day = loaded_data.current_day;
             string familiar_stats = File.ReadAllText("Assets/Saves/familiar_stats.json");
@@ -276,7 +297,34 @@ public class GameManager : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+        // Randomize spawnpoints when entering a new scene.
+        int spawn_zone = Random.Range(0, 3);
+        switch (spawn_zone)
+        {
+            case 0:
+                player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+                break;
+            case 1:
+                if (GameObject.Find("SpawnPoint_1") != null)
+                {
+                    player.transform.position = GameObject.Find("SpawnPoint_1").transform.position;
+                }
+                else
+                {
+                    player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+                }
+                break;
+            case 2:
+                if (GameObject.Find("SpawnPoint_2") != null)
+                {
+                    player.transform.position = GameObject.Find("SpawnPoint_2").transform.position;
+                }
+                else
+                {
+                    player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+                }
+                break;
+        }
     }
 
     public void NewDay()

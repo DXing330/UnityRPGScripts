@@ -39,22 +39,6 @@ public class SaveDataManager
     public void LoadGameData()
     {
         /*
-        if (!PlayerPrefs.HasKey("SaveState"))
-            return;
-        Debug.Log("Loaded");
-        string[] data = PlayerPrefs.GetString("SaveState").Split('|');
-        
-        player.SetLevel(int.Parse(data[0]));
-        coins = int.Parse(data[1]);
-        experience = int.Parse(data[2]);
-        if (experience < 0)
-        {
-            experience = 0;
-        }
-        weapon.UpdateWeaponLevel(int.Parse(data[3]));
-        familiar.SetLevel(int.Parse(data[4]));
-        mana_crystals = int.Parse(data[5]);
-        */
         if (File.Exists("Assets/Saves/save_data.json"))
         {
             string save_data = File.ReadAllText("Assets/Saves/save_data.json");
@@ -66,7 +50,7 @@ public class SaveDataManager
         else
         {
             Debug.LogWarning("Data file not found!");
-        }
+        }*/
     }
 }
 
@@ -79,7 +63,8 @@ public class SaveDataWrapper
     public int experience;
     public int current_day;
     public int danger_level;
-    public string random_stuff;
+    public int weapon_type;
+    public string weapon_levels;
 
     public void UpdateData()
     {
@@ -87,6 +72,8 @@ public class SaveDataWrapper
         player_health = GameManager.instance.player.health;
         player_mana = GameManager.instance.player.current_mana;
         weapon_level = GameManager.instance.weapon.weaponLevel;
+        weapon_type = GameManager.instance.weapon.weapon_type;
+        weapon_levels = GameManager.instance.weapon.weapon_levels;
         experience = GameManager.instance.experience;
         current_day = GameManager.instance.current_day;
         danger_level = GameManager.instance.danger_level;

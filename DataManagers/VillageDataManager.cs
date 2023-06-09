@@ -30,6 +30,7 @@ public class VillageDataManager : MonoBehaviour
     // Need to make a skill tree.
     public List<string> village_skills;
     protected Village current_village;
+    public int current_village_buildings;
 
     protected void Start()
     {
@@ -261,4 +262,5 @@ public class VillageDataManager : MonoBehaviour
         }
         return false;
     }
+
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuManagerVillages : MonoBehaviour
@@ -144,5 +145,14 @@ public class MenuManagerVillages : MonoBehaviour
     {
         village.UpdateVillage();
         UpdateVillageInformation();
+    }
+
+    public void VisitArea()
+    {
+        if (selected_area >= 0)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(village.surroundings[selected_area]);
+            GameManager.instance.hud.Unfade();
+        }
     }
 }

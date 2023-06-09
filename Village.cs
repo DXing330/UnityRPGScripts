@@ -243,7 +243,6 @@ public class Village : MonoBehaviour
 
     }
 
-
     public void UpdateVillage()
     {
         current_day = GameManager.instance.current_day;
@@ -298,6 +297,7 @@ public class Village : MonoBehaviour
             Save();
         }
     }
+
     protected void AssignToBuilding(int index)
     {
         int limit = villagebuilding.DetermineWorkerLimit(buildings[index]);
@@ -348,6 +348,20 @@ public class Village : MonoBehaviour
         {
             AssignToBuilding(index);
         }
+    }
+
+    public void CountBuildings()
+    {
+        int count = 0;
+        for (int i = 0; i < surroundings.Count; i++)
+        {
+            // If you've built something then it's different from the original surrounding terrain.
+            if (surroundings[i] != buildings[i])
+            {
+                count++;
+            }
+        }
+        GameManager.instance.villages.current_village_buildings = count;
     }
 
     protected void GetBuildingProducts()

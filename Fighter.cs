@@ -85,7 +85,11 @@ public class Fighter : MonoBehaviour
         // Universal Damage Reduction will never be 100%.
         float reduction_percentage = reduction_float/(50 + reduction_float);
         damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1.0f - reduction_percentage));
-        float resistance_float = resistances.CheckResistance(damage.damage_type);
+        float resistance_float = 0f;
+        if (resistances != null)
+        {
+            resistance_float = resistances.CheckResistance(damage.damage_type);
+        }
         float resistance_percentage = resistance_float/100;
         damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1-resistance_percentage));
         if (damage.damage_amount < 1)
