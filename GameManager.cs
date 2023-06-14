@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
+
     public void EatMana()
     {
         Debug.Log("Eating Mana");

@@ -36,7 +36,8 @@ public class Fighter : MonoBehaviour
     // All fighters can take damage and die.
     protected virtual void ReceiveDamage(Damage damage)
     {
-        if (Time.time - last_i_frame > i_frames)
+        // Check for i_frames and damage.
+        if (Time.time - last_i_frame > i_frames && damage.damage_amount > 0)
         {
             last_i_frame = Time.time;
             if (CheckDodge(damage))

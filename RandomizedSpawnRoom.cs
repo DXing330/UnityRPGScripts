@@ -13,7 +13,7 @@ public class RandomizedSpawnRoom : MonoBehaviour
     public bool ranged;
     public bool limited_use = false;
     public float spawn_cooldown;
-    private int spawn_limit = 1;
+    public int spawn_limit = 1;
     private int current_spawns = 0;
     private float last_spawn;
     public ContactFilter2D filter;
@@ -39,20 +39,22 @@ public class RandomizedSpawnRoom : MonoBehaviour
         if (Time.time - last_spawn > spawn_cooldown)
         {
             last_spawn = Time.time;
+            Vector3 random_location =  Random.insideUnitSphere * 5;
+            random_location.z = 0;
             if (normal)
             {
                 spawn_index = Random.Range(0, spawnable_enemies.Count);
-                Enemy clone = Instantiate(spawnable_enemies[spawn_index], transform.position, new Quaternion(0, 0, 0, 0));
+                Enemy clone = Instantiate(spawnable_enemies[spawn_index], transform.position + random_location, new Quaternion(0, 0, 0, 0));
             }
             else if (animated)
             {
                 spawn_index = Random.Range(0, spawnable_a_enemies.Count);
-                EnemyAnimated clone = Instantiate(spawnable_a_enemies[spawn_index], transform.position, new Quaternion(0, 0, 0, 0));   
+                EnemyAnimated clone = Instantiate(spawnable_a_enemies[spawn_index], transform.position + random_location, new Quaternion(0, 0, 0, 0));   
             }
             else if (ranged)
             {
                 spawn_index = Random.Range(0, spawnable_r_enemies.Count);
-                EnemyRanged clone = Instantiate(spawnable_r_enemies[spawn_index], transform.position, new Quaternion(0, 0, 0, 0));   
+                EnemyRanged clone = Instantiate(spawnable_r_enemies[spawn_index], transform.position + random_location, new Quaternion(0, 0, 0, 0));   
             }
             if (limited_use)
             {

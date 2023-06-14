@@ -99,25 +99,13 @@ public class FamiliarStatsWrapper
 {
     public int level;
     public int exp;
-    public int bonus_speed;
-    public int heal_threshold_increase;
-    public int bonus_damage;
-    public int bonus_push_force;
-    public int bonus_heal;
     public int current_blood;
-    public int max_blood;
 
     public void UpdateData()
     {
         level = GameManager.instance.familiar.level;
         exp = GameManager.instance.familiar.exp;
-        bonus_speed = GameManager.instance.familiar.bonus_rotate_speed;
-        heal_threshold_increase = GameManager.instance.familiar.heal_threshold_increase;
-        bonus_damage = GameManager.instance.familiar.bonus_damage;
-        bonus_push_force = GameManager.instance.familiar.bonus_push_force;
-        bonus_heal = GameManager.instance.familiar.bonus_heal;
         current_blood = GameManager.instance.familiar.current_blood;
-        max_blood = GameManager.instance.familiar.max_blood;
     }
 }
 

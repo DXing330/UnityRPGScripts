@@ -25,13 +25,12 @@ public class Familiar : MonoBehaviour
     private float hit_cooldown = 0.66f;
     private float last_hit;
     // Customizable stats that the player can put stat points into whenever the familiar levels up.
-    public int upgrade_cost = 1;
-    public int bonus_rotate_speed = 0;
-    public float bonus_rotate_speed_float = 0;
-    public int heal_threshold_increase = 0;
-    public int bonus_damage = 0;
-    public int bonus_push_force = 0;
-    public int bonus_heal = 0;
+    private int bonus_rotate_speed = 0;
+    private float bonus_rotate_speed_float = 0;
+    private int heal_threshold_increase = 0;
+    private int bonus_damage = 0;
+    private int bonus_push_force = 0;
+    private int bonus_heal = 0;
     public int current_blood = 0;
     public int max_blood = 0;
     // Stats where the player feeds mana and the familiar levels up.
@@ -95,6 +94,7 @@ public class Familiar : MonoBehaviour
             }
         }
     }
+
     protected void HealMaster()
     {
         if (current_blood >= bonus_heal+1)
@@ -115,7 +115,7 @@ public class Familiar : MonoBehaviour
         if (coll.tag == "Enemy" && Time.time - last_hit > hit_cooldown)
         {
             last_hit = Time.time;
-            // Make a damage object and send it to the player.
+            // Make a damage object and send it over.
             Damage damage = new Damage
             {
                 damage_amount = 1 + bonus_damage,
@@ -127,6 +127,7 @@ public class Familiar : MonoBehaviour
             if (laugh == 0)
             {
                 GameManager.instance.ShowText("Hehe, Fresh Blood.", 15, Color.red, transform.position, Vector3.up*25, 0.66f);
+                RefillBloodBank(level);
             }
         }
     }
@@ -157,12 +158,21 @@ public class Familiar : MonoBehaviour
 
     public void DrinkBlood()
     {
-        if (current_blood < max_blood)
-        {
-            current_blood = max_blood;
-        }
+        RefillBloodBank(max_blood);
         exp++;
         LevelUp();
+    }
+
+    protected void RefillBloodBank(int blood)
+    {
+        if (current_blood < max_blood)
+        {
+            current_blood += blood;
+            if (current_blood > max_blood)
+            {
+                current_blood = max_blood;
+            }
+        }
     }
 
     public void LevelUp()
@@ -180,5 +190,13 @@ public class Familiar : MonoBehaviour
             bonus_heal++;
             max_blood += 6;
         }
+    }
+
+    public string[] ReturnStats()
+    {
+        string stat_string = "";
+        stat_string += bonus_damage.ToString()+"|";
+        stat_string += bonus_heal.ToString();
+        return stat_string.Split("|");
     }
 }

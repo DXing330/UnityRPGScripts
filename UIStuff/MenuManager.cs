@@ -130,8 +130,9 @@ public class MenuManager : MonoBehaviour
 
     public void UpdateFamiliarMenu()
     {
-        familiar_damage.text =  (1 + GameManager.instance.familiar.bonus_damage).ToString();
-        familiar_heal.text = (1 + GameManager.instance.familiar.bonus_heal).ToString();
+        string[] familiar_stats = GameManager.instance.familiar.ReturnStats();
+        familiar_damage.text =  (1 + int.Parse(familiar_stats[0])).ToString();
+        familiar_heal.text = (1 + int.Parse(familiar_stats[1])).ToString();
         familiar_blood_bank.text = (GameManager.instance.familiar.current_blood).ToString()+" / "+(GameManager.instance.familiar.max_blood).ToString();
     }
 

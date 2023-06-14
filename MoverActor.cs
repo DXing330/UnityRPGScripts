@@ -49,6 +49,35 @@ public class MoverActor : Mover
         }
     }
 
+
+    protected virtual void FaceRight()
+    {
+        if (facing_right && horizontal_flip)
+        {
+            horizontal_flip = false;
+            transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+        }
+        else if (!facing_right && !horizontal_flip)
+        {
+            horizontal_flip = true;
+            transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+        }
+    }
+
+    protected virtual void FaceLeft()
+    {
+        if (facing_right && !horizontal_flip)
+        {
+            horizontal_flip = true;
+            transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+        }
+        else if (!facing_right && horizontal_flip)
+        {
+            horizontal_flip = false;
+            transform.localScale = new Vector3(transform.localScale.x*-1, transform.localScale.y, 0);
+        }
+    }
+
     protected virtual Vector3 PickDirection(int i)
     {
         switch (i)
@@ -56,21 +85,27 @@ public class MoverActor : Mover
             case 0:
                 return Vector3.up;
             case 1:
+                FaceRight();
                 return Vector3.right;
             case 2:
                 return Vector3.down;
             case 3:
+                FaceLeft();
                 return Vector3.left;
             case 4:
+                FaceRight();
                 dVector = new Vector3(0.5f,0.5f,0);
                 return dVector;
             case 5:
+                FaceLeft();
                 dVector = new Vector3(-0.5f,0.5f,0);
                 return dVector;
             case 6:
+                FaceLeft();
                 dVector = new Vector3(-0.5f,-0.5f,0);
                 return dVector;
             case 7:
+                FaceRight();
                 dVector = new Vector3(0.5f,-0.5f,0);
                 return dVector;
         }
@@ -222,6 +257,10 @@ public class MoverActor : Mover
 
     protected virtual void DetermineDrops()
     {
-        GameManager.instance.GainResource(drop_type,drop_value);
+        drop_value = Random.Range(0, drop_value+1);
+        if (drop_value > 0)
+        {
+            GameManager.instance.GainResource(drop_type,drop_value);
+        }
     }
 }

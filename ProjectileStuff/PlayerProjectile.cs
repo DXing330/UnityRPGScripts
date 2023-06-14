@@ -84,12 +84,12 @@ public class PlayerProjectile : Collideable
     public void SetStats(Familiar loaded_stats)
     {
         active = true;
-        bonus_damage = loaded_stats.bonus_damage;
-        bonus_speed = loaded_stats.bonus_rotate_speed;
-        bonus_speed_float = bonus_speed;
+        bonus_damage = loaded_stats.level;
+        bonus_speed = loaded_stats.level;
+        bonus_speed_float = bonus_speed * 1.0f;
         bonus_speed_float = bonus_speed_float/10;
-        bonus_weight = loaded_stats.bonus_push_force;
-        bonus_weight_float = bonus_weight;
+        bonus_weight = loaded_stats.level;
+        bonus_weight_float = bonus_weight * 1.0f;
         bonus_weight_float = bonus_weight_float/10;
         UpdateStats();
     }
