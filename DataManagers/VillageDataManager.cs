@@ -8,6 +8,7 @@ using UnityEngine;
 public class VillageDataManager : MonoBehaviour
 {
     public OverworldTilesDataManager tiles;
+    public VillageTradingManager trading;
     public int total_villages;
     public string next_research = "None";
     public int research_cost;
@@ -61,6 +62,7 @@ public class VillageDataManager : MonoBehaviour
         village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString()+"|"+collected_blood.ToString();
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
         tiles.SaveData();
+        trading.SaveData();
     }
 
     public void LoadData()
@@ -85,11 +87,11 @@ public class VillageDataManager : MonoBehaviour
         }
         if (File.Exists("Assets/Saves/Villages/overworld_data.txt"))
         {
-            loaded_data = File.ReadAllText("Assets/Saves/Villages/overworld_data.txt");
-            string[] loaded_data_blocks = loaded_data.Split("||");
-            tiles.tile_type = loaded_data_blocks[0].Split("|").ToList();
-            tiles.tile_owner = loaded_data_blocks[1].Split("|").ToList();
-            tiles.tiles_explored = loaded_data_blocks[2].Split("|").ToList();
+            tiles.LoadData();
+        }
+        if (File.Exists("Assets/Saves/Villages/trade_data.txt"))
+        {
+            trading.LoadData();
         }
     }
 
@@ -109,16 +111,7 @@ public class VillageDataManager : MonoBehaviour
 
     public string ConvertListToString(List<string> string_list)
     {
-        string returned = "";
-        for (int i = 0; i < string_list.Count; i++)
-        {
-            returned += string_list[i];
-            if (i < string_list.Count-1)
-            {
-                returned += "|";
-            }
-        }
-        return returned;
+        return GameManager.instance.ConvertListToString(string_list);
     }
 
     protected string ConvertVillageToString(Village village)
@@ -143,7 +136,8 @@ public class VillageDataManager : MonoBehaviour
         village_data += ConvertListToString(village.buildings)+"||";
         village_data += ConvertListToString(village.assigned_buildings)+"||";
         village_data += ConvertListToString(village.technologies)+"||";
-        village_data += ConvertListToString(village.problems);
+        village_data += ConvertListToString(village.events)+"||";;
+        village_data += ConvertListToString(village.event_durations);
         return village_data;
     }
 
@@ -169,7 +163,8 @@ public class VillageDataManager : MonoBehaviour
         village.buildings = village_data_blocks[3].Split("|").ToList();
         village.assigned_buildings = village_data_blocks[4].Split("|").ToList();
         village.technologies = village_data_blocks[5].Split("|").ToList();
-        village.problems = village_data_blocks[6].Split("|").ToList();
+        village.events = village_data_blocks[6].Split("|").ToList();
+        village.event_durations = village_data_blocks[7].Split("|").ToList();
     }
 
     public void SaveVillage(Village village)

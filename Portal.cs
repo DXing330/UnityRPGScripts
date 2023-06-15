@@ -10,6 +10,9 @@ public class Portal : Collideable
     // Need some way to adjust weights.
     public bool randomportal = false;
     public bool conditionalportal = false;
+    public bool home = false;
+    public bool boss = false;
+    public int conditional_depth;
     // Going through a portal means you've cleared an area.
     // As you clear more areas the dungeon notices and tries to drive you out.
     //public int danger_increase = 0;
@@ -19,9 +22,20 @@ public class Portal : Collideable
     {
         if (coll.name == "Player")
         {
-            GameManager.instance.AdjustDepth(depth_increase);
             // Teleport the player.
             string sceneName = sceneNames[Random.Range(0, sceneNames.Length)];
+            if (conditionalportal)
+            {
+                if (GameManager.instance.current_depth <= conditional_depth)
+                {
+                    sceneName = "Main";
+                }
+                else
+                {
+                    sceneName = sceneNames[Random.Range(1, sceneNames.Length)];
+                }
+            }
+            GameManager.instance.AdjustDepth(depth_increase);
             // Autosave after clearing a dungeon or dying.
             if (sceneName == "Main")
             {

@@ -1,16 +1,33 @@
 using System.IO;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class OverworldTilesDataManager : MonoBehaviour
 {
+    public string loaded_data;
     public List<string> tile_type;
     public List<string> tile_owner;
     public List<string> tiles_explored;
     public List<string> tile_events;
+    public List<string> owned_tiles;
     public bool new_events = false;
     protected int grid_size = 9;
+
+    public void CountOwnedTiles()
+    {
+        if (owned_tiles.Count < 1)
+        {
+            for (int i = 0; i < tile_owner.Count; i++)
+            {
+                if (tile_owner[i] == "You")
+                {
+                    owned_tiles.Add(i.ToString());
+                }
+            }
+        }
+    }
 
     public void TrimEvents()
     {
@@ -35,12 +52,28 @@ public class OverworldTilesDataManager : MonoBehaviour
             ResetTiles();
         }
         string overworld_data = "";
-        overworld_data += GameManager.instance.villages.ConvertListToString(tile_type);
+        overworld_data += GameManager.instance.ConvertListToString(tile_type);
         overworld_data += "||";
-        overworld_data += GameManager.instance.villages.ConvertListToString(tile_owner);
+        overworld_data += GameManager.instance.ConvertListToString(tile_owner);
         overworld_data += "||";
-        overworld_data += GameManager.instance.villages.ConvertListToString(tiles_explored);
+        overworld_data += GameManager.instance.ConvertListToString(tiles_explored);
+        overworld_data += "||";
+        CountOwnedTiles();
+        overworld_data += GameManager.instance.ConvertListToString(owned_tiles);
         File.WriteAllText("Assets/Saves/Villages/overworld_data.txt", overworld_data);
+    }
+
+    public void LoadData()
+    {
+        if (File.Exists("Assets/Saves/Villages/overworld_data.txt"))
+        {
+            loaded_data = File.ReadAllText("Assets/Saves/Villages/overworld_data.txt");
+            string[] loaded_data_blocks = loaded_data.Split("||");
+            tile_type = loaded_data_blocks[0].Split("|").ToList();
+            tile_owner = loaded_data_blocks[1].Split("|").ToList();
+            tiles_explored = loaded_data_blocks[2].Split("|").ToList();
+            owned_tiles = loaded_data_blocks[3].Split("|").ToList();
+        }
     }
 
     protected void ResetTiles()
@@ -210,12 +243,19 @@ public class OverworldTilesDataManager : MonoBehaviour
     // Generate events on certain tiles, like mana surges or orc attacks.
     public void PassTime()
     {
+        int rng = 0;
+        // Traders appear randomly.
+        if (GameManager.instance.current_day%3 == 0)
+        {
+            rng = Random.Range(0, owned_tiles.Count);
+            int location_index = int.Parse(owned_tiles[rng]);
+            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+location_index.ToString());
+        }
         // Every month an orc encampment spawns nearby.
         if (GameManager.instance.current_day%28 == 0)
         {
             bool orcs = false;
             int index = 0;
-            int rng = 0;
             while (!orcs && index < (grid_size*grid_size))
             {
                 if (tiles_explored[index] == "Yes" && tile_owner[index] != "You")
@@ -225,7 +265,7 @@ public class OverworldTilesDataManager : MonoBehaviour
                     {
                         tile_owner[index] = "Orc";
                         orcs = true;
-                        AddEvent("Orcs appeared at zone "+index.ToString());
+                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+index.ToString());
                         break;
                     }
                     index++;
@@ -243,19 +283,19 @@ public class OverworldTilesDataManager : MonoBehaviour
             {
                 if ((i%9)+1 < 9 && tile_owner[i+1] == "You")
                 {
-                    AddEvent("Orcs attacking village "+(i+1).ToString());
+                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i+1).ToString());
                 }
                 else if ((i%9)-1 > 0 && tile_owner[i-1] == "You")
                 {
-                    AddEvent("Orcs attacking village "+(i-1).ToString());
+                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i-1).ToString());
                 }
                 else if ((i%9)+3 < 9 && tile_owner[i+3] == "You")
                 {
-                    AddEvent("Orcs attacking village "+(i+3).ToString());
+                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i+3).ToString());
                 }
                 else if ((i%9)-3 > 0 && tile_owner[i-3] == "You")
                 {
-                    AddEvent("Orcs attacking village "+(i-3).ToString());
+                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i-3).ToString());
                 }
             }
         }

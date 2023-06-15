@@ -57,7 +57,8 @@ public class Village : MonoBehaviour
     // Technology allows for more buildings and specialization.
     public List<string> technologies;
     // Various problems that afflict the village, ex. bandits, monsters, etc.
-    public List<string> problems;
+    public List<string> events;
+    public List<string> event_durations;
     public VillageBuilding villagebuilding;
     public VillageBuildingManager villagebuildingmanager;
 
@@ -383,6 +384,33 @@ public class Village : MonoBehaviour
         gathered_research += int.Parse(all_products[4]);
         gathered_gold += int.Parse(all_products[5]);
         gathered_mana += int.Parse(all_products[6]);
+    }
+
+    protected void PassTime()
+    {
+        int remaining_time = 0;
+        for (int i = 0; i < event_durations.Count; i++)
+        {
+            remaining_time = int.Parse(event_durations[i]);
+            if (remaining_time > 0)
+            {
+                remaining_time--;
+                event_durations[i] = remaining_time.ToString();
+            }
+            else if (remaining_time == 0)
+            {
+                // Might need to change this later if the ordering gets messed up.
+                event_durations.RemoveAt(i);
+                events.RemoveAt(i);
+            }
+        }
+    }
+
+    public void AddEvent(string event_and_duration)
+    {
+        string[] ev_and_time = event_and_duration.Split("|");
+        events.Add(ev_and_time[0]);
+        event_durations.Add(ev_and_time[1]);
     }
 
     public void OrcAttack()

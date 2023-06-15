@@ -26,11 +26,17 @@ public class RandomizedSpawnRoom : MonoBehaviour
     {
         spawn_zone = GetComponent<BoxCollider2D>();
         last_check = -check_cooldown;
+        AdjustSpawnLimit(GameManager.instance.current_depth);
     }
 
     protected virtual void AdjustSpawnLimit(int new_limit)
     {
-        spawn_limit = new_limit;
+        if (new_limit < 1)
+        {
+            new_limit = 1;
+        }
+        int limit = Random.Range(1, new_limit);
+        spawn_limit = limit;
         limited_use = true;
     }
     

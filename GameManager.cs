@@ -50,6 +50,20 @@ public class GameManager : MonoBehaviour
     public int current_depth;
     public int current_max_depth;
 
+    public string ConvertListToString(List<string> string_list)
+    {
+        string returned = "";
+        for (int i = 0; i < string_list.Count; i++)
+        {
+            returned += string_list[i];
+            if (i < string_list.Count-1)
+            {
+                returned += "|";
+            }
+        }
+        return returned;
+    }
+
     // Floating text.
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
     {
