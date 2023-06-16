@@ -24,6 +24,7 @@ public class MenuManagerVillages : MonoBehaviour
     protected void Start()
     {
         villagedatamanager = GameManager.instance.villages;
+        village = GameManager.instance.villages.current_village;
         total_villages = villagedatamanager.total_villages;
     }
 
@@ -154,5 +155,9 @@ public class MenuManagerVillages : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene(village.surroundings[selected_area]);
             GameManager.instance.hud.Unfade();
         }
+    }
+
+    public void VisitTraders()
+    {
     }
 }

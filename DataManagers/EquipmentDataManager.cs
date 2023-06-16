@@ -43,7 +43,7 @@ public class EquipmentDataManager : MonoBehaviour
             equipment_string += all_equipment_stats[i];
             if (i <all_equipment_stats.Count - 1)
             {
-                equipment_string += "||";
+                equipment_string += "#";
             }
         }
         File.WriteAllText("Assets/Saves/EquipmentData/equip_string.txt", equipment_string);
@@ -60,7 +60,7 @@ public class EquipmentDataManager : MonoBehaviour
         if (File.Exists("Assets/Saves/EquipmentData/equip_string.txt"))
         {
             string loaded_equip_string = File.ReadAllText("Assets/Saves/EquipmentData/equip_string.txt");
-            string[] loaded_equip_stats = loaded_equip_string.Split("||");
+            string[] loaded_equip_stats = loaded_equip_string.Split("#");
             if (loaded_equip_stats.Length > 0)
             {
                 for (int i = 0; i < loaded_equip_stats.Length; i++)

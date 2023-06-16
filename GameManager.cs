@@ -345,11 +345,13 @@ public class GameManager : MonoBehaviour
     public void NewDay()
     {
         current_day++;
+        villages.tiles.PassTime();
     }
 
     public void NewWeek()
     {
         current_day += 7;
+        villages.tiles.PassTime();
     }
 
     public void ResetDepth()

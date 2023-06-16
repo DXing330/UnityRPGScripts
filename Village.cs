@@ -254,6 +254,7 @@ public class Village : MonoBehaviour
                 DetermineVillageStats();
             }
             last_update_day++;
+            PassTime();
         }
         Save();
     }
@@ -408,9 +409,19 @@ public class Village : MonoBehaviour
 
     public void AddEvent(string event_and_duration)
     {
+        string new_string = "";
         string[] ev_and_time = event_and_duration.Split("|");
-        events.Add(ev_and_time[0]);
-        event_durations.Add(ev_and_time[1]);
+        new_string = ev_and_time[0];
+        events.Add(new_string);
+        Debug.Log(events[0].ToString());
+        new_string = ev_and_time[1];
+        event_durations.Add(new_string);
+        Debug.Log(event_durations[0].ToString());
+    }
+
+    public bool CheckEvent(string event_to_check)
+    {
+        return events.Contains(event_to_check);
     }
 
     public void OrcAttack()

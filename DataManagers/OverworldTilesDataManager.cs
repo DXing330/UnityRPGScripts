@@ -14,6 +14,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> owned_tiles;
     public bool new_events = false;
     protected int grid_size = 9;
+    public Village village_to_add_events;
 
     public void CountOwnedTiles()
     {
@@ -32,7 +33,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public void TrimEvents()
     {
         // Keep track of a year's worth or so.
-        while (tile_events.Count > 12)
+        while (tile_events.Count > 28)
         {
             // Remove old news.
             tile_events.RemoveAt(0);
@@ -53,13 +54,15 @@ public class OverworldTilesDataManager : MonoBehaviour
         }
         string overworld_data = "";
         overworld_data += GameManager.instance.ConvertListToString(tile_type);
-        overworld_data += "||";
+        overworld_data += "#";
         overworld_data += GameManager.instance.ConvertListToString(tile_owner);
-        overworld_data += "||";
+        overworld_data += "#";
         overworld_data += GameManager.instance.ConvertListToString(tiles_explored);
-        overworld_data += "||";
+        overworld_data += "#";
         CountOwnedTiles();
         overworld_data += GameManager.instance.ConvertListToString(owned_tiles);
+        overworld_data += "#";
+        overworld_data += GameManager.instance.ConvertListToString(tile_events);
         File.WriteAllText("Assets/Saves/Villages/overworld_data.txt", overworld_data);
     }
 
@@ -68,11 +71,12 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (File.Exists("Assets/Saves/Villages/overworld_data.txt"))
         {
             loaded_data = File.ReadAllText("Assets/Saves/Villages/overworld_data.txt");
-            string[] loaded_data_blocks = loaded_data.Split("||");
+            string[] loaded_data_blocks = loaded_data.Split("#");
             tile_type = loaded_data_blocks[0].Split("|").ToList();
             tile_owner = loaded_data_blocks[1].Split("|").ToList();
             tiles_explored = loaded_data_blocks[2].Split("|").ToList();
             owned_tiles = loaded_data_blocks[3].Split("|").ToList();
+            tile_events = loaded_data_blocks[4].Split("|").ToList();
         }
     }
 
@@ -250,6 +254,9 @@ public class OverworldTilesDataManager : MonoBehaviour
             rng = Random.Range(0, owned_tiles.Count);
             int location_index = int.Parse(owned_tiles[rng]);
             AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+location_index.ToString());
+            village_to_add_events.Load(location_index);
+            village_to_add_events.AddEvent("traders|3");
+            village_to_add_events.Save();
         }
         // Every month an orc encampment spawns nearby.
         if (GameManager.instance.current_day%28 == 0)

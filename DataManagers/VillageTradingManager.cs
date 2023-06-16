@@ -96,11 +96,14 @@ public class VillageTradingManager : MonoBehaviour
 
     public void GenerateSupplyandPrice()
     {
-        if (GameManager.instance.current_day > last_visited_day)
+        if (GameManager.instance.villages.current_village.CheckEvent("traders"))
         {
-            last_visited_day = GameManager.instance.current_day;
-            GenerateSupply();
-            GeneratePrices();
+            if (GameManager.instance.current_day > last_visited_day)
+            {
+                last_visited_day = GameManager.instance.current_day;
+                GenerateSupply();
+                GeneratePrices();
+            }
         }
     }
 
@@ -119,9 +122,9 @@ public class VillageTradingManager : MonoBehaviour
         food_price_buy = Math.Max(1, ((food_demand/food_supply) - 1));
         mats_price_buy = Math.Max(1, ((mats_demand/mats_supply) - 1));
         mana_price_buy = (Math.Max(1, ((mana_demand/Math.Max(1, mana_supply)) - 1)))*mana_premium;
-        food_price_sell = (food_demand/food_supply) + 1;
-        mats_price_sell = (mats_demand/mats_supply) + 1;
-        mana_price_sell = ((mana_demand/Math.Max(1, mana_supply)) + 1)*mana_premium;
+        food_price_sell = Math.Max(2, (food_demand/food_supply) + 1);
+        mats_price_sell = Math.Max(2, (mats_demand/mats_supply) + 1);
+        mana_price_sell = Math.Max(2, ((mana_demand/Math.Max(1, mana_supply)) + 1))*mana_premium;
     }
 
     // When buying and sell, need to check price, adjust supply.
@@ -134,6 +137,7 @@ public class VillageTradingManager : MonoBehaviour
                 {
                     GameManager.instance.villages.collected_food++;
                     GameManager.instance.villages.collected_gold -= food_price_sell;
+                    gold_supply += food_price_sell;
                     food_demand++;
                     food_supply--;
                     reputation++;
@@ -144,6 +148,7 @@ public class VillageTradingManager : MonoBehaviour
                 {
                     GameManager.instance.villages.collected_materials++;
                     GameManager.instance.villages.collected_gold -= mats_price_sell;
+                    gold_supply += mats_price_sell;
                     mats_demand++;
                     mats_supply--;
                     reputation++;
@@ -154,6 +159,7 @@ public class VillageTradingManager : MonoBehaviour
                 {
                     GameManager.instance.villages.collected_mana++;
                     GameManager.instance.villages.collected_gold -= mana_price_sell;
+                    gold_supply += mana_price_sell;
                     mats_demand++;
                     mana_supply--;
                     reputation++;
@@ -168,30 +174,33 @@ public class VillageTradingManager : MonoBehaviour
         switch (product)
         {
             case "food":
-                if (GameManager.instance.villages.collected_food > 0)
+                if (GameManager.instance.villages.collected_food > 0 && gold_supply >= food_price_buy)
                 {
                     GameManager.instance.villages.collected_food--;
                     GameManager.instance.villages.collected_gold += food_price_buy;
+                    gold_supply -= food_price_buy;
                     food_demand--;
                     food_supply++;
                     reputation++;
                 }
                 break;
             case "mats":
-                if (GameManager.instance.villages.collected_materials > 0)
+                if (GameManager.instance.villages.collected_materials > 0 && gold_supply >= mats_price_buy)
                 {
                     GameManager.instance.villages.collected_materials--;
                     GameManager.instance.villages.collected_gold += mats_price_buy;
+                    gold_supply -= mats_price_buy;
                     mats_demand--;
                     mats_supply++;
                     reputation++;
                 }
                 break;
             case "mana":
-                if (GameManager.instance.villages.collected_mana > 0)
+                if (GameManager.instance.villages.collected_mana > 0 && gold_supply >= mana_price_buy)
                 {
                     GameManager.instance.villages.collected_mana--;
                     GameManager.instance.villages.collected_gold += mana_price_buy;
+                    gold_supply -= mana_price_buy;
                     mana_demand--;
                     mana_supply++;
                     reputation++;

@@ -30,13 +30,8 @@ public class VillageDataManager : MonoBehaviour
     public List<string> learned_magic;
     // Need to make a skill tree.
     public List<string> village_skills;
-    protected Village current_village;
+    public Village current_village;
     public int current_village_buildings;
-
-    protected void Start()
-    {
-        current_village = GetComponent<Village>();
-    }
 
     public void SaveData()
     {
@@ -46,19 +41,19 @@ public class VillageDataManager : MonoBehaviour
         }
         string village_data = "";
         village_data += ConvertListToString(learned_tech);
-        village_data += "||";
+        village_data += "#";
         village_data += ConvertListToString(possible_buildings);
-        village_data += "||";
+        village_data += "#";
         village_data += ConvertListToString(learned_magic);
-        village_data += "||";
+        village_data += "#";
         village_data += ConvertListToString(village_skills);
-        village_data += "||";
+        village_data += "#";
         village_data += total_villages.ToString();
-        village_data += "||";
+        village_data += "#";
         village_data += next_research;
-        village_data += "||";
+        village_data += "#";
         village_data += research_cost.ToString();
-        village_data += "||";
+        village_data += "#";
         village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString()+"|"+collected_blood.ToString();
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
         tiles.SaveData();
@@ -130,20 +125,20 @@ public class VillageDataManager : MonoBehaviour
         village_data += village.accumulated_research.ToString()+"|";
         village_data += village.last_update_day.ToString()+"|";
         village_data += village.max_population.ToString();
-        village_data += "||";
-        village_data += ConvertListToString(village.connected_villages)+"||";
-        village_data += ConvertListToString(village.surroundings)+"||";
-        village_data += ConvertListToString(village.buildings)+"||";
-        village_data += ConvertListToString(village.assigned_buildings)+"||";
-        village_data += ConvertListToString(village.technologies)+"||";
-        village_data += ConvertListToString(village.events)+"||";;
+        village_data += "#";
+        village_data += ConvertListToString(village.connected_villages)+"#";
+        village_data += ConvertListToString(village.surroundings)+"#";
+        village_data += ConvertListToString(village.buildings)+"#";
+        village_data += ConvertListToString(village.assigned_buildings)+"#";
+        village_data += ConvertListToString(village.technologies)+"#";
+        village_data += ConvertListToString(village.events)+"#";;
         village_data += ConvertListToString(village.event_durations);
         return village_data;
     }
 
     protected void ConvertStringToVillage(Village village, string village_data)
     {
-        string[] village_data_blocks = village_data.Split("||");
+        string[] village_data_blocks = village_data.Split("#");
         string[] village_int_data = village_data_blocks[0].Split("|");
         village.village_number = int.Parse(village_int_data[0]);
         village.population = int.Parse(village_int_data[1]);
