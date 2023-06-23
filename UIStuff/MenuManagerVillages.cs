@@ -152,7 +152,8 @@ public class MenuManagerVillages : MonoBehaviour
     {
         if (selected_area >= 0)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(village.surroundings[selected_area]);
+            GameManager.instance.villages.events.UpdateArea(village.surroundings[selected_area]);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("plains");
             GameManager.instance.hud.Unfade();
         }
     }

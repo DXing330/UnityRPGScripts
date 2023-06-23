@@ -405,6 +405,14 @@ public class Village : MonoBehaviour
                 events.RemoveAt(i);
             }
         }
+        if (events.Contains("goblins") || events.Contains("bandits"))
+        {
+            int rng = Random.Range(0, 6);
+            if (rng == 0)
+            {
+                Robbed();
+            }
+        }
     }
 
     public void AddEvent(string event_and_duration)
@@ -422,6 +430,31 @@ public class Village : MonoBehaviour
     public bool CheckEvent(string event_to_check)
     {
         return events.Contains(event_to_check);
+    }
+
+    protected void Robbed()
+    {
+        if (accumulated_gold > 0)
+        {
+            accumulated_gold--;
+            discontentment++;
+        }
+        if (food_supply > 0)
+        {
+            food_supply--;
+            discontentment++;
+        }
+        if (accumulated_materials > 0)
+        {
+            accumulated_materials--;
+            discontentment++;
+        }
+        if (accumulated_mana > 0)
+        {
+            accumulated_mana--;
+            discontentment++;
+        }
+        discontentment++;
     }
 
     public void OrcAttack()

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class MenuManagerVillageTrading : MonoBehaviour
 {
+    public Text traders_status;
     public Text selected_product;
     public Text buy_price;
     public Text sell_price;
@@ -14,6 +15,7 @@ public class MenuManagerVillageTrading : MonoBehaviour
     public Text your_supply;
     protected string selected_good = "none";
     protected string[] supply_data;
+    protected bool traders_arrived = false;
     public VillageTradingManager village_trader;
 
     public void Start()
@@ -23,7 +25,11 @@ public class MenuManagerVillageTrading : MonoBehaviour
 
     public void UpdateTradingDetails()
     {
-        village_trader.GenerateSupplyandPrice();
+        traders_arrived = village_trader.GenerateSupplyandPrice();
+        if (!traders_arrived)
+        {
+            traders_status.text = "No Traders Currently";
+        }
         your_gold.text = GameManager.instance.villages.collected_gold.ToString();
         supply_data = village_trader.ReturnSupplyPriceData();
         current_gold_supply.text = supply_data[0];

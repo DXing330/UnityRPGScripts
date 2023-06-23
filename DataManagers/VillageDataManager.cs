@@ -9,6 +9,7 @@ public class VillageDataManager : MonoBehaviour
 {
     public OverworldTilesDataManager tiles;
     public VillageTradingManager trading;
+    public EventBoolManager events;
     public int total_villages;
     public string next_research = "None";
     public int research_cost;
@@ -65,7 +66,7 @@ public class VillageDataManager : MonoBehaviour
         if (File.Exists("Assets/Saves/Villages/village_data.txt"))
         {
             loaded_data = File.ReadAllText("Assets/Saves/Villages/village_data.txt");
-            string[] loaded_data_blocks = loaded_data.Split("||");
+            string[] loaded_data_blocks = loaded_data.Split("#");
             learned_tech = loaded_data_blocks[0].Split("|").ToList();
             possible_buildings = loaded_data_blocks[1].Split("|").ToList();
             learned_magic = loaded_data_blocks[2].Split("|").ToList();

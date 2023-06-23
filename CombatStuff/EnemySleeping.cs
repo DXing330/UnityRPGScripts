@@ -24,6 +24,14 @@ public class EnemySleeping : Enemy
         {
             base.Update();
         }
+        if (dead)
+        {
+            if (Time.time - last_alive > corpse_linger_time)
+            {
+                DetermineDrops();
+                Destroy(gameObject);
+            }
+        }
     }
 
     protected override void ReceiveDamage(Damage damage)

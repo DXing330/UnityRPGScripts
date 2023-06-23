@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class RandomizedSpawnRoom : MonoBehaviour
 {
+    private bool active = false;
     public List<Enemy> spawnable_enemies;
+    public List<EnemySleeping> spawnable_s_enemies;
     public List<EnemyAnimated> spawnable_a_enemies;
     public List<EnemyRanged> spawnable_r_enemies;
     private int spawn_index;
     public bool normal;
+    public bool sleeping;
     public bool animated;
     public bool ranged;
     public bool limited_use = false;
     public float spawn_cooldown;
     public int spawn_limit = 1;
+    public int spawn_range = 5;
     private int current_spawns = 0;
     private float last_spawn;
     public ContactFilter2D filter;
@@ -22,7 +26,7 @@ public class RandomizedSpawnRoom : MonoBehaviour
     protected float check_cooldown = 6.0f;
     protected float last_check;
 
-    void Start()
+    protected virtual void Start()
     {
         spawn_zone = GetComponent<BoxCollider2D>();
         last_check = -check_cooldown;
@@ -45,12 +49,17 @@ public class RandomizedSpawnRoom : MonoBehaviour
         if (Time.time - last_spawn > spawn_cooldown)
         {
             last_spawn = Time.time;
-            Vector3 random_location =  Random.insideUnitSphere * 5;
+            Vector3 random_location = Random.insideUnitSphere * spawn_range;
             random_location.z = 0;
             if (normal)
             {
                 spawn_index = Random.Range(0, spawnable_enemies.Count);
                 Enemy clone = Instantiate(spawnable_enemies[spawn_index], transform.position + random_location, new Quaternion(0, 0, 0, 0));
+            }
+            else if (sleeping)
+            {
+                spawn_index = Random.Range(0, spawnable_s_enemies.Count);
+                EnemySleeping clone = Instantiate(spawnable_s_enemies[spawn_index], transform.position + random_location, new Quaternion(0, 0, 0, 0)); 
             }
             else if (animated)
             {
@@ -87,9 +96,9 @@ public class RandomizedSpawnRoom : MonoBehaviour
         }
     }
 
-    void Update()
+    protected virtual void Update()
     {
-        if (Time.time - last_check > check_cooldown)
+        if (active && Time.time - last_check > check_cooldown)
         {
             last_check = Time.time;
             current_spawns = 0;
@@ -110,5 +119,10 @@ public class RandomizedSpawnRoom : MonoBehaviour
                 Spawn();
             }
         }
+    }
+
+    public virtual void Activate()
+    {
+        active = true;
     }
 }

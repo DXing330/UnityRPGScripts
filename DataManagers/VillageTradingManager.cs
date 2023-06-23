@@ -94,7 +94,7 @@ public class VillageTradingManager : MonoBehaviour
         mana_price_sell = 999;
     }
 
-    public void GenerateSupplyandPrice()
+    public bool GenerateSupplyandPrice()
     {
         if (GameManager.instance.villages.current_village.CheckEvent("traders"))
         {
@@ -103,8 +103,10 @@ public class VillageTradingManager : MonoBehaviour
                 last_visited_day = GameManager.instance.current_day;
                 GenerateSupply();
                 GeneratePrices();
+                return true;
             }
         }
+        return false;
     }
 
     protected void GenerateSupply()
@@ -116,15 +118,15 @@ public class VillageTradingManager : MonoBehaviour
         mana_supply = UnityEngine.Random.Range(0, Math.Max(1, mana_demand));
     }
 
-    // Adjust prices after every buy/sell/trade.
+    // Adjust prices every visit.
     protected void GeneratePrices()
     {
-        food_price_buy = Math.Max(1, ((food_demand/food_supply) - 1));
-        mats_price_buy = Math.Max(1, ((mats_demand/mats_supply) - 1));
-        mana_price_buy = (Math.Max(1, ((mana_demand/Math.Max(1, mana_supply)) - 1)))*mana_premium;
-        food_price_sell = Math.Max(2, (food_demand/food_supply) + 1);
-        mats_price_sell = Math.Max(2, (mats_demand/mats_supply) + 1);
-        mana_price_sell = Math.Max(2, ((mana_demand/Math.Max(1, mana_supply)) + 1))*mana_premium;
+        food_price_buy = Math.Max(1, UnityEngine.Random.Range(0, food_demand)/UnityEngine.Random.Range(1, food_supply));
+        mats_price_buy = Math.Max(1, UnityEngine.Random.Range(0, mats_demand)/UnityEngine.Random.Range(1, mana_supply));
+        mana_price_buy = (Math.Max(1, UnityEngine.Random.Range(0, mana_demand)/UnityEngine.Random.Range(1, mana_supply)))*mana_premium;
+        food_price_sell = food_price_buy+1;
+        mats_price_sell = mats_price_buy+1;
+        mana_price_sell = mana_price_buy+1;
     }
 
     // When buying and sell, need to check price, adjust supply.

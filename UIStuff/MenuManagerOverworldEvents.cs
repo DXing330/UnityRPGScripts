@@ -48,7 +48,10 @@ public class MenuManagerOverworldEvents : MonoBehaviour
         event_3.text = "N/A";
         if (0 + page*4 < tiles.tile_events.Count)
         {
-            event_0.text = tiles.tile_events[0 + page*4];
+            if (tiles.tile_events[0 + page*4].Length > 6)
+            {
+                event_0.text = tiles.tile_events[0 + page*4];
+            }
         }
         if (1 + page*4 < tiles.tile_events.Count)
         {
