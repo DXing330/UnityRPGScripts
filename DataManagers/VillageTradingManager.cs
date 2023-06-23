@@ -96,6 +96,7 @@ public class VillageTradingManager : MonoBehaviour
 
     public bool GenerateSupplyandPrice()
     {
+        ResetSupply();
         if (GameManager.instance.villages.current_village.CheckEvent("traders"))
         {
             if (GameManager.instance.current_day > last_visited_day)

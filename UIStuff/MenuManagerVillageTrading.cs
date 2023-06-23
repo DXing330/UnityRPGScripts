@@ -71,7 +71,7 @@ public class MenuManagerVillageTrading : MonoBehaviour
 
     public void Buy()
     {
-        if (selected_good != "none")
+        if (selected_good != "none" && traders_arrived)
         {
             village_trader.Buy(selected_good);
         }
@@ -79,7 +79,7 @@ public class MenuManagerVillageTrading : MonoBehaviour
 
     public void Sell()
     {
-        if (selected_good != "none")
+        if (selected_good != "none" && traders_arrived)
         {
             village_trader.Sell(selected_good);
         }
@@ -87,7 +87,7 @@ public class MenuManagerVillageTrading : MonoBehaviour
 
     public void Steal()
     {
-        if (selected_good != "none")
+        if (selected_good != "none" && traders_arrived)
         {
             village_trader.Steal(selected_good);
         }

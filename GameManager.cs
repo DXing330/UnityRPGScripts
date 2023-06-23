@@ -21,20 +21,18 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Resources.
-    public int weaponPrice;
-    public int expLevelUp;
-    public int familiar_upgrade_cost_scaling;
 
-    // References
+    // Player Stuff.
     public Player player;
     public Weapon weapon;
     public Familiar familiar;
+    // Data Managers.
+    public StoryDataManager story;
     public SummonDataManager summons;
     public SpellDataManager spells;
     public VillageDataManager villages;
     public EquipmentDataManager all_equipment;
-    // UI Stuff
+    // UI Stuff.
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
     public HUD hud;
@@ -43,7 +41,7 @@ public class GameManager : MonoBehaviour
     public RectTransform manaBar;
     public Text manaText;
 
-    // Logic.
+    // Resources/Logic.
     public int experience;
     public int current_day;
     public int danger_level;
@@ -74,25 +72,6 @@ public class GameManager : MonoBehaviour
     public void ShowFixedText(string speaker, string speakers_words)
     {
         fixedTextManager.ShowText(speaker, speakers_words);
-    }
-
-    // Determine prices.
-    public int DeterminePrice(string thing)
-    {
-        int level = 1;
-        int price = 0;
-        int cost = 0;
-        if (thing == "weapon")
-        {
-            level = weapon.weaponLevel + 1;
-            price = weaponPrice;
-        }
-        else
-        {
-            // pass.
-        }
-        cost = price * level * level;
-        return cost;
     }
 
     public void PickWeaponType(int index)
@@ -266,7 +245,6 @@ public class GameManager : MonoBehaviour
             Directory.CreateDirectory("Assets/Saves/");
         }
         weapon.UpdateLevels();
-        Debug.Log(weapon.weapon_levels);
         SaveDataWrapper save_data = new SaveDataWrapper();
         save_data.UpdateData();
         string save_json = JsonUtility.ToJson(save_data, true);
@@ -276,6 +254,7 @@ public class GameManager : MonoBehaviour
         string familiar_stats_json = JsonUtility.ToJson(familiar_stats, true);
         File.WriteAllText("Assets/Saves/familiar_stats.json", familiar_stats_json);
         Debug.Log("Saved");
+        story.SaveData();
         summons.SaveData();
         spells.SaveData();
         all_equipment.SaveData();
@@ -308,6 +287,7 @@ public class GameManager : MonoBehaviour
         spells.LoadData();
         all_equipment.LoadData();
         villages.LoadData();
+        story.LoadData();
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)

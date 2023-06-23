@@ -70,5 +70,20 @@ public class MenuManagerOverworldEvents : MonoBehaviour
     public void UpdateInfo()
     {
         current_day.text = GameManager.instance.current_day.ToString();
+        UpdateQuota();
+    }
+
+    public void UpdateQuota()
+    {
+        string paydead = GameManager.instance.story.ReturnPaymentDeadline();
+        string[] paydead_info = paydead.Split("|");
+        quota.text = paydead_info[0];
+        deadline.text = paydead_info[1];
+    }
+
+    public void PayBlood()
+    {
+        GameManager.instance.story.PayBlood();
+        UpdateQuota();
     }
 }

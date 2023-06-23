@@ -71,6 +71,26 @@ public class Village : MonoBehaviour
     {
         village_number = ID;
         GameManager.instance.villages.LoadVillage(this);
+        AdjustLists();
+    }
+
+    protected void AdjustLists()
+    {
+        for (int i = 0; i < assigned_buildings.Count; i++)
+        {
+            if (assigned_buildings[i].Length <= 0)
+            {
+                assigned_buildings.RemoveAt(i);
+            }
+        }
+        for (int i = 0; i < events.Count; i++)
+        {
+            if (events[i].Length <= 1)
+            {
+                events.RemoveAt(i);
+                event_durations.RemoveAt(i);
+            }
+        }
     }
 
     public void RandomizeNewVillage(string base_surrounding = "plains")

@@ -78,6 +78,18 @@ public class OverworldTilesDataManager : MonoBehaviour
             owned_tiles = loaded_data_blocks[3].Split("|").ToList();
             tile_events = loaded_data_blocks[4].Split("|").ToList();
         }
+        AdjustLists();
+    }
+
+    protected void AdjustLists()
+    {
+        for (int i = 0; i < tile_events.Count; i++)
+        {
+            if (tile_events[i].Length <= 0)
+            {
+                tile_events.RemoveAt(i);
+            }
+        }
     }
 
     protected void ResetTiles()

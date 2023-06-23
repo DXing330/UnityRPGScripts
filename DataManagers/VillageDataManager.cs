@@ -132,7 +132,7 @@ public class VillageDataManager : MonoBehaviour
         village_data += ConvertListToString(village.buildings)+"#";
         village_data += ConvertListToString(village.assigned_buildings)+"#";
         village_data += ConvertListToString(village.technologies)+"#";
-        village_data += ConvertListToString(village.events)+"#";;
+        village_data += ConvertListToString(village.events)+"#";
         village_data += ConvertListToString(village.event_durations);
         return village_data;
     }
