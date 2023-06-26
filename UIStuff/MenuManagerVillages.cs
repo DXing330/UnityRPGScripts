@@ -15,6 +15,7 @@ public class MenuManagerVillages : MonoBehaviour
     public Text collected_gold;
     public Text collected_mana;
     public Text collected_blood;
+    public Text collected_settlers;
     public Animator animator;
     public Village village;
     protected int page = 0;
@@ -64,13 +65,13 @@ public class MenuManagerVillages : MonoBehaviour
         collected_gold.text = villagedatamanager.collected_gold.ToString();
         collected_mana.text = villagedatamanager.collected_mana.ToString();
         collected_blood.text = villagedatamanager.collected_blood.ToString();
+        collected_settlers.text = villagedatamanager.collected_settlers.ToString();
     }
 
     protected void UpdateVillageInformation()
     {
         villagepanel.UpdateVillageInformation();
     }
-
 
     public void SelectVillage()
     {
@@ -148,6 +149,12 @@ public class MenuManagerVillages : MonoBehaviour
         UpdateVillageInformation();
     }
 
+    public void PrepareSettlers()
+    {
+        village.PrepareSettlers();
+        UpdateVillageInformation();
+    }
+
     public void VisitArea()
     {
         if (selected_area >= 0)
@@ -156,9 +163,5 @@ public class MenuManagerVillages : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene("plains");
             GameManager.instance.hud.Unfade();
         }
-    }
-
-    public void VisitTraders()
-    {
     }
 }

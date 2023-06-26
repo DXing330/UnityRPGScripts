@@ -133,18 +133,32 @@ public class Village : MonoBehaviour
         }
     }
 
+    // Takes a lot of people to prepare settlers, most die during transport, you're using the castle to teleport them to the new village.
+    public void PrepareSettlers()
+    {
+        // Need at least three people, two to go, one to stay.
+        if (population >= 3)
+        {
+            population -= 2;
+            GameManager.instance.villages.collected_settlers++;
+            fear++;
+            discontentment++;
+        }
+    }
+
     // If there's enough food, more people are made, otherwise people die/leave.
     protected void PopulationChange()
     {
         // Population adjusts every month based on food supply.
         if (last_update_day%28==0)
         {
-            if (food_supply > population)
+            if (food_supply >= population)
             {
                 if (population < max_population)
                 {
                     population++;
                     food_supply--;
+                    GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has gained population.");
                 }
             }
             else if (food_supply < population)
@@ -152,11 +166,14 @@ public class Village : MonoBehaviour
                 // Starving people don't stay long.
                 population = food_supply;
                 discontentment++;
+                GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has lost population due to lack of food.");
             }
         }
         // If there are not enough people to work.
         while (population < assigned_buildings.Count)
         {
+            Debug.Log(population);
+            Debug.Log(assigned_buildings.Count);
             assigned_buildings.RemoveAt(assigned_buildings.Count - 1);
         }
     }
@@ -259,11 +276,6 @@ public class Village : MonoBehaviour
         }
     }
 
-    public void Craft()
-    {
-
-    }
-
     public void UpdateVillage()
     {
         current_day = GameManager.instance.current_day;
@@ -285,6 +297,25 @@ public class Village : MonoBehaviour
         PopulationChange();
     }
 
+    protected void CheckVillageMood()
+    {
+        // Scared people run.
+        if (fear > population && population > 0)
+        {
+            fear -= population;
+            population--;
+            GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has people fleeing.");
+        }
+        // Angry people rebel.
+        if (discontentment > population && population > 0)
+        {
+            discontentment -= population;
+            population--;
+            AddEvent("bandits|-1");
+            GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has people turning to banditry.");
+        }
+    }
+
     protected void DetermineVillageStats()
     {
         // Reset gathered supply every day.
@@ -303,6 +334,7 @@ public class Village : MonoBehaviour
         accumulated_research += gathered_research * (education_level+1);
         accumulated_materials += gathered_production * (education_level+1);
         PayUpkeepCosts();
+        CheckVillageMood();
     }
 
     public void UpgradeVillageSize()
@@ -441,10 +473,8 @@ public class Village : MonoBehaviour
         string[] ev_and_time = event_and_duration.Split("|");
         new_string = ev_and_time[0];
         events.Add(new_string);
-        Debug.Log(events[0].ToString());
         new_string = ev_and_time[1];
         event_durations.Add(new_string);
-        Debug.Log(event_durations[0].ToString());
     }
 
     public bool CheckEvent(string event_to_check)

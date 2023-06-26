@@ -38,7 +38,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
         fear.text = village.estimated_fear.ToString();
         anger.text = village.estimated_discontment.ToString();
         gold.text = village.accumulated_gold.ToString();
-        mana.text = village.accumulated_gold.ToString();
+        mana.text = village.accumulated_mana.ToString();
         materials.text = village.accumulated_materials.ToString();
     }
 

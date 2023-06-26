@@ -17,6 +17,7 @@ public class Player : Mover
     public int max_stamina;
     public int current_stamina;
     protected int stamina_per_level = 10;
+    protected float distance_since_last_exhaust = 0;
     // Melee Attack.
     public Weapon player_weapon;
     public float attack_cooldown;
@@ -163,12 +164,27 @@ public class Player : Mover
         y += joy_y;
 
         UpdateMotor(new Vector3(x,y,0));
+        if (x*x > 0 || y*y > 0)
+        {
+            distance_since_last_exhaust += (Time.deltaTime*x*x);
+            distance_since_last_exhaust += (Time.deltaTime*y*y);
+            ExhaustionDistance();
+        }
         if (slowed)
         {
             if (Time.time - slow_start_time > slow_duration)
             {
                 ResetSpeed();
             }
+        }
+    }
+
+    private void ExhaustionDistance()
+    {
+        if (distance_since_last_exhaust > playerLevel)
+        {
+            distance_since_last_exhaust = 0;
+            PayStam(1);
         }
     }
 

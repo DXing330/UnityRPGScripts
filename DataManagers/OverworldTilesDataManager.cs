@@ -33,7 +33,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public void TrimEvents()
     {
         // Keep track of a year's worth or so.
-        while (tile_events.Count > 28)
+        while (tile_events.Count > 66)
         {
             // Remove old news.
             tile_events.RemoveAt(0);
@@ -229,6 +229,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (tiles_explored[tile_num] == "Yes" && tile_owner[tile_num] == "None")
         {
             tile_owner[tile_num] = "You";
+            owned_tiles.Add(tile_num.ToString());
         }
         GameManager.instance.villages.NewVillage(tile_type[tile_num], tile_num);
     }
@@ -260,6 +261,13 @@ public class OverworldTilesDataManager : MonoBehaviour
     public void PassTime()
     {
         int rng = 0;
+        // Update all villages you own every day.
+        for (int i = 0; i < owned_tiles.Count; i++)
+        {
+            int tile = int.Parse(owned_tiles[i]);
+            village_to_add_events.Load(tile);
+            village_to_add_events.UpdateVillage();
+        }
         // Traders appear randomly.
         if (GameManager.instance.current_day%3 == 0)
         {
@@ -270,24 +278,22 @@ public class OverworldTilesDataManager : MonoBehaviour
             village_to_add_events.AddEvent("traders|3");
             village_to_add_events.Save();
         }
-        // Every month an orc encampment spawns nearby.
+        // Every month an orc encampment may spawns nearby.
         if (GameManager.instance.current_day%28 == 0)
         {
-            bool orcs = false;
-            int index = 0;
-            while (!orcs && index < (grid_size*grid_size))
+            bool orc = false;
+            for (int i = 0; i < grid_size*grid_size; i++)
             {
-                if (tiles_explored[index] == "Yes" && tile_owner[index] != "You")
+                if (tiles_explored[i] == "Yes" && tile_owner[i] != "You" && !orc)
                 {
                     rng = Random.Range(0, 3);
                     if (rng >= 2)
                     {
-                        tile_owner[index] = "Orc";
-                        orcs = true;
-                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+index.ToString());
+                        orc = true;
+                        tile_owner[i] = "Orc";
+                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
                         break;
                     }
-                    index++;
                 }
             }
         }

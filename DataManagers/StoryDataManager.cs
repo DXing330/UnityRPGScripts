@@ -71,6 +71,7 @@ public class StoryDataManager : MonoBehaviour
         {
             current_payment--;
             GameManager.instance.villages.collected_blood--;
+            GameManager.instance.player.DrinkBlood();
         }
     }
 
@@ -101,7 +102,7 @@ public class StoryDataManager : MonoBehaviour
     protected void Success()
     {
         current_deadline += 90;
-        current_payment += 1;
+        current_payment += GameManager.instance.current_day/45;
         trust++;
         chapter_page++;
         if (chapter_page > story_chapter)
@@ -116,7 +117,7 @@ public class StoryDataManager : MonoBehaviour
     protected void Fail()
     {
         current_deadline += 90;
-        current_payment += current_payment;
+        current_payment += current_payment + GameManager.instance.current_day/45;
         trust--;
         if (trust <= 0)
         {

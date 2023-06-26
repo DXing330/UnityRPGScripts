@@ -256,6 +256,7 @@ public class GameManager : MonoBehaviour
         {
             danger_level = 0;
         }
+        bag.DropItems();
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         NewWeek();
         SaveState();
@@ -382,14 +383,17 @@ public class GameManager : MonoBehaviour
 
     public void NewWeek()
     {
-        current_day += 7;
-        villages.tiles.PassTime();
+        for (int i = 0; i < 7; i++)
+        {
+            NewDay();
+        }
     }
 
-    public void ResetDepth()
+    public void ReturnHome()
     {
         current_depth = 0;
         current_max_depth = 0;
+        bag.StoreItems();
     }
 
     public void AdjustDepth(int depth_change)

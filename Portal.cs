@@ -40,7 +40,7 @@ public class Portal : Collideable
             if (sceneName == "Main")
             {
                 // Reset depth counters when returning to main.
-                GameManager.instance.ResetDepth();
+                GameManager.instance.ReturnHome();
                 GameManager.instance.SaveState();
             }
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);

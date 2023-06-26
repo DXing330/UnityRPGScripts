@@ -23,6 +23,8 @@ public class VillageDataManager : MonoBehaviour
     public int collected_mana;
     // Blood can be used to heal and grants exp.
     public int collected_blood;
+    // Settlers are needed to claim new tiles and expand.
+    public int collected_settlers;
     protected string loaded_data;
     // Need to make a tech tree.
     public List<string> learned_tech;
@@ -55,7 +57,7 @@ public class VillageDataManager : MonoBehaviour
         village_data += "#";
         village_data += research_cost.ToString();
         village_data += "#";
-        village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString()+"|"+collected_blood.ToString();
+        village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString()+"|"+collected_blood.ToString()+"|"+collected_settlers.ToString();
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
         tiles.SaveData();
         trading.SaveData();
@@ -80,6 +82,7 @@ public class VillageDataManager : MonoBehaviour
             collected_gold = int.Parse(collected_taxes[2]);
             collected_mana = int.Parse(collected_taxes[3]);
             collected_blood = int.Parse(collected_taxes[4]);
+            collected_settlers = int.Parse(collected_taxes[5]);
         }
         if (File.Exists("Assets/Saves/Villages/overworld_data.txt"))
         {
@@ -229,7 +232,7 @@ public class VillageDataManager : MonoBehaviour
                     return true;
                 }
                 return false;
-            case "materials":
+            case "mats":
                 if (collected_materials > 0)
                 {
                     collected_materials--;
