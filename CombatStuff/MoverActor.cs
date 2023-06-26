@@ -37,6 +37,7 @@ public class MoverActor : Mover
 		agent.updateUpAxis = false;
         animator = GetComponent<Animator>();
         StartSpeed();
+        SpeedUpFromPlayerExhaustion();
     }
 
     protected virtual void RandomizeDirection()
@@ -117,6 +118,13 @@ public class MoverActor : Mover
         int random_speed_adjustment = Random.Range(-1, 1);
         float move_variance = (base_move_speed/10) * random_speed_adjustment;
         agent.speed = base_move_speed + move_variance;
+    }
+
+    protected virtual void SpeedUpFromPlayerExhaustion()
+    {
+        float exhaustion_ratio = 4*(1 - GameManager.instance.StaminaRatio());
+        float speed_multipler = (exhaustion_ratio*exhaustion_ratio)/16;
+        agent.speed += speed_multipler;
     }
 
     protected override void ResetSpeed()
@@ -260,7 +268,7 @@ public class MoverActor : Mover
         drop_value = Random.Range(0, drop_value+1);
         if (drop_value > 0)
         {
-            GameManager.instance.GainResource(drop_type,drop_value);
+            GameManager.instance.CollectResource(drop_type,drop_value);
         }
     }
 }

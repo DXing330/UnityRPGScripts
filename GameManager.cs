@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     // Player Stuff.
     public Player player;
+    public Bag bag;
     public Weapon weapon;
     public Familiar familiar;
     // Data Managers.
@@ -40,6 +41,8 @@ public class GameManager : MonoBehaviour
     public Text healthText;
     public RectTransform manaBar;
     public Text manaText;
+    public RectTransform stamBar;
+    public Text stamText;
 
     // Resources/Logic.
     public int experience;
@@ -117,6 +120,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void Sleep()
+    {
+        player.RecoverStamina();
+        NewDay();
+    }
+
     public void FeedFamiliarMana()
     {
         Debug.Log("Feeding Mana");
@@ -161,6 +170,36 @@ public class GameManager : MonoBehaviour
     }
 
     // 0:Blood,1:EXP,2:Mana,3:Gold,4:Food,5:Mats
+    public void CollectResource(int type, int amount)
+    {
+        switch (type)
+        {
+            case 0:
+                bag.blud += amount;
+                ShowText("+ "+amount+" blood crystals", 25, Color.red, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 1:
+                GrantExp(amount);
+                break;
+            case 2:
+                bag.mana += amount;
+                ShowText("+ "+amount+" mana crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 3:
+                bag.gold += amount;
+                ShowText("+ "+amount+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 4:
+                bag.food += amount;
+                ShowText("+ "+amount+" food", 20, Color.green, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+            case 5:
+                bag.mats += amount;
+                ShowText("+ "+amount+" materials", 20, Color.grey, player.transform.position, Vector3.up*25, 1.0f);
+                break;
+        }
+    }
+
     public void GainResource(int type, int amount)
     {
         switch (type)
@@ -237,6 +276,18 @@ public class GameManager : MonoBehaviour
         manaText.text = player.current_mana.ToString()+" / "+player.max_mana.ToString();
     }
 
+    public void OnStamChange()
+    {
+        float ratio = (float)player.current_stamina / (float)player.max_stamina;
+        stamBar.localScale = new Vector3(ratio, 1, 1);
+        stamText.text = (ratio * 100.0f).ToString() + "%";
+    }
+
+    public float StaminaRatio()
+    {
+        return (float)player.current_stamina / (float)player.max_stamina;
+    }
+
     // Saving and loading.
     public void SaveState()
     {
@@ -269,7 +320,8 @@ public class GameManager : MonoBehaviour
             string save_data = File.ReadAllText("Assets/Saves/save_data.json");
             SaveDataWrapper loaded_data = JsonUtility.FromJson<SaveDataWrapper>(save_data);
             player.SetLevel(loaded_data.player_level);
-            player.SetHealth(loaded_data.player_health);
+            player.SetHealth(loaded_data.player_hlth);
+            player.SetStam(loaded_data.player_stam);
             player.SetMana(loaded_data.player_mana);
             weapon.SetLevels(loaded_data.weapon_levels);
             weapon.SetType(loaded_data.weapon_type);

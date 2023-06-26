@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,9 @@ public class Player : Mover
     public int max_mana;
     public int current_mana;
     protected int mana_per_level = 6;
+    public int max_stamina;
+    public int current_stamina;
+    protected int stamina_per_level = 10;
     // Melee Attack.
     public Weapon player_weapon;
     public float attack_cooldown;
@@ -55,6 +59,7 @@ public class Player : Mover
         {
             last_attack = Time.time;
             player_weapon.Swing();
+            PayStam(1);
         }
     }
 
@@ -105,6 +110,7 @@ public class Player : Mover
         if (Time.time - last_dash > dash_cooldown)
         {
             PayHealth(1);
+            PayStam(1);
             if (PayMana(1))
             {
                 float x = Input.GetAxisRaw("Horizontal");
@@ -138,6 +144,7 @@ public class Player : Mover
             SwingWeapon();
         }
     }
+
     private void FixedUpdate()
     {
         float x = Input.GetAxisRaw("Horizontal");
@@ -183,8 +190,9 @@ public class Player : Mover
         {
             summon_limit = 1;
         }
-        SetMaxHealth();
+        SetMaxHlth();
         SetMaxMana();
+        SetMaxStam();
     }
 
     public void SetStats()
@@ -202,16 +210,22 @@ public class Player : Mover
         player_weapon.damage_multiplier = damage_multiplier;
     }
 
-    public void SetMaxHealth()
+    protected void SetMaxHlth()
     {
         max_health = (playerLevel-1) * health_per_level;
         max_health += 10;
     }
 
-    public void SetMaxMana()
+    protected void SetMaxMana()
     {
         max_mana = (playerLevel-1) * mana_per_level;
         max_mana += 10;
+    }
+
+    protected void SetMaxStam()
+    {
+        max_stamina = (playerLevel-1) * stamina_per_level;
+        max_stamina += 100;
     }
 
     public void SetHealth(int new_health)
@@ -224,6 +238,12 @@ public class Player : Mover
     {
         current_mana = new_mana;
         GameManager.instance.OnManaChange();
+    }
+
+    public void SetStam(int new_stam)
+    {
+        current_stamina = new_stam;
+        GameManager.instance.OnStamChange();
     }
 
     public void SetSummonIndex(int i)
@@ -263,6 +283,15 @@ public class Player : Mover
         return false;
     }
 
+    protected void PayStam(int cost)
+    {
+        if (current_stamina > 0)
+        {
+            current_stamina -= Math.Min(current_stamina, cost);
+            GameManager.instance.OnStamChange();
+        }
+    }
+
     public void EatMana()
     {
         current_mana += playerLevel;
@@ -277,6 +306,15 @@ public class Player : Mover
         if (health < max_health)
         {
             health = max_health;
+        }
+    }
+
+    public void RecoverStamina()
+    {
+        if (current_stamina < max_stamina)
+        {
+            current_stamina = max_stamina;
+            GameManager.instance.OnStamChange();
         }
     }
 

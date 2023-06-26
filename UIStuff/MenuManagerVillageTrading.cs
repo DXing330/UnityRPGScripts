@@ -25,6 +25,7 @@ public class MenuManagerVillageTrading : MonoBehaviour
 
     public void UpdateTradingDetails()
     {
+        traders_status.text = "";
         traders_arrived = village_trader.GenerateSupplyandPrice();
         if (!traders_arrived)
         {

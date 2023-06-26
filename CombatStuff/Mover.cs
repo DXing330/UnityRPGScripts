@@ -73,6 +73,7 @@ public abstract class Mover : Fighter
     protected virtual void UpdateMotor(Vector3 input)
     {
         // Normalize movement so diagonals aren't OP.
+        // Only normalize when going fast, so you have finer control.
         if (input.sqrMagnitude > 1)
         {
             input.Normalize();

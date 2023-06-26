@@ -12,7 +12,7 @@ public class EnemySleeping : Enemy
     protected override void Start()
     {
         base.Start();
-        int wake_rng = Random.Range(0, 3);
+        int wake_rng = Random.Range(0, 2);
         if (wake_rng != 0)
         {
             wakeable = false;

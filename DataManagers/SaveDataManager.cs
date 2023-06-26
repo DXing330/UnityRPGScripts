@@ -57,8 +57,9 @@ public class SaveDataManager
 public class SaveDataWrapper
 {
     public int player_level;
-    public int player_health;
+    public int player_hlth;
     public int player_mana;
+    public int player_stam;
     public int weapon_level;
     public int experience;
     public int current_day;
@@ -69,8 +70,9 @@ public class SaveDataWrapper
     public void UpdateData()
     {
         player_level = GameManager.instance.player.playerLevel;
-        player_health = GameManager.instance.player.health;
+        player_hlth = GameManager.instance.player.health;
         player_mana = GameManager.instance.player.current_mana;
+        player_stam = GameManager.instance.player.current_stamina;
         weapon_level = GameManager.instance.weapon.weaponLevel;
         weapon_type = GameManager.instance.weapon.weapon_type;
         weapon_levels = GameManager.instance.weapon.weapon_levels;
