@@ -33,6 +33,9 @@ public class MenuManagerOverworldTiles : MonoBehaviour
     protected bool inner_tiles = false;
     public int visited_area = -1;
     public int visited_tile = -1;
+    // Action that lets you clear out hostile areas.
+    public GameObject clear_area_button;
+
 
     public void Start()
     {
@@ -69,18 +72,53 @@ public class MenuManagerOverworldTiles : MonoBehaviour
         }
     }
 
+    public void ClaimArea()
+    {
+        if (inner_tiles && visited_tile >= 0)
+        {
+            GameManager.instance.ClaimTile(visited_tile);
+            UpdateTileInfo();
+            UpdateTiles();
+        }
+    }
+
+    public void ExploreArea()
+    {
+        if (inner_tiles && visited_tile >= 0)
+        {
+            GameManager.instance.ExploreTile(visited_tile + (visited_area*9));
+            UpdateTileInfo();
+            UpdateTiles();
+        }
+    }
+
+    public void ClearArea()
+    {
+        if (inner_tiles && visited_tile >= 0)
+        {
+            return;
+        }
+    }
+
     protected void UpdateTileInfo()
     {
+        clear_area_button.SetActive(false);
         int index = visited_tile + (visited_area*9);
-        tile_number.text = (index).ToString();
-        tile_owner.text = overworld_tiles.tile_owner[index];
+        tile_number.text = (index + 1).ToString();
         if (overworld_tiles.tiles_explored[index] == "Yes")
         {
             tile_type.text = overworld_tiles.tile_type[index];
+            tile_owner.text = overworld_tiles.tile_owner[index];
+            // Only attack tiles owned by other people.
+            if (overworld_tiles.tile_owner[index] != "None" && overworld_tiles.tile_owner[index] != "You")
+            {
+                clear_area_button.SetActive(true);
+            }
         }
         else
         {
             tile_type.text = "Unknown";
+            tile_owner.text = "Unknown";
         }
     }
 

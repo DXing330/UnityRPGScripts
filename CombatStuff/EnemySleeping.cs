@@ -8,11 +8,12 @@ public class EnemySleeping : Enemy
     public bool sleeping = true;
     // Inanimate objects will sleep forever, like rocks or trees.
     public bool wakeable = true;
+    public int wake_chance_inverse = 2;
 
     protected override void Start()
     {
         base.Start();
-        int wake_rng = Random.Range(0, 2);
+        int wake_rng = Random.Range(0, wake_chance_inverse);
         if (wake_rng != 0)
         {
             wakeable = false;

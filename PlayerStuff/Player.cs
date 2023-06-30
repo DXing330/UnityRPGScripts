@@ -7,6 +7,7 @@ public class Player : Mover
 {
     public int playerLevel;
     public Joystick joystick;
+    protected Animator animator;
     protected SpriteRenderer sprite_renderer;
     protected float dash_cooldown = 0.6f;
     protected float last_dash;
@@ -18,6 +19,10 @@ public class Player : Mover
     public int current_stamina;
     protected int stamina_per_level = 10;
     protected float distance_since_last_exhaust = 0;
+    // Form Changes.
+    protected int current_form = 0;
+    protected float transform_cooldown = 6.6f;
+    protected float last_transform = -6.6f;
     // Melee Attack.
     public Weapon player_weapon;
     public float attack_cooldown;
@@ -39,6 +44,7 @@ public class Player : Mover
     {
         base.Start();
         sprite_renderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         last_summon = -summon_cooldown;
     }
 
@@ -54,9 +60,38 @@ public class Player : Mover
         GameManager.instance.OnHealthChange();
     }
 
+    public void BattleMode()
+    {
+        if (current_form == 0)
+        {
+            GameManager.instance.controls.FightForm();
+        }
+    }
+
+    public void HumanForm()
+    {
+        if (current_form == 1)
+        {
+            animator.SetTrigger("Human");
+            current_form = 0;
+            equipment_stats.move_speed -= 0.6f;
+            player_weapon.Show();
+        }
+        GameManager.instance.controls.RelaxForm();
+    }
+
+    public void BatForm()
+    {
+        current_form = 1;
+        animator.SetTrigger("Bat");
+        equipment_stats.move_speed += 0.6f;
+        player_weapon.Hide();
+        GameManager.instance.controls.FleeForm();
+    }
+
     public virtual void SwingWeapon()
     {
-        if (Time.time - last_attack > attack_cooldown)
+        if (Time.time - last_attack > attack_cooldown && current_form == 0)
         {
             last_attack = Time.time;
             player_weapon.Swing();
@@ -90,7 +125,6 @@ public class Player : Mover
 
     public virtual void SummonAlly()
     {
-        Debug.Log(summon_limit);
         if (summon_limit > 0 && Time.time - last_summon > summon_cooldown)
         {
             // Pay health first to try to summon.
@@ -226,6 +260,14 @@ public class Player : Mover
         player_weapon.damage_multiplier = damage_multiplier;
     }
 
+    public void AdjustStatsFromExhaustion()
+    {
+        float stam_ratio = (1f - GameManager.instance.StaminaRatio());
+        float slowdown_percentage = 1f - ((stam_ratio * stam_ratio)/3f);
+        move_speed = equipment_stats.move_speed * slowdown_percentage;
+        attack_cooldown = equipment_stats.attack_cooldown * (1/slowdown_percentage);
+    }
+
     protected void SetMaxHlth()
     {
         max_health = (playerLevel-1) * health_per_level;
@@ -260,6 +302,7 @@ public class Player : Mover
     {
         current_stamina = new_stam;
         GameManager.instance.OnStamChange();
+        AdjustStatsFromExhaustion();
     }
 
     public void SetSummonIndex(int i)
@@ -306,6 +349,7 @@ public class Player : Mover
             current_stamina -= Math.Min(current_stamina, cost);
             GameManager.instance.OnStamChange();
         }
+        AdjustStatsFromExhaustion();
     }
 
     public void EatMana()
@@ -332,6 +376,7 @@ public class Player : Mover
             current_stamina = max_stamina;
             GameManager.instance.OnStamChange();
         }
+        AdjustStatsFromExhaustion();
     }
 
     protected override void Death()

@@ -52,13 +52,13 @@ public class MenuManagerEquipment : MonoBehaviour
     public void UpdateStatTexts()
     {
         float damage_multiplier = player.damage_multiplier;
-        stat_1.text = damage_multiplier.ToString()+"%";
+        stat_1.text = damage_multiplier.ToString("F2")+"%";
         float damage_reduction = player.damage_reduction;
         float damage_reduction_percentage = damage_reduction/(50+damage_reduction);
-        stat_2.text = (damage_reduction_percentage*100).ToString()+"%";
-        stat_3.text = player.dodge_chance.ToString()+"%";
-        stat_4.text = (player.move_speed*100).ToString()+"%";
-        stat_5.text = (1/player.attack_cooldown).ToString()+"/s";
+        stat_2.text = (damage_reduction_percentage*100).ToString("F2")+"%";
+        stat_3.text = player.dodge_chance.ToString("F2")+"%";
+        stat_4.text = (player.move_speed*100).ToString("F2")+"%";
+        stat_5.text = (1/player.attack_cooldown).ToString("F2")+"/s";
         stat_6.text = (player.i_frames).ToString()+"s";
     }
 

@@ -5,15 +5,12 @@ using UnityEngine.UI;
 
 public class MenuManagerWeapons : MonoBehaviour
 {
+    protected int selected_weapon = -1;
     public Text weapon_level_0;
     public Text weapon_level_1;
     public Text weapon_level_2;
-    public Text weapon_equipped_0;
-    public Text weapon_equipped_1;
-    public Text weapon_equipped_2;
-    public Text weapon_upgrade_cost_0;
-    public Text weapon_upgrade_cost_1;
-    public Text weapon_upgrade_cost_2;
+    public Text equip_weapon;
+    public Text weapon_upgrade_cost;
 
     public void UpdateMenuInfo()
     {
@@ -23,41 +20,45 @@ public class MenuManagerWeapons : MonoBehaviour
         weapon_level_0.text = wl0.ToString();
         weapon_level_1.text = wl1.ToString();
         weapon_level_2.text = wl2.ToString();
-        weapon_upgrade_cost_0.text = "Upgrade ("+(wl0*wl0).ToString()+"Gold + Materials)";
-        weapon_upgrade_cost_1.text = "Upgrade ("+(wl1*wl1).ToString()+"Gold + Materials)";
-        weapon_upgrade_cost_2.text = "Upgrade ("+(wl2*wl2).ToString()+"Gold + Materials)";
-        UpdateEquippedText(GameManager.instance.weapon.weapon_type);
+        switch (selected_weapon)
+        {
+            case 0:
+                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl0*wl0).ToString()+"Gold + "+(wl0*wl0).ToString()+" Mats)";
+                break;
+            case 1:
+                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl1*wl1).ToString()+"Gold + "+(wl1*wl1).ToString()+" Mats)";
+                break;
+            case 2:
+                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl2*wl2).ToString()+"Gold + "+(wl2*wl2).ToString()+" Mats)";
+                break;
+        }
+        UpdateEquippedText(selected_weapon);
     }
 
     public void UpdateEquippedText(int index)
     {
-        weapon_equipped_0.text = "Equip";
-        weapon_equipped_1.text = "Equip";
-        weapon_equipped_2.text = "Equip";
-        switch (index)
+        equip_weapon.text = "Equip";
+        if (GameManager.instance.weapon.weapon_type == index)
         {
-            case 0:
-                weapon_equipped_0.text = "Equipped";
-                break;
-            case 1:
-                weapon_equipped_1.text = "Equipped";
-                break;
-            case 2:
-                weapon_equipped_2.text = "Equipped";
-                break;
+            equip_weapon.text = "Equipped";
         }
     }
 
-
     public void SelectWeapon(int index)
     {
-        GameManager.instance.PickWeaponType(index);
-        UpdateEquippedText(index);
+        selected_weapon = index;
+        UpdateMenuInfo();
     }
 
-    public void UpgradeWeapon(int index)
+    public void EquipWeapon()
     {
-        if (GameManager.instance.UpgradeWeapon(index))
+        GameManager.instance.PickWeaponType(selected_weapon);
+        UpdateEquippedText(selected_weapon);
+    }
+
+    public void UpgradeWeapon()
+    {
+        if (GameManager.instance.UpgradeWeapon(selected_weapon))
         {
             UpdateMenuInfo();
         }

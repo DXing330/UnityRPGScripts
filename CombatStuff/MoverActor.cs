@@ -28,6 +28,12 @@ public class MoverActor : Mover
     public CircleCollider2D detection_range;
     protected Transform target_transform = null;
     protected Vector3 dVector;
+    protected bool sprinting = false;
+    public float sprint_bonus = 0.6f;
+    public float sprint_duration = 1.6f;
+    public float sprint_cooldown = 16.0f;
+    protected float start_sprint_time;
+    protected float end_sprint_time;
 
     protected override void Start()
     {
@@ -37,7 +43,6 @@ public class MoverActor : Mover
 		agent.updateUpAxis = false;
         animator = GetComponent<Animator>();
         StartSpeed();
-        SpeedUpFromPlayerExhaustion();
     }
 
     protected virtual void RandomizeDirection()
@@ -122,9 +127,35 @@ public class MoverActor : Mover
 
     protected virtual void SpeedUpFromPlayerExhaustion()
     {
-        float exhaustion_ratio = 4*(1 - GameManager.instance.StaminaRatio());
-        float speed_multipler = (exhaustion_ratio*exhaustion_ratio)/16;
+        float exhaustion_ratio = (1 - GameManager.instance.StaminaRatio());
+        float speed_multipler = (exhaustion_ratio*exhaustion_ratio*exhaustion_ratio);
         agent.speed += speed_multipler;
+    }
+
+    protected virtual void CheckSprint()
+    {
+        if (!sprinting && Time.time - end_sprint_time > sprint_cooldown)
+        {
+            StartSprint();
+        }
+        else if (sprinting && Time.time - start_sprint_time > sprint_duration)
+        {
+            EndSprint();
+        }
+    }
+
+    protected virtual void StartSprint()
+    {
+        sprinting = true;
+        agent.speed += sprint_bonus;
+        start_sprint_time = Time.time;
+    }
+
+    protected virtual void EndSprint()
+    {
+        sprinting = false;
+        agent.speed -= sprint_bonus;
+        end_sprint_time = Time.time;
     }
 
     protected override void ResetSpeed()
@@ -210,6 +241,7 @@ public class MoverActor : Mover
         // While chasing, follow the target.
         if (chasing && !dead)
         {
+            CheckSprint();
             if (!attacking && push_direction.magnitude <= recovery_speed)
             {
                 agent.SetDestination(target_transform.position);

@@ -66,6 +66,16 @@ public class Weapon : Collideable
         animator.SetTrigger("BackSwing");
     }
 
+    public void Hide()
+    {
+        animator.SetTrigger("Hide");
+    }
+
+    public void Show()
+    {
+        animator.SetTrigger("Show");
+    }
+
     public void Swing()
     {
         switch (weapon_type)

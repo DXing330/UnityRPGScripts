@@ -100,7 +100,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         for (int i = 0; i < grid_size*grid_size; i++)
         {
             tiles_explored.Add("No");
-            tile_owner.Add("Unknown");
+            tile_owner.Add("None");
         }
         tiles_explored[40] = "Yes";
         tile_owner[40] = "None";
@@ -230,14 +230,16 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             tile_owner[tile_num] = "You";
             owned_tiles.Add(tile_num.ToString());
+            GameManager.instance.villages.NewVillage(tile_type[tile_num], tile_num);
         }
-        GameManager.instance.villages.NewVillage(tile_type[tile_num], tile_num);
     }
 
     // Need to explore a tile to see what kind of terrain it is and who lives there.
     public void ExploreTile(int tile_num)
     {
         tiles_explored[tile_num] = "Yes";
+        // Decide on owner somehow.
+        // Decide on random event.
     }
 
     public void ExploreAll()
@@ -251,7 +253,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     // Need a process of clearing out a tile before you can claim it.  Basically clear a dungeon.
     public void ClearTile(int tile_num)
     {
-        if (tile_owner[tile_num] == "Unknown")
+        if (tile_owner[tile_num] != "None")
         {
             tile_owner[tile_num] = "None";
         }
@@ -281,17 +283,18 @@ public class OverworldTilesDataManager : MonoBehaviour
         // Every month an orc encampment may spawns nearby.
         if (GameManager.instance.current_day%28 == 0)
         {
-            bool orc = false;
             for (int i = 0; i < grid_size*grid_size; i++)
             {
-                if (tiles_explored[i] == "Yes" && tile_owner[i] != "You" && !orc)
+                if (tile_owner[i] == "None" || tile_owner[i] == "Unknown")
                 {
-                    rng = Random.Range(0, 3);
-                    if (rng >= 2)
+                    rng = Random.Range(0, grid_size*grid_size);
+                    if (rng == 0)
                     {
-                        orc = true;
                         tile_owner[i] = "Orc";
-                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
+                        if (tiles_explored[i] == "Yes")
+                        {
+                            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
+                        }
                         break;
                     }
                 }

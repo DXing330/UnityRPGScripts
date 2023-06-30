@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     public Text manaText;
     public RectTransform stamBar;
     public Text stamText;
+    public HUDControls controls;
 
     // Resources/Logic.
     public int experience;
@@ -77,6 +78,7 @@ public class GameManager : MonoBehaviour
         fixedTextManager.ShowText(speaker, speakers_words);
     }
 
+    // Player actions.
     public void PickWeaponType(int index)
     {
         weapon.SetType(index);
@@ -84,14 +86,17 @@ public class GameManager : MonoBehaviour
 
     public bool UpgradeWeapon(int type)
     {
-        int current_weapon_level = int.Parse(weapon.weapon_levels_list[type]);
-        int price = current_weapon_level * current_weapon_level;
-        if (villages.collected_materials >= price && villages.collected_gold >= price)
+        if (type >= 0)
         {
-            weapon.weapon_levels_list[type] = (current_weapon_level+1).ToString();
-            villages.collected_materials -= price;
-            villages.collected_gold -= price;
-            return true;
+            int current_weapon_level = int.Parse(weapon.weapon_levels_list[type]);
+            int price = current_weapon_level * current_weapon_level;
+            if (villages.collected_materials >= price && villages.collected_gold >= price)
+            {
+                weapon.weapon_levels_list[type] = (current_weapon_level+1).ToString();
+                villages.collected_materials -= price;
+                villages.collected_gold -= price;
+                return true;
+            }
         }
         return false;
     }
@@ -146,6 +151,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ClaimTile(int tile_num)
+    {
+        if (villages.collected_settlers > 0 && villages.collected_mana > 0)
+        {
+            villages.collected_settlers--;
+            villages.collected_mana--;
+            villages.tiles.ClaimTile(tile_num);
+        }
+    }
+
+    public void ExploreTile(int tile_num)
+    {
+        villages.tiles.ExploreTile(tile_num);
+        NewWeek();
+    }
+
+    // Player resources.
     public int GetExptoLevel()
     {
         int exp = 0;
