@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MenuManagerOverworldTiles : MonoBehaviour
 {
@@ -210,5 +211,12 @@ public class MenuManagerOverworldTiles : MonoBehaviour
                 return Color.yellow;
         }
         return Color.black;
+    }
+
+    public void AttackArea()
+    {
+        GameManager.instance.villages.events.UpdateDataFromOverworld(overworld_tiles.tile_owner[visited_tile + (visited_area*9)]);
+        //UnityEngine.SceneManagement.SceneManager.LoadScene("wilds");
+        GameManager.instance.hud.Unfade();
     }
 }

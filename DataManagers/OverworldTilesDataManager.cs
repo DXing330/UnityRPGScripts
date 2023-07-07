@@ -279,7 +279,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             village_to_add_events.Load(location_index);
             village_to_add_events.AddEvent("traders|3");
         }
-        // Every month an orc encampment may spawns nearby.
+        // Every month orc encampments may spawn.
         if (GameManager.instance.current_day%28 == 0)
         {
             for (int i = 0; i < grid_size*grid_size; i++)
@@ -296,6 +296,30 @@ public class OverworldTilesDataManager : MonoBehaviour
                         }
                     }
                 }
+                else if (tile_owner[i] == "Orc")
+                {
+                    rng = Random.Range(0, grid_size*grid_size);
+                    if (rng == 0)
+                    {
+                        tile_owner[i] = "Orc Camp";
+                        if (tiles_explored[i] == "Yes")
+                        {
+                            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs gather at zone "+i.ToString());
+                        }
+                    }
+                }
+                else if (tile_owner[i] == "Orc Camp")
+                {
+                    rng = Random.Range(0, grid_size*grid_size);
+                    if (rng == 0)
+                    {
+                        tile_owner[i] = "Orc Army";
+                        if (tiles_explored[i] == "Yes")
+                        {
+                            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs form an army at zone "+i.ToString());
+                        }
+                    }
+                }
             }
         }
     }
@@ -305,11 +329,13 @@ public class OverworldTilesDataManager : MonoBehaviour
         // Orcs only move and attack within the area they spawned in.
         for (int i = 0; i < tile_owner.Count; i++)
         {
-            if (tile_owner[i] == "Orc")
+            if (tile_owner[i].Contains("Orc"))
             {
                 if ((i%9)+1 < 9 && tile_owner[i+1] == "You")
                 {
                     AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i+1).ToString());
+                    // Check on the state of the village.
+                    // Orc attack -> lose 1 pop, camp attack -> lose half pop, army attack -> lose village
                 }
                 else if ((i%9)-1 > 0 && tile_owner[i-1] == "You")
                 {

@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Keep track of what events are in the village that affect local spawns.
+// Keep track of what events are in the area that affect local spawns.
 public class EventBoolManager : MonoBehaviour
 {
     protected string current_area = "";
+    protected string area_owner = "";
     protected int bandits_in_area = 0;
     protected int goblins_in_area = 0;
     protected int orcs_in_area = 0;
+    protected int orc_leaders_in_area = 0;
     protected int bandits_cleared = 0;
     protected int goblins_cleared = 0;
     protected int orcs_cleared = 0;
+    protected int orc_leader_cleared = 0;
     protected string enemy_data = "";
     protected string cleared_data = "";
 
@@ -25,9 +28,11 @@ public class EventBoolManager : MonoBehaviour
         bandits_in_area = 0;
         orcs_in_area = 0;
         goblins_in_area = 0;
+        orc_leaders_in_area = 0;
         bandits_cleared = 0;
         orcs_cleared = 0;
         goblins_cleared = 0;
+        orc_leader_cleared = 0;
     }
 
     public string ReturnEnemies()
@@ -35,7 +40,8 @@ public class EventBoolManager : MonoBehaviour
         enemy_data = "";
         enemy_data += bandits_in_area.ToString()+"|";
         enemy_data += goblins_in_area.ToString()+"|";
-        enemy_data += orcs_in_area.ToString();
+        enemy_data += orcs_in_area.ToString()+"|";
+        enemy_data += orc_leaders_in_area.ToString();
         return enemy_data;
     }
 
@@ -44,7 +50,8 @@ public class EventBoolManager : MonoBehaviour
         cleared_data = "";
         cleared_data += bandits_cleared.ToString()+"|";
         cleared_data += goblins_cleared.ToString()+"|";
-        cleared_data += orcs_cleared.ToString();
+        cleared_data += orcs_cleared.ToString()+"|";
+        cleared_data += orc_leader_cleared.ToString();
         return cleared_data;
     }
 
@@ -60,6 +67,9 @@ public class EventBoolManager : MonoBehaviour
                 break;
             case 2:
                 goblins_cleared++;
+                break;
+            case 3:
+                orc_leader_cleared++;
                 break;
         }
     }
@@ -89,5 +99,27 @@ public class EventBoolManager : MonoBehaviour
     {
         return current_area;
     }
+
+    public void UpdateDataFromOverworld(string tile_owner)
+    {
+        area_owner = tile_owner;
+        switch (area_owner)
+        {
+            case "Orc":
+                orcs_in_area = 3;
+                orc_leaders_in_area = 1;
+                break;
+            case "Orc Camp":
+                orcs_in_area = 9;
+                orc_leaders_in_area = 2;
+                break;
+            case "Orc Army":
+                orcs_in_area = 27;
+                orc_leaders_in_area = 4;
+                break;
+        }
+    }
+
+
 
 }
