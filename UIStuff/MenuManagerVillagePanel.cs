@@ -73,6 +73,8 @@ public class MenuManagerVillagePanel : MonoBehaviour
         {
             case "plains":
                 return Color.green;
+            case "farm":
+                return Color.green;
             case "desert":
                 return Color.yellow;
             case "mountains":

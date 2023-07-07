@@ -10,6 +10,7 @@ public class MenuManagerVillages : MonoBehaviour
     public MenuManagerVillageTech villagetechmenu;
     public MenuManagerOverworldTiles overworldtilesmenu;
     public MenuManagerVillagePanel villagepanel;
+    public MenuManagerVillageBuilding villagebuildingmenu;
     public Text collected_food;
     public Text collected_mats;
     public Text collected_gold;
@@ -33,7 +34,6 @@ public class MenuManagerVillages : MonoBehaviour
     {
         total_villages = villagedatamanager.total_villages;
     }
-
 
     public void SaveVillage()
     {
@@ -164,4 +164,15 @@ public class MenuManagerVillages : MonoBehaviour
             GameManager.instance.hud.Unfade();
         }
     }
+
+    public void Build()
+    {
+        if (selected_area >= 0)
+        {
+            animator.SetTrigger("Build");
+            villagebuildingmenu.UpdateCurrentBuilding(selected_area);
+        }
+    }
+
+
 }

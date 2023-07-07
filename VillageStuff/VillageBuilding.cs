@@ -39,6 +39,8 @@ public class VillageBuilding : MonoBehaviour
         {
             case "plains":
                 return "F";
+            case "farm":
+                return "F";
             case "forest":
                 return "F|M";
             case "hills":
@@ -73,11 +75,13 @@ public class VillageBuilding : MonoBehaviour
                 return "1";
             case "desert":
                 return "0";
+            case "farm":
+                return "3";
         }
         return "0";
     }
 
-    // order population|materials|food|anger|research|gold|mana
+    // order population|materials|food|anger|fear|gold|mana
     public string DetermineAllProducts(string building_name)
     {
         // Behold the horrors of hard coding.
@@ -99,8 +103,20 @@ public class VillageBuilding : MonoBehaviour
                 return "0|0|0|0|0|0|0";
             case "farm":
                 return "0|0|3|0|0|0|0";
+            case "market":
+                return "0|0|0|0|0|1|0";
         }
         return "0|0|0|0|0|0|0";
+    }
+
+    public string DetermineSpecialEffects(string building_name)
+    {
+        switch (building_name)
+        {
+            case "cave":
+                return "Full of deadly monsters.";
+        }
+        return "";
     }
 
     public string DetermineProducts(string building_name)

@@ -278,7 +278,6 @@ public class OverworldTilesDataManager : MonoBehaviour
             AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+location_index.ToString());
             village_to_add_events.Load(location_index);
             village_to_add_events.AddEvent("traders|3");
-            village_to_add_events.Save();
         }
         // Every month an orc encampment may spawns nearby.
         if (GameManager.instance.current_day%28 == 0)
@@ -295,7 +294,6 @@ public class OverworldTilesDataManager : MonoBehaviour
                         {
                             AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
                         }
-                        break;
                     }
                 }
             }
@@ -327,5 +325,10 @@ public class OverworldTilesDataManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void Negotiate()
+    {
+        return;
     }
 }

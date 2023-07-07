@@ -43,6 +43,7 @@ public class Village : MonoBehaviour
     protected int gathered_discontentment;
     protected int gathered_production;
     protected int gathered_research;
+    protected int gathered_fear;
     protected int gathered_food;
     protected int gathered_gold;
     protected int gathered_mana;
@@ -178,6 +179,12 @@ public class Village : MonoBehaviour
         }
     }
 
+    protected void PopulationLoss()
+    {
+        population--;
+        RandomlyRemoveFromBuilding();
+    }
+
     // Taking from them makes them very angry.
     public void Plunder(string type)
     {
@@ -303,14 +310,14 @@ public class Village : MonoBehaviour
         if (fear > population && population > 0)
         {
             fear -= population;
-            population--;
+            PopulationLoss();
             GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has people fleeing.");
         }
         // Angry people rebel.
         if (discontentment > population && population > 0)
         {
             discontentment -= population;
-            population--;
+            PopulationLoss();
             AddEvent("bandits|-1");
             GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has people turning to banditry.");
         }
@@ -381,6 +388,15 @@ public class Village : MonoBehaviour
         }
     }
 
+    // When the population goes down you lose workers.
+    protected void RandomlyRemoveFromBuilding()
+    {
+        if (assigned_buildings.Count > 0)
+        {
+            assigned_buildings.RemoveAt(0);
+        }
+    }
+
     public void DestroyBuilding(int index)
     {
         // Remove any workers from the building first.
@@ -393,6 +409,18 @@ public class Village : MonoBehaviour
         }
         // Then replace the building with the original surrounding.
         buildings[index] = surroundings[index];
+    }
+
+    public bool UpgradeBuilding(int index, string new_building, int cost)
+    {
+        if (accumulated_gold >= cost && accumulated_materials >= cost)
+        {
+            accumulated_gold -= cost;
+            accumulated_materials -= cost;
+            buildings[index] = new_building;
+            return true;
+        }
+        return false;
     }
 
     public void SelectAssignedBuilding(int index)
@@ -434,7 +462,7 @@ public class Village : MonoBehaviour
         gathered_production += int.Parse(all_products[1]);
         gathered_food += int.Parse(all_products[2]);
         gathered_discontentment += int.Parse(all_products[3]);
-        gathered_research += int.Parse(all_products[4]);
+        gathered_fear += int.Parse(all_products[4]);
         gathered_gold += int.Parse(all_products[5]);
         gathered_mana += int.Parse(all_products[6]);
     }

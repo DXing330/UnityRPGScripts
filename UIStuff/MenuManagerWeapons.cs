@@ -23,13 +23,13 @@ public class MenuManagerWeapons : MonoBehaviour
         switch (selected_weapon)
         {
             case 0:
-                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl0*wl0).ToString()+"Gold + "+(wl0*wl0).ToString()+" Mats)";
+                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl0*wl0).ToString()+"Gold+"+(wl0*wl0).ToString()+"Mats)";
                 break;
             case 1:
-                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl1*wl1).ToString()+"Gold + "+(wl1*wl1).ToString()+" Mats)";
+                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl1*wl1).ToString()+"Gold+"+(wl1*wl1).ToString()+"Mats)";
                 break;
             case 2:
-                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl2*wl2).ToString()+"Gold + "+(wl2*wl2).ToString()+" Mats)";
+                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl2*wl2).ToString()+"Gold+"+(wl2*wl2).ToString()+"Mats)";
                 break;
         }
         UpdateEquippedText(selected_weapon);
