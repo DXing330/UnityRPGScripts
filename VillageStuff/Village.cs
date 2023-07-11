@@ -293,9 +293,8 @@ public class Village : MonoBehaviour
                 DetermineVillageStats();
             }
             last_update_day++;
-            PassTime();
+            PassVillageTime();
         }
-        Save();
     }
 
     protected void PayUpkeepCosts()
@@ -355,7 +354,6 @@ public class Village : MonoBehaviour
             accumulated_materials -= 6;
             accumulated_gold -= 6;
             max_population++;
-            Save();
         }
     }
 
@@ -467,7 +465,7 @@ public class Village : MonoBehaviour
         gathered_mana += int.Parse(all_products[6]);
     }
 
-    protected void PassTime()
+    protected void PassVillageTime()
     {
         int remaining_time = 0;
         for (int i = 0; i < event_durations.Count; i++)

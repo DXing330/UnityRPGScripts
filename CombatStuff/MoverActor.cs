@@ -55,7 +55,6 @@ public class MoverActor : Mover
         }
     }
 
-
     protected virtual void FaceRight()
     {
         if (facing_right && horizontal_flip)

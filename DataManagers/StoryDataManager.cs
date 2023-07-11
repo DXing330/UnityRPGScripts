@@ -59,10 +59,15 @@ public class StoryDataManager : MonoBehaviour
 
     public string ReturnPaymentDeadline()
     {
-        string paydead = "";
-        paydead += current_payment.ToString()+"|";
-        paydead += current_deadline.ToString();
-        return paydead;
+        string paydate = "";
+        paydate += current_payment.ToString()+"|";
+        paydate += current_deadline.ToString();
+        return paydate;
+    }
+
+    public int ReturnDeadlineDate()
+    {
+        return current_deadline;
     }
 
     public void PayBlood()
@@ -121,7 +126,7 @@ public class StoryDataManager : MonoBehaviour
         trust--;
         if (trust <= 0)
         {
-            // You die.
+            // They take your blood.
         }
     }
 

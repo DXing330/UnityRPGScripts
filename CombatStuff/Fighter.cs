@@ -10,6 +10,7 @@ public class Fighter : MonoBehaviour
     public int defense = 0;
     public int damage_reduction = 0;
     public float recovery_speed = 0.2f;
+    public bool interacting = false;
 
     // Resistances.
     public FighterResistances resistances;

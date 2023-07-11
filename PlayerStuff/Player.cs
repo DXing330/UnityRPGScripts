@@ -9,6 +9,9 @@ public class Player : Mover
     public Joystick joystick;
     protected Animator animator;
     protected SpriteRenderer sprite_renderer;
+    protected ContactFilter2D filter;
+    protected Collider2D[] hits = new Collider2D[6]; 
+    // Stats.
     protected float dash_cooldown = 0.6f;
     protected float last_dash;
     protected int health_per_level = 6;
@@ -120,6 +123,23 @@ public class Player : Mover
                     clone.UpdateForce(direction);
                 }
             }
+        }
+    }
+
+    public void TryToInteract()
+    {
+        boxCollider.OverlapCollider(filter,hits);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[i] == null)
+            {
+                continue;
+            }
+            if (hits[i].tag == "Interactable")
+            {
+                hits[i].SendMessage("Interact");
+            }
+            hits[i] = null;
         }
     }
 

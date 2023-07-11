@@ -52,7 +52,7 @@ public class Button : Activatable
 
     protected void OnCollide(Collider2D coll)
     {
-        if (coll.tag == "Interactable" || coll.name == "Player")
+        if (coll.tag == "Object" || coll.name == "Player")
         {
             Push();
         }

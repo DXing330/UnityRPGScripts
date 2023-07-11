@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPCText : Collideable
+public class NPCText : Interactable
 {
     public string npc_name;
     public bool story = false;
@@ -18,9 +18,9 @@ public class NPCText : Collideable
         last_text_shown_time = -text_cooldown;
     }
 
-    protected override void OnCollide(Collider2D coll)
+    public override void Interact()
     {
-        if (Time.time - last_text_shown_time > text_cooldown && coll.name == "Player" && texts.Count > 0)
+        if (Time.time - last_text_shown_time > text_cooldown && texts.Count > 0)
         {
             if (story)
             {

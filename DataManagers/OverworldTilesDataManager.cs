@@ -260,7 +260,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     }
 
     // Generate events on certain tiles, like mana surges or orc attacks.
-    public void PassTime()
+    public void PassWorldTime()
     {
         int rng = 0;
         // Update all villages you own every day.

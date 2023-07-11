@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class EnemyAnimated : MoverActor
+public class EnemyWeaponUser : MoverActor
 {
+    public EnemyWeapon weapon;
+
     protected override void Update()
     {
         base.Update();
@@ -35,21 +36,16 @@ public class EnemyAnimated : MoverActor
                 Attack();
             }
         }
-        // While chasing the player, use the move animation.
-        if (chasing && !moving && !dead)
-        {
-            moving = true;
-            animator.SetBool("Moving", moving);
-        }
     }
 
     protected virtual void Attack()
     {
-        moving = false;
-        animator.SetBool("Moving", moving);
-        animator.SetTrigger("Attack");
-        attacking = true;
-        last_attack = Time.time;
+        if (!attacking)
+        {
+            weapon.Swing();
+            attacking = true;
+            last_attack = Time.time;
+        }
     }
 
     protected override void Death()
@@ -58,8 +54,6 @@ public class EnemyAnimated : MoverActor
         {
             dead = true;
             last_alive = Time.time;
-            animator.SetBool("Moving", false);
-            animator.SetTrigger("Dead");
         }
     }
 }

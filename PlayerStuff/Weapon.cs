@@ -41,7 +41,7 @@ public class Weapon : Collideable
 
     protected override void OnCollide(Collider2D coll)
     {
-        if (coll.tag == "Enemy" || coll.tag == "Interactable")
+        if (coll.tag == "Enemy" || coll.tag == "Object")
         {
             Damage damage = new Damage
             {

@@ -37,6 +37,8 @@ public class MenuManagerVillages : MonoBehaviour
 
     public void SaveVillage()
     {
+        // Costs a day to travel to a village.
+        GameManager.instance.NewDay();
         village.Save();
         GameManager.instance.SaveState();
     }
@@ -82,8 +84,6 @@ public class MenuManagerVillages : MonoBehaviour
             villagepanel.SetVillage(village);
             UpdateVillageInformation();
             ShowVillage();
-            // Costs a day to travel to a village.
-            GameManager.instance.NewDay();
         }
     }
 

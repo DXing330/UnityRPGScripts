@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
     // UI Stuff.
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
+    public InteractableTextManager interactableTextManager;
+    public DialogTree current_tree = null;
     public HUD hud;
     public RectTransform healthBar;
     public Text healthText;
@@ -48,6 +50,7 @@ public class GameManager : MonoBehaviour
     // Resources/Logic.
     public int experience;
     public int current_day;
+    protected int blood_deadline;
     public int danger_level;
     public int current_depth;
     public int current_max_depth;
@@ -76,6 +79,22 @@ public class GameManager : MonoBehaviour
     public void ShowFixedText(string speaker, string speakers_words)
     {
         fixedTextManager.ShowText(speaker, speakers_words);
+    }
+
+    // Interactable Text.
+    public void SetDialogTree(DialogTree tree)
+    {
+        current_tree = tree;
+    }
+
+    public void ReceiveChoice(int choice)
+    {
+        current_tree.ReceiveChoice(choice);
+    }
+
+    public void ShowInteractableText(string name, string words, string choice_1="", string choice_2="", string choice_3="")
+    {
+        interactableTextManager.ShowTexts(name, words, choice_1, choice_2, choice_3);
     }
 
     // Player actions.
@@ -363,6 +382,7 @@ public class GameManager : MonoBehaviour
         all_equipment.LoadData();
         villages.LoadData();
         story.LoadData();
+        blood_deadline = story.ReturnDeadlineDate();
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -400,7 +420,7 @@ public class GameManager : MonoBehaviour
     public void NewDay()
     {
         current_day++;
-        villages.tiles.PassTime();
+        villages.tiles.PassWorldTime();
     }
 
     public void NewWeek()
