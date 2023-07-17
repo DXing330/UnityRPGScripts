@@ -10,7 +10,7 @@ public class SummonDataManager : MonoBehaviour
     public MenuManagerSummons summon_menu;
     protected string summon_to_upgrade;
     public string wolf_data;
-    protected string[] wolf_data_list;
+    public string[] wolf_data_list;
 
     public void PrepareDataLists()
     {
@@ -42,15 +42,18 @@ public class SummonDataManager : MonoBehaviour
             Directory.CreateDirectory("Assets/Saves/SummonData");
         }
         string new_wolf_data = "";
-        for (int i = 0; i < wolf_data_list.Length; i++)
+        if (wolf_data_list.Length > 6)
         {
-            new_wolf_data += wolf_data_list[i];
-            if (i < wolf_data_list.Length - 1)
+            for (int i = 0; i < wolf_data_list.Length; i++)
             {
-                new_wolf_data += "|";
+                new_wolf_data += wolf_data_list[i];
+                if (i < wolf_data_list.Length - 1)
+                {
+                    new_wolf_data += "|";
+                }
             }
+            File.WriteAllText("Assets/Saves/SummonData/wolf_data.txt", new_wolf_data);
         }
-        File.WriteAllText("Assets/Saves/SummonData/wolf_data.txt", new_wolf_data);
     }
 
     public void LoadData()

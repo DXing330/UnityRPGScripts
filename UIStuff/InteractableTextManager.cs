@@ -15,6 +15,7 @@ public class InteractableTextManager : MonoBehaviour
     public Text option_text_1;
     public Text option_text_2;
     public Text option_text_3;
+    protected bool showing;
 
     // Start is called before the first frame update
     void Start()
@@ -37,22 +38,39 @@ public class InteractableTextManager : MonoBehaviour
     {
         text.text = "";
         speaker.text = "";
+        DisableButtons();
+        animator.SetTrigger("Hide");
+        showing = false;
+        GameManager.instance.player.TakeInputs();
+    }
+
+    public void DisableButtons()
+    {
+        return_button.SetActive(false);
         option_1.SetActive(false);
         option_2.SetActive(false);
         option_3.SetActive(false);
-        return_button.SetActive(false);
-        animator.SetTrigger("Hide");
     }
 
-    public void ShowTexts(string name, string words, string choice_1="", string choice_2="", string choice_3="")
+    public void ShowTexts(string words, string name = "", string choice_1="", string choice_2="", string choice_3="")
     {
-        animator.SetTrigger("Show");
+        DisableButtons();
+        if (!showing)
+        {
+            showing = true;
+            animator.SetTrigger("Show");
+            GameManager.instance.player.DisableInputs();
+        }
         speaker.text = name;
         text.text = words;
         if (choice_1.Length > 6)
         {
             option_1.SetActive(true);
             option_text_1.text = choice_1;
+        }
+        else
+        {
+            EnableReturnButton();
         }
         if (choice_2.Length > 6)
         {

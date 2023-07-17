@@ -137,22 +137,30 @@ public class Familiar : MonoBehaviour
         }
     }
 
-    public void SetStats(FamiliarStatsWrapper loaded_stats)
+    public void SetLevel(int old_level)
     {
-        level = loaded_stats.level;
+        level = old_level;
         if (level < 1)
         {
             level = 1;
         }
-        exp = loaded_stats.exp;
         bonus_rotate_speed = level;
         bonus_rotate_speed_float = bonus_rotate_speed * 1.0f;
         heal_threshold_increase = level;
         bonus_damage = level;
         bonus_push_force = level;
         bonus_heal = level;
-        current_blood = loaded_stats.current_blood;
         max_blood = level * 6;
+    }
+
+    public void SetExp(int old_exp)
+    {
+        exp = old_exp;
+    }
+
+    public void SetCBlood(int old_blood)
+    {
+        current_blood = old_blood;
     }
 
     public void GainExp(int exp_points)

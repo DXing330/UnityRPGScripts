@@ -3,81 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveDataManager
+public class SaveDataManager : MonoBehaviour
 {
-
-    public void SaveGameData()
-    {
-        if (!Directory.Exists("Assets/Saves/"))
-        {
-            Directory.CreateDirectory("Assets/Saves/");
-        }
-        SaveDataWrapper save_data = new SaveDataWrapper();
-        save_data.UpdateData();
-        string save_json = JsonUtility.ToJson(save_data, true);
-        File.WriteAllText("Assets/Saves/save_data.json", save_json);
-    }
-
-    public void LoadGameData()
-    {
-        /*
-        if (File.Exists("Assets/Saves/save_data.json"))
-        {
-            string save_data = File.ReadAllText("Assets/Saves/save_data.json");
-            SaveDataWrapper loaded_data = JsonUtility.FromJson<SaveDataWrapper>(save_data);
-            GameManager.instance.player.SetLevel(loaded_data.player_level);
-            GameManager.instance.weapon.SetLevel(loaded_data.weapon_level);
-            GameManager.instance.experience = loaded_data.experience;
-        }
-        else
-        {
-            Debug.LogWarning("Data file not found!");
-        }*/
-    }
-}
-
-public class SaveDataWrapper
-{
-    public int player_level;
-    public int player_hlth;
-    public int player_mana;
-    public int player_stam;
-    public int weapon_level;
-    public int experience;
-    public int current_day;
-    public int danger_level;
-    public int weapon_type;
-    public string weapon_levels;
+    public string saved_data;
 
     public void UpdateData()
     {
-        player_level = GameManager.instance.player.playerLevel;
-        player_hlth = GameManager.instance.player.health;
-        player_mana = GameManager.instance.player.current_mana;
-        player_stam = GameManager.instance.player.current_stamina;
-        weapon_level = GameManager.instance.weapon.weaponLevel;
-        weapon_type = GameManager.instance.weapon.weapon_type;
-        weapon_levels = GameManager.instance.weapon.weapon_levels;
-        experience = GameManager.instance.experience;
-        current_day = GameManager.instance.current_day;
-        danger_level = GameManager.instance.danger_level;
+        saved_data = "";
+        saved_data += GameManager.instance.player.playerLevel.ToString()+"#";
+        saved_data += GameManager.instance.player.health.ToString()+"#";
+        saved_data += GameManager.instance.player.current_mana.ToString()+"#";
+        saved_data += GameManager.instance.player.current_stamina.ToString()+"#";
+        saved_data += GameManager.instance.familiar.level.ToString()+"#";
+        saved_data += GameManager.instance.familiar.exp.ToString()+"#";
+        saved_data += GameManager.instance.familiar.current_blood.ToString()+"#";
+        saved_data += GameManager.instance.weapon.weapon_type.ToString()+"#";
+        saved_data += GameManager.instance.weapon.weapon_levels+"#";
+        saved_data += GameManager.instance.experience.ToString()+"#";
+        saved_data += GameManager.instance.current_day.ToString()+"#";
     }
 }
-
-/*public class PlayerStatsWrapper
-{
-    public int bonus_health;
-    public int damage_multiplier;
-    public int damage_reduction;
-    public int luck;
-
-    public void UpdateData()
-    {
-        bonus_health = GameManager.instance.player.bonus_health;
-        damage_multiplier = GameManager.instance.player.damage_multiplier;
-        damage_reduction = GameManager.instance.player.damage_reduction;
-    }
-}*/
 
 public class FamiliarStatsWrapper
 {

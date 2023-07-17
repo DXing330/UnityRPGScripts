@@ -22,7 +22,8 @@ public class Player : Mover
     public int current_stamina;
     protected int stamina_per_level = 10;
     protected float distance_since_last_exhaust = 0;
-    // Form Changes.
+    // Form Changes and different states.
+    protected bool taking_inputs = true;
     protected int current_form = 0;
     protected float transform_cooldown = 6.6f;
     protected float last_transform = -6.6f;
@@ -63,10 +64,21 @@ public class Player : Mover
         GameManager.instance.OnHealthChange();
     }
 
+    public void TakeInputs()
+    {
+        taking_inputs = true;
+    }
+
+    public void DisableInputs()
+    {
+        taking_inputs = false;
+    }
+
     public void BattleMode()
     {
         if (current_form == 0)
         {
+            current_form = 2;
             GameManager.instance.controls.FightForm();
         }
     }
@@ -76,10 +88,10 @@ public class Player : Mover
         if (current_form == 1)
         {
             animator.SetTrigger("Human");
-            current_form = 0;
             equipment_stats.move_speed -= 0.6f;
             player_weapon.Show();
         }
+        current_form = 0;
         GameManager.instance.controls.RelaxForm();
     }
 
@@ -128,18 +140,21 @@ public class Player : Mover
 
     public void TryToInteract()
     {
-        boxCollider.OverlapCollider(filter,hits);
-        for (int i = 0; i < hits.Length; i++)
+        if (taking_inputs)
         {
-            if (hits[i] == null)
+            boxCollider.OverlapCollider(filter,hits);
+            for (int i = 0; i < hits.Length; i++)
             {
-                continue;
+                if (hits[i] == null)
+                {
+                    continue;
+                }
+                if (hits[i].tag == "Interactable")
+                {
+                    hits[i].SendMessage("Interact");
+                }
+                hits[i] = null;
             }
-            if (hits[i].tag == "Interactable")
-            {
-                hits[i].SendMessage("Interact");
-            }
-            hits[i] = null;
         }
     }
 
@@ -182,21 +197,53 @@ public class Player : Mover
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (taking_inputs)
         {
-            StartDash();
+            if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (current_form == 0)
+            {
+                BatForm();
+            }
+            else
+            {
+                StartDash();
+            }
+            
         }
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            RangedAttack();
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SummonAlly();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            SwingWeapon();
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                if (current_form == 0)
+                {
+                    BattleMode();
+                }
+                else if (current_form == 1)
+                {
+                    HumanForm();
+                }
+                else if (current_form == 2)
+                {
+                    HumanForm();
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                if (current_form == 2)
+                {
+                    SummonAlly();
+                }
+                else if (current_form == 0)
+                {
+                    TryToInteract();
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                if (current_form == 2 || current_form == 0)
+                {
+                    SwingWeapon();
+                }
+            }
         }
     }
 
@@ -216,8 +263,10 @@ public class Player : Mover
         float y = Input.GetAxisRaw("Vertical");
         float joy_y = joystick.Vertical;
         y += joy_y;
-
-        UpdateMotor(new Vector3(x,y,0));
+        if (taking_inputs)
+        {
+            UpdateMotor(new Vector3(x,y,0));
+        }
         if (x*x > 0 || y*y > 0)
         {
             distance_since_last_exhaust += (Time.deltaTime*x*x);

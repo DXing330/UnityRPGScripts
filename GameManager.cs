@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public Weapon weapon;
     public Familiar familiar;
     // Data Managers.
+    public string saved_data;
     public StoryDataManager story;
     public SummonDataManager summons;
     public SpellDataManager spells;
@@ -37,7 +38,7 @@ public class GameManager : MonoBehaviour
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
     public InteractableTextManager interactableTextManager;
-    public DialogTree current_tree = null;
+    public EventChoices current_event = null;
     public HUD hud;
     public RectTransform healthBar;
     public Text healthText;
@@ -55,6 +56,7 @@ public class GameManager : MonoBehaviour
     public int current_depth;
     public int current_max_depth;
 
+    // Useful Generic Functions
     public string ConvertListToString(List<string> string_list)
     {
         string returned = "";
@@ -67,6 +69,17 @@ public class GameManager : MonoBehaviour
             }
         }
         return returned;
+    }
+
+    public List<string> InverstListOrder(List<string> list_to_reverse, List<string> newly_reversed_list)
+    {
+        newly_reversed_list.Clear();
+        int list_length = list_to_reverse.Count;
+        for (int i = list_length; i > 0; i--)
+        {
+            newly_reversed_list.Add(list_to_reverse[i-1]);
+        }
+        return newly_reversed_list;
     }
 
     // Floating text.
@@ -82,19 +95,20 @@ public class GameManager : MonoBehaviour
     }
 
     // Interactable Text.
-    public void SetDialogTree(DialogTree tree)
+    public void SetEvent(EventChoices eventChoices)
     {
-        current_tree = tree;
+        current_event = eventChoices;
+        ShowInteractableText(current_event.words, current_event.speaker_name, current_event.choice_1_text, current_event.choice_2_text, current_event.choice_3_text);
     }
 
     public void ReceiveChoice(int choice)
     {
-        current_tree.ReceiveChoice(choice);
+        current_event.ReceiveChoice(choice);
     }
 
-    public void ShowInteractableText(string name, string words, string choice_1="", string choice_2="", string choice_3="")
+    public void ShowInteractableText(string words, string name = "", string choice_1="", string choice_2="", string choice_3="")
     {
-        interactableTextManager.ShowTexts(name, words, choice_1, choice_2, choice_3);
+        interactableTextManager.ShowTexts(words, name, choice_1, choice_2, choice_3);
     }
 
     // Player actions.
@@ -210,7 +224,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 0:Blood,1:EXP,2:Mana,3:Gold,4:Food,5:Mats
+    // 0:Blood,1:Settlers,2:Mana,3:Gold,4:Food,5:Mats
     public void CollectResource(int type, int amount)
     {
         switch (type)
@@ -243,30 +257,40 @@ public class GameManager : MonoBehaviour
 
     public void GainResource(int type, int amount)
     {
+        string new_text = "";
+        if (amount > 0)
+        {
+            new_text += "+ "+amount;
+        }
+        else if (amount < 0)
+        {
+            new_text += amount;
+        }
         switch (type)
         {
             case 0:
                 villages.collected_blood += amount;
-                ShowText("+ "+amount+" blood crystals", 25, Color.red, player.transform.position, Vector3.up*25, 1.0f);
+                ShowText(new_text+" blood crystals", 25, Color.red, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 1:
-                GrantExp(amount);
+                villages.collected_settlers += amount;
+                ShowText(new_text+" settlers", 25, Color.green, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 2:
                 villages.collected_mana += amount;
-                ShowText("+ "+amount+" mana crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
+                ShowText(new_text+" mana crystals", 25, Color.blue, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 3:
                 villages.collected_gold += amount;
-                ShowText("+ "+amount+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
+                ShowText(new_text+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 4:
                 villages.collected_food += amount;
-                ShowText("+ "+amount+" food", 20, Color.green, player.transform.position, Vector3.up*25, 1.0f);
+                ShowText(new_text+" food", 20, Color.green, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 5:
                 villages.collected_materials += amount;
-                ShowText("+ "+amount+" materials", 20, Color.grey, player.transform.position, Vector3.up*25, 1.0f);
+                ShowText(new_text+" materials", 20, Color.grey, player.transform.position, Vector3.up*25, 1.0f);
                 break;
         }
     }
@@ -301,7 +325,7 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         NewWeek();
         SaveState();
-        ShowFixedText("Spirit Guardian Blaty", "You were defeated but I dragged you back, a few weeks regenerating in your coffin and you're as good as new.");
+        ShowInteractableText("You were defeated but I dragged you back, a few weeks regenerating in your coffin and you're as good as new.", "Spirit Guardian Blaty");
     }
 
     public void OnHealthChange()
@@ -331,6 +355,29 @@ public class GameManager : MonoBehaviour
     }
 
     // Saving and loading.
+    [ContextMenu("New Game")]
+    public void NewGame()
+    {
+        Directory.Delete("Assets/Saves", true);
+        SaveState();
+    }
+
+    public void SaveData()
+    {
+        saved_data = "";
+        saved_data += player.playerLevel.ToString()+"#";
+        saved_data += player.health.ToString()+"#";
+        saved_data += player.current_mana.ToString()+"#";
+        saved_data += player.current_stamina.ToString()+"#";
+        saved_data += familiar.level.ToString()+"#";
+        saved_data += familiar.exp.ToString()+"#";
+        saved_data += familiar.current_blood.ToString()+"#";
+        saved_data += weapon.weapon_type.ToString()+"#";
+        saved_data += weapon.weapon_levels+"#";
+        saved_data += experience.ToString()+"#";
+        saved_data += current_day.ToString()+"#";
+    }
+
     public void SaveState()
     {
         if (!Directory.Exists("Assets/Saves/"))
@@ -338,15 +385,8 @@ public class GameManager : MonoBehaviour
             Directory.CreateDirectory("Assets/Saves/");
         }
         weapon.UpdateLevels();
-        SaveDataWrapper save_data = new SaveDataWrapper();
-        save_data.UpdateData();
-        string save_json = JsonUtility.ToJson(save_data, true);
-        File.WriteAllText("Assets/Saves/save_data.json", save_json);
-        FamiliarStatsWrapper familiar_stats = new FamiliarStatsWrapper();
-        familiar_stats.UpdateData();
-        string familiar_stats_json = JsonUtility.ToJson(familiar_stats, true);
-        File.WriteAllText("Assets/Saves/familiar_stats.json", familiar_stats_json);
-        Debug.Log("Saved");
+        SaveData();
+        File.WriteAllText("Assets/Saves/save_data", saved_data);
         story.SaveData();
         summons.SaveData();
         spells.SaveData();
@@ -357,21 +397,21 @@ public class GameManager : MonoBehaviour
     public void LoadState(Scene scene, LoadSceneMode mode)
     {
         SceneManager.sceneLoaded -= LoadState;
-        if (File.Exists("Assets/Saves/save_data.json"))
+        if (File.Exists("Assets/Saves/save_data"))
         {
-            string save_data = File.ReadAllText("Assets/Saves/save_data.json");
-            SaveDataWrapper loaded_data = JsonUtility.FromJson<SaveDataWrapper>(save_data);
-            player.SetLevel(loaded_data.player_level);
-            player.SetHealth(loaded_data.player_hlth);
-            player.SetStam(loaded_data.player_stam);
-            player.SetMana(loaded_data.player_mana);
-            weapon.SetLevels(loaded_data.weapon_levels);
-            weapon.SetType(loaded_data.weapon_type);
-            experience = loaded_data.experience;
-            current_day = loaded_data.current_day;
-            string familiar_stats = File.ReadAllText("Assets/Saves/familiar_stats.json");
-            FamiliarStatsWrapper loaded_familiar_stats = JsonUtility.FromJson<FamiliarStatsWrapper>(familiar_stats);
-            familiar.SetStats(loaded_familiar_stats);
+            string save_data = File.ReadAllText("Assets/Saves/save_data");
+            string[] loaded_data = save_data.Split("#");
+            player.SetLevel(int.Parse(loaded_data[0]));
+            player.SetHealth(int.Parse(loaded_data[1]));
+            player.SetMana(int.Parse(loaded_data[2]));
+            player.SetStam(int.Parse(loaded_data[3]));
+            familiar.SetLevel(int.Parse(loaded_data[4]));
+            familiar.SetExp(int.Parse(loaded_data[5]));
+            familiar.SetCBlood(int.Parse(loaded_data[6]));
+            weapon.SetLevels(loaded_data[8]);
+            weapon.SetType(int.Parse(loaded_data[7]));
+            experience = int.Parse(loaded_data[9]);
+            current_day = int.Parse(loaded_data[10]);
         }
         else
         {
@@ -421,6 +461,7 @@ public class GameManager : MonoBehaviour
     {
         current_day++;
         villages.tiles.PassWorldTime();
+        story.CheckTime();
     }
 
     public void NewWeek()

@@ -12,9 +12,11 @@ public class HUDControls : MonoBehaviour
     public GameObject rlax_button;
     public GameObject fght_button;
     public GameObject talk_button;
+    private Player player;
 
     protected void Start()
     {
+        player = GameManager.instance.player;
         RelaxForm();
     }
 
@@ -53,4 +55,5 @@ public class HUDControls : MonoBehaviour
         fght_button.SetActive(false);
         flee_button.SetActive(false);
     }
+
 }

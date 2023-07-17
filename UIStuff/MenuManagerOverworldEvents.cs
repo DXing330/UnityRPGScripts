@@ -14,17 +14,23 @@ public class MenuManagerOverworldEvents : MonoBehaviour
     public Text event_2;
     public Text event_3;
     protected int page = 0;
+    protected int total_events;
+    protected int total_pages;
+    public List<string> all_events;
 
     protected void Start()
     {
         tiles = GameManager.instance.villages.tiles;
+        total_events = tiles.tile_events.Count;
+        total_pages = total_events/4;
+        all_events = GameManager.instance.InverstListOrder(tiles.tile_events, all_events);
     }
 
     public void SwitchPage(bool right)
     {
         if (right)
         {
-            if (tiles.tile_events.Count > (page+1)*4)
+            if (total_events > (page+1)*4)
             {
                 page++;
                 UpdateEvents();
@@ -46,24 +52,24 @@ public class MenuManagerOverworldEvents : MonoBehaviour
         event_1.text = "N/A";
         event_2.text = "N/A";
         event_3.text = "N/A";
-        if (0 + page*4 < tiles.tile_events.Count)
+        if (0 + page*4 < total_events)
         {
-            if (tiles.tile_events[0 + page*4].Length > 6)
+            if (all_events[0 + page*4].Length > 6)
             {
-                event_0.text = tiles.tile_events[0 + page*4];
+                event_0.text = all_events[0 + page*4];
             }
         }
-        if (1 + page*4 < tiles.tile_events.Count)
+        if (1 + page*4 < total_events)
         {
-            event_1.text = tiles.tile_events[1 + page*4];
+            event_1.text = all_events[1 + page*4];
         }
-        if (2 + page*4 < tiles.tile_events.Count)
+        if (2 + page*4 < total_events)
         {
-            event_2.text = tiles.tile_events[2 + page*4];
+            event_2.text = all_events[2 + page*4];
         }
-        if (3 + page*4 < tiles.tile_events.Count)
+        if (3 + page*4 < total_events)
         {
-            event_3.text = tiles.tile_events[3 + page*4];
+            event_3.text = all_events[3 + page*4];
         }
     }
 

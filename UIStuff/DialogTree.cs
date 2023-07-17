@@ -7,12 +7,6 @@ public class DialogTree : Interactable
     protected int choice = -1;
     public string speaker_name;
     public string words;
-    public List<int> result_1_quality;
-    public List<int> result_2_quality;
-    public List<int> result_3_quality;
-    public List<int> result_1_quantity;
-    public List<int> result_2_quantity;
-    public List<int> result_3_quantity;
     public string choice_1_text;
     public string choice_2_text;
     public string choice_3_text;
@@ -35,8 +29,7 @@ public class DialogTree : Interactable
 
     public override void Interact()
     {
-        GameManager.instance.SetDialogTree(this);
-        GameManager.instance.ShowInteractableText(speaker_name, words, choice_1_text, choice_2_text, choice_3_text);
+        GameManager.instance.ShowInteractableText(words, speaker_name, choice_1_text, choice_2_text, choice_3_text);
     }
 
     public virtual void ReceiveChoice(int choice)
@@ -54,4 +47,5 @@ public class DialogTree : Interactable
                 break;
         }
     }
+
 }

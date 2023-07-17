@@ -7,6 +7,7 @@ using UnityEngine;
 // Handles villages and keeps track of things shared between villages.
 public class VillageDataManager : MonoBehaviour
 {
+    public string village_data;
     public OverworldTilesDataManager tiles;
     public VillageTradingManager trading;
     public EventBoolManager events;
@@ -42,7 +43,7 @@ public class VillageDataManager : MonoBehaviour
         {
             Directory.CreateDirectory("Assets/Saves/Villages");
         }
-        string village_data = "";
+        village_data = "";
         village_data += ConvertListToString(learned_tech);
         village_data += "#";
         village_data += ConvertListToString(possible_buildings);
