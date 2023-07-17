@@ -61,6 +61,7 @@ public class VillageDataManager : MonoBehaviour
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
         tiles.SaveData();
         trading.SaveData();
+        current_village.villagebuildingmanager.SaveData();
     }
 
     public void LoadData()
@@ -92,6 +93,7 @@ public class VillageDataManager : MonoBehaviour
         {
             trading.LoadData();
         }
+        current_village.villagebuildingmanager.LoadData();
     }
 
     public void AddTech(string new_tech)
@@ -136,7 +138,11 @@ public class VillageDataManager : MonoBehaviour
         village_data += ConvertListToString(village.assigned_buildings)+"#";
         village_data += ConvertListToString(village.technologies)+"#";
         village_data += ConvertListToString(village.events)+"#";
-        village_data += ConvertListToString(village.event_durations);
+        village_data += ConvertListToString(village.event_durations)+"#";
+        village_data += ConvertListToString(village.building_levels)+"#";
+        village_data += ConvertListToString(village.building_experience)+"#";
+        village_data += ConvertListToString(village.building_bonus_sizes)+"#";
+        village_data += ConvertListToString(village.building_bonus_outputs)+"#";
         return village_data;
     }
 
@@ -164,6 +170,10 @@ public class VillageDataManager : MonoBehaviour
         village.technologies = village_data_blocks[5].Split("|").ToList();
         village.events = village_data_blocks[6].Split("|").ToList();
         village.event_durations = village_data_blocks[7].Split("|").ToList();
+        village.building_levels = village_data_blocks[8].Split("|").ToList();
+        village.building_experience = village_data_blocks[9].Split("|").ToList();
+        village.building_bonus_sizes = village_data_blocks[10].Split("|").ToList();
+        village.building_bonus_outputs = village_data_blocks[11].Split("|").ToList();
     }
 
     public void SaveVillage(Village village)

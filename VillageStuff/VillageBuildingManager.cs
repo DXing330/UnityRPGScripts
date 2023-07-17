@@ -1,3 +1,5 @@
+using System.IO;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +8,41 @@ public class VillageBuildingManager : MonoBehaviour
 {
     protected string building;
     public List<string> potential_buildings;
+    public List<string> unlocked_buildings;
+    public List<string> building_prerequisites;
     public List<string> all_buildings;
+    public List<string> all_prerequisites;
+
+    public void SaveData()
+    {
+        string building_data = "";
+        building_data += GameManager.instance.ConvertListToString(unlocked_buildings)+"#";
+        building_data += GameManager.instance.ConvertListToString(building_prerequisites)+"#";
+        building_data += GameManager.instance.ConvertListToString(all_buildings)+"#";
+        building_data += GameManager.instance.ConvertListToString(all_prerequisites)+"#";
+        File.WriteAllText("Assets/Saves/Villages/village_buildings.txt", building_data);
+    }
+
+    public void LoadData()
+    {
+        if (File.Exists("Assets/Saves/Villages/village_buildings.txt"))
+        {
+            string[] loaded_data_blocks = File.ReadAllText("Assets/Saves/Villages/village_buildings.txt").Split("#");
+            unlocked_buildings = loaded_data_blocks[0].Split("|").ToList();
+            building_prerequisites = loaded_data_blocks[1].Split("|").ToList();
+            all_buildings = loaded_data_blocks[2].Split("|").ToList();
+            all_prerequisites = loaded_data_blocks[3].Split("|").ToList();
+        }
+        else
+        {
+            unlocked_buildings.Clear();
+            building_prerequisites.Clear();
+            unlocked_buildings.Add("farm");
+            building_prerequisites.Add("plains");
+            unlocked_buildings.Add("market");
+            building_prerequisites.Add("plains");
+        }
+    }
 
     public int DetermineBuildingCost(string building)
     {
@@ -24,15 +60,12 @@ public class VillageBuildingManager : MonoBehaviour
     public List<string> PotentialBuildings(string area)
     {
         potential_buildings.Clear();
-        switch (area)
+        for (int i = 0; i < unlocked_buildings.Count; i++)
         {
-            case "plains":
-                potential_buildings.Add("farm");
-                potential_buildings.Add("market");
-                return potential_buildings;
-            case "mountain":
-                potential_buildings.Add("mine");
-                return potential_buildings;
+            if (building_prerequisites[i] == area)
+            {
+                potential_buildings.Add(unlocked_buildings[i]);
+            }
         }
         return potential_buildings;
     }

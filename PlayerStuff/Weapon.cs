@@ -59,6 +59,10 @@ public class Weapon : Collideable
             damage.damage_amount = Mathf.RoundToInt(damage.damage_amount * (1.0f + increase_percentage));
             coll.SendMessage("ReceiveDamage", damage);
         }
+        else if (coll.tag == "Projectile")
+        {
+            coll.SendMessage("DestroySelf");
+        }
     }
 
     private void BackSwing()

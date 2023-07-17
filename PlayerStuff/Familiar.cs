@@ -130,6 +130,11 @@ public class Familiar : MonoBehaviour
                 RefillBloodBank(level);
             }
         }
+        else if (coll.tag == "Projectile")
+        {
+            coll.SendMessage("DestroySelf");
+            GameManager.instance.ShowText("Took a bullet for you there, master.", 15, Color.red, transform.position, Vector3.up*25, 0.66f);
+        }
     }
 
     public void SetStats(FamiliarStatsWrapper loaded_stats)

@@ -53,6 +53,13 @@ public class Village : MonoBehaviour
     public List<string> surroundings;
     // Buildings allow for village specialization.
     public List<string> buildings;
+    // tracks exp to next skill point;
+    public List<string> building_levels;
+    // Increases from events/time, decreases from attacks/destruction
+    public List<string> building_experience;
+    // Used to increase building production/capacity/etc.
+    public List<string> building_bonus_sizes;
+    public List<string> building_bonus_outputs;
     // Assign population to buildings for more specialization.
     public List<string> assigned_buildings;
     // Technology allows for more buildings and specialization.
@@ -90,6 +97,20 @@ public class Village : MonoBehaviour
             {
                 events.RemoveAt(i);
                 event_durations.RemoveAt(i);
+            }
+        }
+        if (building_levels.Count < 9)
+        {
+            building_levels.Clear();
+            building_experience.Clear();
+            building_bonus_sizes.Clear();
+            building_bonus_outputs.Clear();
+            for (int i = 0; i < 9; i++)
+            {
+                building_levels.Add("1");
+                building_experience.Add("0");
+                building_bonus_sizes.Add("0");
+                building_bonus_outputs.Add("0");
             }
         }
     }
@@ -332,6 +353,8 @@ public class Village : MonoBehaviour
         gathered_production = 0;
         gathered_research = 0;
         GetBuildingProducts();
+        // Unassigned people gather food for themselves.
+        gathered_food += population - assigned_buildings.Count;
         // Accumulate resources;
         food_supply += gathered_food;
         accumulated_gold += gathered_gold;
@@ -359,7 +382,7 @@ public class Village : MonoBehaviour
 
     protected void AssignToBuilding(int index)
     {
-        int limit = villagebuilding.DetermineWorkerLimit(buildings[index]);
+        int limit = villagebuilding.DetermineWorkerLimit(buildings[index]) + int.Parse(building_bonus_sizes[index]);
         for (int i = 0; i < assigned_buildings.Count; i++)
         {
             if (assigned_buildings[i] == index.ToString())
@@ -450,7 +473,30 @@ public class Village : MonoBehaviour
         {
             string new_products = villagebuilding.DetermineAllProducts(buildings[int.Parse(assigned_buildings[i])]);
             AddBuildingProducts(new_products);
+            UpdateBuildingExperience(int.Parse(assigned_buildings[i]));
         }
+    }
+
+    protected void UpdateBuildingExperience(int area)
+    {
+        // Make sure there is actually a building there.
+        if (buildings[area] != surroundings[area])
+        {
+            building_experience[area] = (int.Parse(building_experience[area]) + 1).ToString();
+        }
+    }
+
+    protected void ResetBuildingExperience(int area)
+    {
+        building_experience[area] = "0";
+    }
+
+    protected void ResetBuildingLevel(int area)
+    {
+        building_levels[area] = "0";
+        building_bonus_sizes[area] = "0";
+        building_bonus_outputs[area] = "0";
+        ResetBuildingExperience(area);
     }
 
     protected void AddBuildingProducts(string products)

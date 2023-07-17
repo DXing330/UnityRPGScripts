@@ -43,6 +43,11 @@ public class Projectile : EnemyHitbox
 
     }
 
+    public void DestroySelf()
+    {
+        Destroy(gameObject);
+    }
+
     public virtual void UpdateSpeed(float new_speed)
     {
         speed = new_speed;

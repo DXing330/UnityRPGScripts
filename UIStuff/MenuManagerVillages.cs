@@ -43,6 +43,12 @@ public class MenuManagerVillages : MonoBehaviour
         GameManager.instance.SaveState();
     }
 
+    public void ReturnFromVillage()
+    {
+        village.Save();
+        GameManager.instance.SaveState();
+    }
+
     public void Show()
     {
         Debug.Log("Showing");
@@ -157,11 +163,18 @@ public class MenuManagerVillages : MonoBehaviour
 
     public void VisitArea()
     {
-        if (selected_area >= 0)
+        if (selected_area >= 0 && village.buildings[selected_area] == village.surroundings[selected_area])
         {
+            // Save whenever you leave the village.
+            village.Save();
+            GameManager.instance.SaveState();
             GameManager.instance.villages.events.UpdateArea(village.surroundings[selected_area]);
             UnityEngine.SceneManagement.SceneManager.LoadScene("plains");
             GameManager.instance.hud.Unfade();
+        }
+        else if (selected_area >= 0 && village.buildings[selected_area] != village.surroundings[selected_area])
+        {
+            Debug.Log("Random event");
         }
     }
 

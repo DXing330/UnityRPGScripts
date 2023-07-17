@@ -23,6 +23,7 @@ public class MenuManagerVillageBuilding : MonoBehaviour
     public Text selected_mana;
     public Text selected_gold;
     public Text selected_note;
+    public List<GameObject> upgrade_buttons;
     public List<TMPro.TMP_Text> possible_upgrades;
     public TMPro.TMP_Text upgrade_cost;
     protected int selected_area_of_village = -1;
@@ -63,6 +64,13 @@ public class MenuManagerVillageBuilding : MonoBehaviour
         for (int i = 0; i < potential_upgrades.Count; i++)
         {
             possible_upgrades[i].text = potential_upgrades[i];
+        }
+        for (int i = 0; i < possible_upgrades.Count; i++)
+        {
+            if (possible_upgrades[i].text == "N/A")
+            {
+                upgrade_buttons[i].SetActive(false);
+            }
         }
     }
 
