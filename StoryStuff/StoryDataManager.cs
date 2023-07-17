@@ -78,7 +78,6 @@ public class StoryDataManager : MonoBehaviour
         {
             current_payment--;
             GameManager.instance.villages.collected_blood--;
-            GameManager.instance.player.DrinkBlood();
         }
         else if (current_payment > 0 && GameManager.instance.villages.collected_blood <= 0)
         {
@@ -118,6 +117,7 @@ public class StoryDataManager : MonoBehaviour
         Debug.Log("success");
         current_deadline += 90;
         current_payment += GameManager.instance.current_day/45;
+        GameManager.instance.ShowInteractableText("Good job paying off your quota this time, we'll be back in a few months to check back in on you, collect "+current_payment+" blood by then.", "Big Guy");
         trust++;
         chapter_page++;
         if (chapter_page > story_chapter)
@@ -126,7 +126,6 @@ public class StoryDataManager : MonoBehaviour
             chapter_page--;
             //"Onto the next chapter of the story."
         }
-        GameManager.instance.ShowInteractableText("Good job paying off your quota this time, we'll be back in a few months to check back in on you, collect "+current_payment+" blood by then.", "Big Guy");
     }
 
     protected void Fail()
@@ -137,6 +136,7 @@ public class StoryDataManager : MonoBehaviour
         trust--;
         if (trust <= 0)
         {
+            GameManager.instance.ShowInteractableText("You're not very good at this.", "Big Guy");
             if (GameManager.instance.player.playerLevel > 1)
             {
                 

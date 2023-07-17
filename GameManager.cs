@@ -386,7 +386,7 @@ public class GameManager : MonoBehaviour
         }
         weapon.UpdateLevels();
         SaveData();
-        File.WriteAllText("Assets/Saves/save_data", saved_data);
+        File.WriteAllText("Assets/Saves/save_data.txt", saved_data);
         story.SaveData();
         summons.SaveData();
         spells.SaveData();
@@ -397,9 +397,9 @@ public class GameManager : MonoBehaviour
     public void LoadState(Scene scene, LoadSceneMode mode)
     {
         SceneManager.sceneLoaded -= LoadState;
-        if (File.Exists("Assets/Saves/save_data"))
+        if (File.Exists("Assets/Saves/save_data.txt"))
         {
-            string save_data = File.ReadAllText("Assets/Saves/save_data");
+            string save_data = File.ReadAllText("Assets/Saves/save_data.txt");
             string[] loaded_data = save_data.Split("#");
             player.SetLevel(int.Parse(loaded_data[0]));
             player.SetHealth(int.Parse(loaded_data[1]));
