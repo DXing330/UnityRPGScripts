@@ -34,7 +34,7 @@ public class Destructible : Crate
         {
             destroyed_time = Time.time;
             destroyed = true;
-            manager.SaveState();
+            manager.SaveData();
         }
     }
 }

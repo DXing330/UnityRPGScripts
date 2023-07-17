@@ -39,8 +39,7 @@ public class MenuManagerVillages : MonoBehaviour
     {
         // Costs a day to travel to a village.
         GameManager.instance.NewDay();
-        village.Save();
-        GameManager.instance.SaveState();
+        ReturnFromVillage();
     }
 
     public void ReturnFromVillage()
@@ -166,8 +165,7 @@ public class MenuManagerVillages : MonoBehaviour
         if (selected_area >= 0 && village.buildings[selected_area] == village.surroundings[selected_area])
         {
             // Save whenever you leave the village.
-            village.Save();
-            GameManager.instance.SaveState();
+            ReturnFromVillage();
             GameManager.instance.villages.events.UpdateArea(village.surroundings[selected_area]);
             UnityEngine.SceneManagement.SceneManager.LoadScene("plains");
             GameManager.instance.hud.Unfade();

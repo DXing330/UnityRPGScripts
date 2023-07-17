@@ -269,6 +269,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             int tile = int.Parse(owned_tiles[i]);
             village_to_add_events.Load(tile);
             village_to_add_events.UpdateVillage();
+            village_to_add_events.Save();
         }
         // Traders appear randomly.
         if (GameManager.instance.current_day%3 == 0)
@@ -322,6 +323,8 @@ public class OverworldTilesDataManager : MonoBehaviour
                 }
             }
         }
+        // After updating all villages and tiles, save the game.
+        GameManager.instance.SaveState();
     }
 
     public void MoveOrcs()

@@ -8,24 +8,6 @@ public class SaveDataManager
 
     public void SaveGameData()
     {
-        /*
-        string str = "";
-        str += player.playerLevel.ToString() + "|";
-        str += coins.ToString() + "|";
-        str += experience.ToString() + "|";
-        str += weapon.weaponLevel.ToString() + "|";
-        str += familiar.familiar_level.ToString() + "|";
-        str += mana_crystals.ToString();
-
-        PlayerPrefs.SetString("SaveState", str);
-        ProjectileStatsWrapper projectile_stats = new ProjectileStatsWrapper();
-        projectile_stats.UpdateData();
-        string projectile_stats_json = JsonUtility.ToJson(projectile_stats, true);
-        File.WriteAllText("Assets/Saves/projectile_stats.json", projectile_stats_json);
-        string projectile_stats = File.ReadAllText("Assets/Saves/projectile_stats.json");
-        ProjectileStatsWrapper loaded_projectile_stats = JsonUtility.FromJson<ProjectileStatsWrapper>(projectile_stats);
-        projectile.SetStats(loaded_projectile_stats);
-        */
         if (!Directory.Exists("Assets/Saves/"))
         {
             Directory.CreateDirectory("Assets/Saves/");

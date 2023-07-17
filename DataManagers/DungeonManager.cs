@@ -14,7 +14,7 @@ public class DungeonManager : MonoBehaviour
     public void Start()
     {
         string_path = "Assets/Saves/Dungeons" + "/" + dungeon_ID;
-        LoadState();
+        LoadData();
         AdjustChests();
     }
 
@@ -35,7 +35,7 @@ public class DungeonManager : MonoBehaviour
     }
 
     [ContextMenu("Save")]
-    public void SaveState()
+    public void SaveData()
     {
         if (!Directory.Exists(string_path))
         {
@@ -61,7 +61,7 @@ public class DungeonManager : MonoBehaviour
     }
 
     [ContextMenu("Load")]
-    public void LoadState()
+    public void LoadData()
     {
         if (File.Exists(string_path + "/destructibles"))
         {
