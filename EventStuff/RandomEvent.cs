@@ -30,17 +30,16 @@ public class RandomEvent : MonoBehaviour
     public string probability_1 = "10";
     public string probability_2 = "10";
     public string probability_3 = "10";
-    // Actual results.
+    // Actual results; resource change/battle/etc.
     public string result_1_success_text = "";
     public string result_2_success_text = "";
     public string result_3_success_text = "";
-    public string result_1_fail_text = "";
-    public string result_2_fail_text = "";
-    public string result_3_fail_text = "";
-    // resource change/battle/etc.
     public string result_1_success_effect = "";
     public string result_2_success_effect = "";
     public string result_3_success_effect = "";
+    public string result_1_fail_text = "";
+    public string result_2_fail_text = "";
+    public string result_3_fail_text = "";
     public string result_1_fail_effect = "";
     public string result_2_fail_effect = "";
     public string result_3_fail_effect = "";
@@ -67,12 +66,12 @@ public class RandomEvent : MonoBehaviour
         result_1_success_text = blocks[12];
         result_2_success_text = blocks[13];
         result_3_success_text = blocks[14];
-        result_1_fail_text = blocks[15];
-        result_2_fail_text = blocks[16];
-        result_3_fail_text = blocks[17];
-        result_1_success_effect = blocks[18];
-        result_2_success_effect = blocks[19];
-        result_3_success_effect = blocks[20];
+        result_1_success_effect = blocks[15];
+        result_2_success_effect = blocks[16];
+        result_3_success_effect = blocks[17];
+        result_1_fail_text = blocks[18];
+        result_2_fail_text = blocks[19];
+        result_3_fail_text = blocks[20];
         result_1_fail_effect = blocks[21];
         result_2_fail_effect = blocks[22];
         result_3_fail_effect = blocks[23];
