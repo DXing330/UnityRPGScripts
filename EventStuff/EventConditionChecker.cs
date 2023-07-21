@@ -52,19 +52,19 @@ public class EventConditionChecker : MonoBehaviour
         condition_details = condition.Split("=");
         switch (condition_details[0])
         {
-            case "Level":
+            case "level":
                 if (player.playerLevel >= int.Parse(condition_details[1]))
                 {
                     return true;
                 }
                 return false;
-            case "Mana":
+            case "mana":
                 if (player.current_mana >= int.Parse(condition_details[1]))
                 {
                     return true;
                 }
                 return false;
-            case "Health":
+            case "health":
                 if (player.health >= int.Parse(condition_details[1]))
                 {
                     return true;

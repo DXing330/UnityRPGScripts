@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public SpellDataManager spells;
     public VillageDataManager villages;
     public EquipmentDataManager all_equipment;
+    public EventDataManager all_events;
     // UI Stuff.
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
@@ -95,9 +96,9 @@ public class GameManager : MonoBehaviour
     }
 
     // Interactable Text.
-    public void SetEvent(RandomEvent new_event)
+    public void SetEvent()
     {
-        current_event = new_event;
+        current_event = all_events.current_event;
         ShowInteractableText(current_event.event_description, current_event.event_name, current_event.choice_1, current_event.choice_2, current_event.choice_3);
     }
 
@@ -399,6 +400,7 @@ public class GameManager : MonoBehaviour
         spells.SaveData();
         all_equipment.SaveData();
         villages.SaveData();
+        all_events.SaveData();
     }
 
     public void LoadState(Scene scene, LoadSceneMode mode)
@@ -430,6 +432,7 @@ public class GameManager : MonoBehaviour
         all_equipment.LoadData();
         villages.LoadData();
         story.LoadData();
+        all_events.LoadData();
         blood_deadline = story.ReturnDeadlineDate();
     }
 

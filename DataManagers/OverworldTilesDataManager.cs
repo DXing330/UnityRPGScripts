@@ -238,8 +238,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public void ExploreTile(int tile_num)
     {
         tiles_explored[tile_num] = "Yes";
-        // Decide on owner somehow.
-        // Decide on random event.
+        GameManager.instance.all_events.PickEvent("exploring");
     }
 
     public void ExploreAll()

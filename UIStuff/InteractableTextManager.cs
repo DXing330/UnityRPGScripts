@@ -26,7 +26,6 @@ public class InteractableTextManager : MonoBehaviour
     public void ReturnChoice(int choice_number)
     {
         GameManager.instance.ReceiveChoice(choice_number);
-        Hide();
     }
 
     public void EnableReturnButton()

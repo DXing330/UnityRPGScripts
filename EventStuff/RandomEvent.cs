@@ -161,6 +161,11 @@ public class RandomEvent : MonoBehaviour
     private void CheckOutcome()
     {
         outcomeChecker.ReceiveOutcome(result_outcome);
+        ShowResultText();
+    }
+
+    private void ShowResultText()
+    {
         GameManager.instance.ShowInteractableText(result_outcome_text);
     }
 }
