@@ -1,0 +1,76 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EventConditionChecker : MonoBehaviour
+{
+    private string[] all_conditions;
+    private string[] condition_details;
+    private bool success;
+    private Player player;
+    private Village village;
+    private int tile_number;
+
+    private void Start()
+    {
+        player = GameManager.instance.player;
+    }
+
+    public bool CheckProbability(string probability)
+    {
+        int rng = Random.Range(0, 10);
+        if (rng < int.Parse(probability))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool CheckConditions(string condition)
+    {
+        if (condition == "None")
+        {
+            return true;
+        }
+        all_conditions = condition.Split("|");
+        for (int i = 0; i < all_conditions.Length; i++)
+        {
+            if (all_conditions[i].Length >= 3)
+            {
+                success = CheckCondition(all_conditions[i]);
+                if (!success)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private bool CheckCondition(string condition)
+    {
+        condition_details = condition.Split("=");
+        switch (condition_details[0])
+        {
+            case "Level":
+                if (player.playerLevel >= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
+            case "Mana":
+                if (player.current_mana >= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
+            case "Health":
+                if (player.health >= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
+        }
+        return false;
+    }
+}

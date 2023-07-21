@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;
     public InteractableTextManager interactableTextManager;
-    public EventChoices current_event = null;
+    public RandomEvent current_event = null;
     public HUD hud;
     public RectTransform healthBar;
     public Text healthText;
@@ -95,10 +95,10 @@ public class GameManager : MonoBehaviour
     }
 
     // Interactable Text.
-    public void SetEvent(EventChoices eventChoices)
+    public void SetEvent(RandomEvent new_event)
     {
-        current_event = eventChoices;
-        ShowInteractableText(current_event.words, current_event.speaker_name, current_event.choice_1_text, current_event.choice_2_text, current_event.choice_3_text);
+        current_event = new_event;
+        ShowInteractableText(current_event.event_description, current_event.event_name, current_event.choice_1, current_event.choice_2, current_event.choice_3);
     }
 
     public void ReceiveChoice(int choice)
@@ -349,6 +349,13 @@ public class GameManager : MonoBehaviour
         stamText.text = (ratio * 100.0f).ToString() + "%";
     }
 
+    public void UpdateHlthManaStam()
+    {
+        OnHealthChange();
+        OnManaChange();
+        OnStamChange();
+    }
+
     public float StaminaRatio()
     {
         return (float)player.current_stamina / (float)player.max_stamina;
@@ -417,6 +424,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Load failed");
         }
+        UpdateHlthManaStam();
         summons.LoadData();
         spells.LoadData();
         all_equipment.LoadData();

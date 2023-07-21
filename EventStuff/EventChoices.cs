@@ -64,9 +64,4 @@ public class EventChoices : DialogTree
         outcomes.SetChoices(this);
         outcomes.SelectChoice(choice);
     }
-
-    public override void Interact()
-    {
-        GameManager.instance.SetEvent(this);
-    }
 }
