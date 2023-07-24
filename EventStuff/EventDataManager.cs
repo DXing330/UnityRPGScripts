@@ -11,12 +11,17 @@ public class EventDataManager : MonoBehaviour
     protected int story_progress;
     protected int current_night;
     public RandomEvent current_event;
-    // List of all events that can happen while exploring the overworld.
-    public List<string> explore_overworld_events;
     // Indices of unlocked events.
     public List<string> possible_overworld_events;
+    // List of all events that can happen while exploring the overworld.
+    public List<string> explore_overworld_events;
     // Every area has their own possible events.
-    public List<string> visit_farm_events;
+    public List<string> explore_plains_events;
+    public List<string> explore_forest_events;
+    public List<string> explore_hills_events;
+    public List<string> explore_mountain_events;
+    public List<string> explore_lake_events;
+    public List<string> explore_desert_events;
 
     public void SaveData()
     {
@@ -35,25 +40,67 @@ public class EventDataManager : MonoBehaviour
                 raw_data = File.ReadAllText("Assets/Events/base_unlocked.txt");
                 possible_overworld_events = raw_data.Split("|").ToList();
             }
-            raw_data = File.ReadAllText("Assets/Events/exploring.txt");
+            raw_data = File.ReadAllText("Assets/Events/unowned_land.txt");
             explore_overworld_events = raw_data.Split("$").ToList();
-            raw_data = File.ReadAllText("Assets/Events/farm.txt");
-            visit_farm_events = raw_data.Split("$").ToList();
+            raw_data = File.ReadAllText("Assets/Events/plains.txt");
+            explore_plains_events = raw_data.Split("$").ToList();
+            raw_data = File.ReadAllText("Assets/Events/forest.txt");
+            explore_forest_events = raw_data.Split("$").ToList();
+            raw_data = File.ReadAllText("Assets/Events/hills.txt");
+            explore_hills_events = raw_data.Split("$").ToList();
+            raw_data = File.ReadAllText("Assets/Events/mountain.txt");
+            explore_mountain_events = raw_data.Split("$").ToList();
+            raw_data = File.ReadAllText("Assets/Events/lake.txt");
+            explore_lake_events = raw_data.Split("$").ToList();
+            raw_data = File.ReadAllText("Assets/Events/desert.txt");
+            explore_desert_events = raw_data.Split("$").ToList();
         }
     }
 
     public void PickEvent(string type)
     {
         int random_index = 0;
+        string event_string = "";
         switch (type)
         {
-            case "exploring":
+            case "unowned":
                 // Pick a random event from the possible overworld events.
                 random_index = Random.Range(0, possible_overworld_events.Count);
-                string event_string = explore_overworld_events[int.Parse(possible_overworld_events[random_index])];
+                event_string = explore_overworld_events[int.Parse(possible_overworld_events[random_index])];
+                current_event.LoadEvent(event_string);
+                break;
+            case "plains":
+                random_index = Random.Range(0, explore_plains_events.Count);
+                event_string = explore_plains_events[random_index];
+                current_event.LoadEvent(event_string);
+                break;
+            case "forest":
+                random_index = Random.Range(0, explore_forest_events.Count);
+                event_string = explore_forest_events[random_index];
+                current_event.LoadEvent(event_string);
+                break;
+            case "hills":
+                random_index = Random.Range(0, explore_hills_events.Count);
+                event_string = explore_hills_events[random_index];
+                current_event.LoadEvent(event_string);
+                break;
+            case "mountain":
+                random_index = Random.Range(0, explore_mountain_events.Count);
+                event_string = explore_mountain_events[random_index];
+                current_event.LoadEvent(event_string);
+                break;
+            case "lake":
+                random_index = Random.Range(0, explore_lake_events.Count);
+                event_string = explore_lake_events[random_index];
+                current_event.LoadEvent(event_string);
+                break;
+            case "desert":
+                random_index = Random.Range(0, explore_desert_events.Count);
+                event_string = explore_desert_events[random_index];
                 current_event.LoadEvent(event_string);
                 break;
         }
         GameManager.instance.SetEvent();
     }
+
 }

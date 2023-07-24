@@ -15,6 +15,11 @@ public class NPCVillageOwner : MonoBehaviour
     private List<string> attitude_network;
     // Allies are a part of the network where they'll be more likely to consider requests.
     private List<string> perceived_allies;
+    private List<string> perceived_enemies;
+    // Contracts are future obligations
+    // Need to know, who|what|how much|when
+    // Failing to deliver a contract is very bad, politically speaking.
+    private List<string> contracts;
     // blood|settlers|mana|gold|food|mats
     private string collected_resources =  "0|0|0|0|0|0";
     private string[] collected_resources_list;

@@ -237,8 +237,21 @@ public class OverworldTilesDataManager : MonoBehaviour
     // Need to explore a tile to see what kind of terrain it is and who lives there.
     public void ExploreTile(int tile_num)
     {
+        int rng = 0;
         tiles_explored[tile_num] = "Yes";
-        GameManager.instance.all_events.PickEvent("exploring");
+        if (tile_owner[tile_num] == "None")
+        {
+            // Either get a general event or a specific terrain event.
+            rng = Random.Range(0, 2);
+            if (rng == 0)
+            {
+                GameManager.instance.all_events.PickEvent("unowned");
+            }
+            else
+            {
+                GameManager.instance.all_events.PickEvent(tile_type[tile_num]);
+            }
+        }
     }
 
     public void ExploreAll()

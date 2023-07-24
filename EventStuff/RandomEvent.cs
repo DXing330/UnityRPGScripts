@@ -17,29 +17,29 @@ public class RandomEvent : MonoBehaviour
     // In case it affects a village, keep track of the appropiate village.
     public int village_ID = -1;
     // Identifier.
-    public string event_name;
-    public string event_description;
+    public string event_name = "Test";
+    public string event_description = "Test";
     // Brief description of options, implying results.
-    public string choice_1 = "";
-    public string choice_2 = "";
-    public string choice_3 = "";
+    public string choice_1 = "Test";
+    public string choice_2 = "Test";
+    public string choice_3 = "Test";
     // Conditions; quantities: levels/mana/trust/fear/food/gold/etc.
-    public string condition_1 = "None";
-    public string condition_2 = "None";
-    public string condition_3 = "None";
+    public string condition_1 = "none=0|none=0|none=0";
+    public string condition_2 = "none=0|none=0|none=0";
+    public string condition_3 = "none=0|none=0|none=0";
     public string probability_1 = "10";
     public string probability_2 = "10";
     public string probability_3 = "10";
     // Actual results; resource change/battle/etc.
-    public string result_1_success_text = "";
-    public string result_2_success_text = "";
-    public string result_3_success_text = "";
+    public string result_1_success_text = "Test";
+    public string result_2_success_text = "Test";
+    public string result_3_success_text = "Test";
     public string result_1_success_effect = "";
     public string result_2_success_effect = "";
     public string result_3_success_effect = "";
-    public string result_1_fail_text = "";
-    public string result_2_fail_text = "";
-    public string result_3_fail_text = "";
+    public string result_1_fail_text = "Test";
+    public string result_2_fail_text = "Test";
+    public string result_3_fail_text = "Test";
     public string result_1_fail_effect = "";
     public string result_2_fail_effect = "";
     public string result_3_fail_effect = "";
@@ -159,7 +159,7 @@ public class RandomEvent : MonoBehaviour
 
     private void CheckOutcome()
     {
-        outcomeChecker.ReceiveOutcome(result_outcome);
+        outcomeChecker.ReceiveOutcome(result_outcome, success);
         ShowResultText();
     }
 

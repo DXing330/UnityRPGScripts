@@ -43,6 +43,8 @@ public class Player : Mover
     protected float summon_cooldown = 6.0f;
     public int summon_limit;
     protected float last_summon;
+    // Diplomacy.
+    public PlayerDiplomacy diplomacy;
 
     protected override void Start()
     {
@@ -384,7 +386,7 @@ public class Player : Mover
         projectile_index = i;
     }
 
-    protected void PayHealth(int cost)
+    public void PayHealth(int cost)
     {
         health -= cost;
         GameManager.instance.OnHealthChange();
@@ -395,7 +397,7 @@ public class Player : Mover
         }
     }
 
-    protected bool PayMana(int cost)
+    public bool PayMana(int cost)
     {
         current_mana -= cost;
         GameManager.instance.OnManaChange();
@@ -411,7 +413,7 @@ public class Player : Mover
         return false;
     }
 
-    protected void PayStam(int cost)
+    public void PayStam(int cost)
     {
         if (current_stamina > 0)
         {

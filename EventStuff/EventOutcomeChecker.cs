@@ -6,8 +6,11 @@ public class EventOutcomeChecker : MonoBehaviour
 {
     private string[] outcomes;
     private string[] single_outcome;
-    public void ReceiveOutcome(string outcome)
+    private bool success;
+
+    public void ReceiveOutcome(string outcome, bool succeed)
     {
+        success = succeed;
         outcomes = outcome.Split("|");
         DetermineOutcomes();
     }
@@ -26,9 +29,19 @@ public class EventOutcomeChecker : MonoBehaviour
     private void DetermineOutcome(string outcome)
     {
         single_outcome = outcome.Split("=");
+        // Don't bother with things that don't change anything.
+        if (int.Parse(single_outcome[1]) == 0)
+        {
+            return;
+        }
+        // If you fail you lose some amount of resources.
+        if (!success)
+        {
+            single_outcome[1] = (-int.Parse(single_outcome[1])).ToString();
+        }
         try
         {
-            if (int.Parse(single_outcome[0]) <= 5)
+            if (int.Parse(single_outcome[0]) <= 6)
             {
                 GameManager.instance.GainResource(int.Parse(single_outcome[0]), int.Parse(single_outcome[1]));
             }
@@ -38,10 +51,10 @@ public class EventOutcomeChecker : MonoBehaviour
             switch (single_outcome[0])
             {
                 case "health":
-                    GameManager.instance.player.SetHealth(int.Parse(single_outcome[1]));
+                    GameManager.instance.player.PayHealth(int.Parse(single_outcome[1]));
                     break;
                 case "mana":
-                    GameManager.instance.player.SetMana(int.Parse(single_outcome[1]));
+                    GameManager.instance.player.PayMana(int.Parse(single_outcome[1]));
                     break;
             }
         }

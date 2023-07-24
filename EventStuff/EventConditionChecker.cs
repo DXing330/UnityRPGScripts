@@ -28,10 +28,6 @@ public class EventConditionChecker : MonoBehaviour
 
     public bool CheckConditions(string condition)
     {
-        if (condition == "None")
-        {
-            return true;
-        }
         all_conditions = condition.Split("|");
         for (int i = 0; i < all_conditions.Length; i++)
         {
@@ -50,6 +46,10 @@ public class EventConditionChecker : MonoBehaviour
     private bool CheckCondition(string condition)
     {
         condition_details = condition.Split("=");
+        if (condition_details[0] == "none")
+        {
+            return true;
+        }
         switch (condition_details[0])
         {
             case "level":
@@ -66,6 +66,12 @@ public class EventConditionChecker : MonoBehaviour
                 return false;
             case "health":
                 if (player.health >= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
+            case "reputation":
+                if (player.diplomacy.ReturnRep() >= int.Parse(condition_details[1]))
                 {
                     return true;
                 }

@@ -293,6 +293,9 @@ public class GameManager : MonoBehaviour
                 villages.collected_materials += amount;
                 ShowText(new_text+" materials", 20, Color.grey, player.transform.position, Vector3.up*25, 1.0f);
                 break;
+            case 6:
+                player.diplomacy.AdjustReputation(amount);
+                break;
         }
     }
 
@@ -384,6 +387,7 @@ public class GameManager : MonoBehaviour
         saved_data += weapon.weapon_levels+"#";
         saved_data += experience.ToString()+"#";
         saved_data += current_day.ToString()+"#";
+        saved_data += player.diplomacy.ReturnRep().ToString()+"#";
     }
 
     public void SaveState()
@@ -421,6 +425,7 @@ public class GameManager : MonoBehaviour
             weapon.SetType(int.Parse(loaded_data[7]));
             experience = int.Parse(loaded_data[9]);
             current_day = int.Parse(loaded_data[10]);
+            player.diplomacy.SetReputation(int.Parse(loaded_data[11]));
         }
         else
         {
