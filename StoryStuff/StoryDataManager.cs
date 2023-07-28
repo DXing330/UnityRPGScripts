@@ -17,7 +17,7 @@ public class StoryDataManager : MonoBehaviour
     // Minimum you need to pay each time period.
     // If they notice you're a higher level they'll make you pay more.
     protected int current_payment = 1;
-    protected int current_deadline = 90;
+    protected int current_deadline = 60;
 
     protected void ConvertSelfToString()
     {
@@ -53,9 +53,9 @@ public class StoryDataManager : MonoBehaviour
             current_payment = int.Parse(loaded_data[4]);
             current_deadline = int.Parse(loaded_data[5]);
         }
-        if (current_deadline < 90)
+        if (current_deadline < 60)
         {
-            current_deadline = 90;
+            current_deadline = 60;
         }
     }
 
@@ -115,8 +115,8 @@ public class StoryDataManager : MonoBehaviour
     protected void Success()
     {
         Debug.Log("success");
-        current_deadline += 90;
-        current_payment += GameManager.instance.current_day/45;
+        current_deadline += 60;
+        current_payment += 1 + GameManager.instance.current_day/60;
         GameManager.instance.ShowInteractableText("Good job paying off your quota this time, we'll be back in a few months to check back in on you, collect "+current_payment+" blood by then.", "Big Guy");
         trust++;
         chapter_page++;
@@ -131,7 +131,7 @@ public class StoryDataManager : MonoBehaviour
     protected void Fail()
     {
         Debug.Log("failure");
-        current_deadline += 90;
+        current_deadline += 60;
         current_payment += current_payment + GameManager.instance.current_day/45;
         trust--;
         if (trust <= 0)

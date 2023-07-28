@@ -20,19 +20,12 @@ public class MenuManagerVillages : MonoBehaviour
     public Animator animator;
     public Village village;
     protected int page = 0;
-    protected int total_villages;
     protected int selected_area = -1;
 
     protected void Start()
     {
         villagedatamanager = GameManager.instance.villages;
         village = GameManager.instance.villages.current_village;
-        total_villages = villagedatamanager.total_villages;
-    }
-
-    protected void UpdateDataFromVillageManager()
-    {
-        total_villages = villagedatamanager.total_villages;
     }
 
     public void SaveVillage()

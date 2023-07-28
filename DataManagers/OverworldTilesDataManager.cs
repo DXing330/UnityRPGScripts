@@ -220,6 +220,19 @@ public class OverworldTilesDataManager : MonoBehaviour
         }
     }
 
+    public void NPCClaimTile(int tile_num, string new_owner)
+    {
+        if (tile_owner[tile_num] == "None")
+        {
+            tile_owner[tile_num] = new_owner;
+        }
+    }
+
+    public void UnclaimTile(int tile_num)
+    {
+        tile_owner[tile_num] = "None";
+    }
+
     // Need to explore a tile to see what kind of terrain it is and who lives there.
     public void ExploreTile(int tile_num)
     {

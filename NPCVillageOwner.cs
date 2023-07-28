@@ -7,6 +7,9 @@ using UnityEngine;
 // People to negotiate deals and trade resources and information with.
 public class NPCVillageOwner : MonoBehaviour
 {
+    // Areas they have explored.
+    public List<string> explored_tiles;
+    private List<int> buildable_areas;
     // Resources they have access to.
     public List<string> villages_owned;
     // List of people they trade requests with.
@@ -28,17 +31,28 @@ public class NPCVillageOwner : MonoBehaviour
     // Easier to connect with people of same or connected factions.
     public string npc_name;
     public string faction = "vampire";
+    private int deadline;
+    private int quota;
     // Affects behavior.
     private int loyalty;
     private string goal;
     private string personality;
     // Affects combat.
     public int level;
+    private int exp;
     public string weapon;
+    private Village current_village;
+    private OverworldTilesDataManager tiles;
+
+    public void Start()
+    {
+        current_village = GameManager.instance.villages.current_village;
+        tiles = GameManager.instance.villages.tiles;
+    }
 
     public void Save()
     {
-        string file_path = "Assets/NPC/"+name+".txt";
+        string file_path = "Assets/NPC/"+npc_name+".txt";
         string save_data = "";
         save_data += npc_name+"#";
         save_data += faction+"#";
@@ -55,6 +69,10 @@ public class NPCVillageOwner : MonoBehaviour
         save_data += GameManager.instance.ConvertListToString(perceived_allies)+"#";
         save_data += GameManager.instance.ConvertListToString(perceived_enemies)+"#";
         save_data += GameManager.instance.ConvertListToString(contracts)+"#";
+        save_data += deadline.ToString()+"#";
+        save_data += quota.ToString()+"#";
+        save_data += exp.ToString()+"#";
+        save_data += GameManager.instance.ConvertListToString(explored_tiles)+"#";
         File.WriteAllText(file_path, save_data);
     }
 
@@ -78,6 +96,11 @@ public class NPCVillageOwner : MonoBehaviour
             perceived_allies = blocks[8].Split("|").ToList();
             perceived_enemies = blocks[9].Split("|").ToList();
             contracts = blocks[10].Split("|").ToList();
+            deadline = int.Parse(blocks[11]);
+            quota = int.Parse(blocks[12]);
+            exp = int.Parse(blocks[13]);
+            explored_tiles = blocks[14].Split("|").ToList();
+
         }
         else
         {
@@ -89,13 +112,21 @@ public class NPCVillageOwner : MonoBehaviour
     {
         npc_name = name;
         faction = new_faction;
+        // Vampires all have a blood debt.
+        if (faction == "vampire")
+        {
+            quota = 1;
+            deadline = GameManager.instance.current_day + 60;
+        }
         loyalty = GameManager.instance.ReturnDiceRollSum(5, 2);
         // Later think up and generate more goals.
         // survive/power/glory/pleasure
+        // survive/expand/power
         goal = "survive";
         // Later think up and generate more personalities;
         personality = "greedy";
         level = 1;
+        exp = 0;
         weapon = "spear";
         Save();
     }
@@ -139,47 +170,136 @@ public class NPCVillageOwner : MonoBehaviour
 
     }
 
-    protected void TurnAction()
+    protected void ClaimTile(int tile_number)
+    {
+        GameManager.instance.villages.NewVillage(tiles.tile_type[tile_number], tile_number);
+        villages_owned.Add(tile_number.ToString());
+        tiles.NPCClaimTile(tile_number, npc_name);
+        Save();
+    }
+
+    public void TurnAction()
     {
         // Manage villages, gather resources, interact with others.
-    }
-
-    protected void ManageVillage(Village village, int village_ID)
-    {
-        // assign workers/get rid of problems/build new buildings/take blood
-        village.Load(village_ID);
-        // Assigning workers is a free action.
-        if (village.population > village.assigned_buildings.Count)
+        // Pass time in each of their villages.
+        for (int i = 0; i < villages_owned.Count; i++)
         {
-            int priority = DeterminePriorities(village);
-            int area_to_assign = village.DetermineOptimalPlacement(priority);
-            if (area_to_assign < 0)
+            int tile = int.Parse(villages_owned[i]);
+            current_village.Load(tile);
+            current_village.UpdateVillage();
+            current_village.Save();
+        }
+        // Near the deadline, go to the largest villages and take blood.
+        // Start prepping the appropiate number of weeks beforehand.
+        int urgency = quota - int.Parse(resources_list[0]);
+        int time = deadline - GameManager.instance.current_day;
+        // At the deadline try to pay off the quota.
+        // This seven can be adjustable depending on their bravery.
+        if (urgency > time/7)
+        {
+            int village_to_suck = DetermineVillageToSuck();
+            if (village_to_suck >= 0)
             {
-                // Take blood if they're a vampire with a full village.
-            }
-            else
-            {
-                village.SelectAssignedBuilding(area_to_assign);
+                ManageVillage(village_to_suck, true);
+                return;
             }
         }
-        // Focus on getting rid of big problems.
-        // If they're a vampire then take blood sometimes.
+        // At the start of each week visit all villages.
+        int day = GameManager.instance.current_day%7;
+        if (day < villages_owned.Count)
+        {
+            ManageVillage(int.Parse(villages_owned[day]));
+            return;
+        }
+        // If less than six villages, try to expand, if success->return.
+        if (villages_owned.Count < 6 && int.Parse(resources_list[1]) > 0 && int.Parse(resources_list[2]) > 0)
+        {
+            // Make a new village on an explored and unowned tile.
+            buildable_areas.Clear();
+            for (int i = 0; i < explored_tiles.Count; i++)
+            {
+                if (tiles.tile_owner[int.Parse(explored_tiles[i])] == "None")
+                {
+                    buildable_areas.Add(int.Parse(explored_tiles[i]));
+                }
+            }
+            if (buildable_areas.Count > 0)
+            {
+                int rng = Random.Range(0, buildable_areas.Count);
+                ClaimTile(buildable_areas[rng]);
+                return;
+            }
+        }
+        // Otherwise just wander around and collect resources/deal/fulfill contracts.
     }
 
-    protected int DeterminePriorities(Village village)
+    protected int DetermineVillageToSuck()
+    {
+        int village_to_suck = -1;
+        int largest_village = 0;
+        for (int i = 0; i < villages_owned.Count; i++)
+        {
+            // Compare all villages based on size.
+            current_village.Load(int.Parse(villages_owned[i]));
+            if (current_village.population > largest_village)
+            {
+                largest_village = current_village.population;
+                if (largest_village >= 2)
+                {
+                    village_to_suck = int.Parse(villages_owned[i]);
+                }
+            }
+        }
+        return village_to_suck;
+    }
+
+    protected void ManageVillage(int village_ID, bool suck = false)
+    {
+        // assign workers/get rid of problems/build new buildings/take blood
+        current_village.Load(village_ID);
+        int priority = DeterminePriorities();
+        // Sucking is a free action.
+        if (suck)
+        {
+            current_village.SuckBlood(1);
+            ResourceChange(0, 1);
+        }
+        // Assigning workers is a free action.
+        if (current_village.population > current_village.assigned_buildings.Count)
+        {
+            int area_to_assign = current_village.DetermineOptimalPlacement(priority);
+            if (area_to_assign >= 0)
+            {
+                current_village.SelectAssignedBuilding(area_to_assign);
+            }
+        }
+        // Building is also a free action.
+        // Need some way to determine the best building.
+        if (current_village.accumulated_gold >= 6 && current_village.accumulated_materials >= 6)
+        {
+            // Try to build something.
+        }
+        // Focus on getting rid of big problems like bandits and starvation.
+        // Try to decrease their fear and anger if possible.
+        // If they're a vampire then take blood sometimes.
+        // After they're done with the village, save it.
+        current_village.Save();
+    }
+
+    protected int DeterminePriorities()
     {
         // blood|pop|mana|gold|food|mats
-        // Basic priority is food.
-        int priority = 4;
-        // If there is enough food then start gathering materials.
-        if (village.food_supply > village.population + 1)
+        // Lowest priority is gold.
+        int priority = 3;
+        // Second lowest is materials.
+        if (current_village.accumulated_materials < 6)
         {
             priority = 5;
         }
-        // If there is enough materials then start gathering gold.
-        if (village.accumulated_materials > 6)
+        // Highest priority is food.
+        if (current_village.food_supply < current_village.population + 1)
         {
-            priority = 3;
+            priority = 4;
         }
         return priority;
     }

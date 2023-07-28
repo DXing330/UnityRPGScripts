@@ -133,7 +133,7 @@ public class Village : MonoBehaviour
     }
 
     // Drinking blood kills people and makes them angry.
-    public void SuckBlood()
+    public void SuckBlood(int player = 0)
     {
         // Can't get blood from a stone.
         if (population <= 0)
@@ -141,9 +141,12 @@ public class Village : MonoBehaviour
             return;
         }
         // As long as they're afraid or much weaker they'll let you do as you please.
-        if (fear >= discontentment || population <= GameManager.instance.player.playerLevel)
+        if (fear >= discontentment || population <= GameManager.instance.player.playerLevel || player != 0)
         {
-            GameManager.instance.GainResource(0,1);
+            if (player == 0)
+            {
+                GameManager.instance.GainResource(0,1);
+            }
             population--;
             fear++;
             discontentment++;
@@ -376,6 +379,7 @@ public class Village : MonoBehaviour
         }
         return area;
     }
+    
 
     protected int CheckBuildingProducts(string product, int type)
     {
@@ -634,6 +638,13 @@ public class Village : MonoBehaviour
         gathered_food = 0;
         gathered_gold = 0;
         gathered_mana = 0;
+    }
+
+    public string VillageStatusReport()
+    {
+        string report = "";
+        // Give details about the village, current output, outstanding issues, visiting traders, etc.
+        return report;
     }
 
 }
