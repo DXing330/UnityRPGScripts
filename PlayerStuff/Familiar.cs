@@ -70,7 +70,7 @@ public class Familiar : MonoBehaviour
 
     protected void CheckOnMaster()
     {
-        if ((GameManager.instance.player.health) * 3 < GameManager.instance.player.max_health - heal_threshold_increase)
+        if ((GameManager.instance.player.health) * 2 < GameManager.instance.player.max_health - heal_threshold_increase)
             {
                 HealMaster();
             }
@@ -97,13 +97,15 @@ public class Familiar : MonoBehaviour
 
     protected void HealMaster()
     {
+        // If you have enough blood, then heal.
         if (current_blood >= bonus_heal+1)
         {
             current_blood -= bonus_heal+1;
             GameManager.instance.player.SendMessage("ReceiveHealing", bonus_heal+1);
             GameManager.instance.ShowText("Blood for Master.", 15, Color.white, transform.position, Vector3.up*25, 0.66f);
         }
-        else
+        // Otherwise only heal if the player is super low.
+        else if (GameManager.instance.player.health < level + 1)
         {
             GameManager.instance.player.SendMessage("ReceiveHealing", 1);
             GameManager.instance.ShowText("We're low on BLOOD.", 25, Color.white, transform.position, Vector3.up*25, 0.66f);
@@ -171,7 +173,7 @@ public class Familiar : MonoBehaviour
 
     public void DrinkBlood()
     {
-        RefillBloodBank(max_blood);
+        RefillBloodBank(max_blood/2);
         exp++;
         LevelUp();
     }
@@ -190,10 +192,9 @@ public class Familiar : MonoBehaviour
 
     public void LevelUp()
     {
-        int variance = Random.Range(-level, level);
-        if (exp >= level*level + variance)
+        if (exp >= level*level)
         {
-            exp -= level*level + variance;
+            exp -= level*level;
             level++;
             bonus_rotate_speed++;
             bonus_rotate_speed_float = bonus_rotate_speed * 1.0f;

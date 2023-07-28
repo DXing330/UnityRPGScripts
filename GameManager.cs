@@ -58,6 +58,30 @@ public class GameManager : MonoBehaviour
     public int current_max_depth;
 
     // Useful Generic Functions
+    public int ReturnDiceRollSum(int dice_faces, int dice_rolls = 1)
+    {
+        int sum = 0;
+        for (int i = 0; i < dice_rolls; i++)
+        {
+            sum += Random.Range(1, dice_faces+1);
+        }
+        return sum;
+    }
+
+    public string ConvertArrayToString(string[] string_array)
+    {
+        string returned = "";
+        for (int i = 0; i < string_array.Length; i++)
+        {
+            returned += string_array[i];
+            if (i < string_array.Length-1)
+            {
+                returned += "|";
+            }
+        }
+        return returned;
+    }
+
     public string ConvertListToString(List<string> string_list)
     {
         string returned = "";
@@ -110,6 +134,11 @@ public class GameManager : MonoBehaviour
     public void ShowInteractableText(string words, string name = "", string choice_1="", string choice_2="", string choice_3="")
     {
         interactableTextManager.ShowTexts(words, name, choice_1, choice_2, choice_3);
+    }
+
+    public void ShowInteractableResult(string result)
+    {
+        interactableTextManager.ShowResultText(result);
     }
 
     // Player actions.
@@ -205,9 +234,8 @@ public class GameManager : MonoBehaviour
     public int GetExptoLevel()
     {
         int exp = 0;
-        int level = player.playerLevel + 1;
+        int level = player.playerLevel;
         exp = level * level;
-        exp += Random.Range(-level, level);
 
         return exp;
     }
@@ -271,6 +299,7 @@ public class GameManager : MonoBehaviour
         {
             case 0:
                 villages.collected_blood += amount;
+                villages.collected_blood = Mathf.Max(0, villages.collected_blood);
                 ShowText(new_text+" blood crystals", 25, Color.red, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 1:
@@ -283,14 +312,17 @@ public class GameManager : MonoBehaviour
                 break;
             case 3:
                 villages.collected_gold += amount;
+                villages.collected_gold = Mathf.Max(0, villages.collected_gold);
                 ShowText(new_text+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 4:
                 villages.collected_food += amount;
+                villages.collected_food = Mathf.Max(0, villages.collected_food);
                 ShowText(new_text+" food", 20, Color.green, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 5:
                 villages.collected_materials += amount;
+                villages.collected_materials = Mathf.Max(0, villages.collected_materials);
                 ShowText(new_text+" materials", 20, Color.grey, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 6:
