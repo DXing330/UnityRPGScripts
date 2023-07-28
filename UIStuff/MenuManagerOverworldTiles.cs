@@ -35,7 +35,8 @@ public class MenuManagerOverworldTiles : MonoBehaviour
     public int visited_area = -1;
     public int visited_tile = -1;
     // Action that lets you clear out hostile areas.
-    public GameObject clear_area_button;
+    // Deprecated for now, exploring a hostile area will result in a fight.
+    //public GameObject clear_area_button;
 
 
     public void Start()
@@ -103,18 +104,17 @@ public class MenuManagerOverworldTiles : MonoBehaviour
 
     protected void UpdateTileInfo()
     {
-        clear_area_button.SetActive(false);
         int index = visited_tile + (visited_area*9);
         tile_number.text = (index + 1).ToString();
         if (overworld_tiles.tiles_explored[index] == "Yes")
         {
             tile_type.text = overworld_tiles.tile_type[index];
             tile_owner.text = overworld_tiles.tile_owner[index];
-            // Only attack tiles owned by other people.
+            /* Only attack tiles owned by other people.
             if (overworld_tiles.tile_owner[index] != "None" && overworld_tiles.tile_owner[index] != "You")
             {
                 clear_area_button.SetActive(true);
-            }
+            }*/
         }
         else
         {
@@ -181,7 +181,6 @@ public class MenuManagerOverworldTiles : MonoBehaviour
             {
                 text.text = "V";
             }
-            // On average an orc area should spawn once a month, if unchecked it will spread every month to a nearby zone, if its a village of yours then they will attack the village.
             else if (overworld_tiles.tile_owner[i] == "Orc")
             {
                 text.text = "Orc "+overworld_tiles.tile_type[i];
@@ -198,8 +197,6 @@ public class MenuManagerOverworldTiles : MonoBehaviour
         switch (tile_type)
         {
             case "plains":
-                return Color.green;
-            case "hills":
                 return Color.green;
             case "forest":
                 return Color.green;

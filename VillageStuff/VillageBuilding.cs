@@ -17,8 +17,6 @@ public class VillageBuilding : MonoBehaviour
                 return 1;
             case "forest":
                 return 1;
-            case "hills":
-                return 1;
             case "lake":
                 return 1;
             case "mountain":
@@ -43,8 +41,6 @@ public class VillageBuilding : MonoBehaviour
                 return "F";
             case "forest":
                 return "F|M";
-            case "hills":
-                return "F";
             case "lake":
                 return "F";
             case "mountain":
@@ -65,8 +61,6 @@ public class VillageBuilding : MonoBehaviour
                 return "2";
             case "forest":
                 return "1|1";
-            case "hills":
-                return "1";
             case "lake":
                 return "1";
             case "mountain":
@@ -92,8 +86,6 @@ public class VillageBuilding : MonoBehaviour
                 return "0|0|0|0|2|0|0";
             case "forest":
                 return "0|0|0|0|1|1|0";
-            case "hills":
-                return "0|0|0|0|1|0|0";
             case "lake":
                 return "0|0|0|0|1|0|-1";
             case "mountain":
@@ -119,4 +111,5 @@ public class VillageBuilding : MonoBehaviour
         }
         return "";
     }
+    
 }

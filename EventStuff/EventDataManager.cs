@@ -18,7 +18,6 @@ public class EventDataManager : MonoBehaviour
     // Every area has their own possible events.
     public List<string> explore_plains_events;
     public List<string> explore_forest_events;
-    public List<string> explore_hills_events;
     public List<string> explore_mountain_events;
     public List<string> explore_lake_events;
     public List<string> explore_desert_events;
@@ -46,8 +45,6 @@ public class EventDataManager : MonoBehaviour
             explore_plains_events = raw_data.Split("$").ToList();
             raw_data = File.ReadAllText("Assets/Events/forest.txt");
             explore_forest_events = raw_data.Split("$").ToList();
-            raw_data = File.ReadAllText("Assets/Events/hills.txt");
-            explore_hills_events = raw_data.Split("$").ToList();
             raw_data = File.ReadAllText("Assets/Events/mountain.txt");
             explore_mountain_events = raw_data.Split("$").ToList();
             raw_data = File.ReadAllText("Assets/Events/lake.txt");
@@ -75,10 +72,6 @@ public class EventDataManager : MonoBehaviour
             case "forest":
                 random_index = Random.Range(0, explore_forest_events.Count);
                 event_string = explore_forest_events[random_index];
-                break;
-            case "hills":
-                random_index = Random.Range(0, explore_hills_events.Count);
-                event_string = explore_hills_events[random_index];
                 break;
             case "mountain":
                 random_index = Random.Range(0, explore_mountain_events.Count);

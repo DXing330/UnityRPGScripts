@@ -95,24 +95,9 @@ public class VillageBuildingManager : MonoBehaviour
                     case 2:
                         return "forest";
                     case 3:
-                        return "hills";
+                        return "mountain";
                     case 4:
                         return "lake";
-                }
-                return "plains";
-            case "hills":
-                switch (i)
-                {
-                    case 0:
-                        return "hills";
-                    case 1:
-                        return "hills";
-                    case 2:
-                        return "plains";
-                    case 3:
-                        return "forest";
-                    case 4:
-                        return "mountain";
                 }
                 return "plains";
             case "forest":
@@ -153,7 +138,7 @@ public class VillageBuildingManager : MonoBehaviour
                     case 1:
                         return "lake";
                     case 2:
-                        return "hills";
+                        return "mountain";
                     case 3:
                         return "cave";
                     case 4:

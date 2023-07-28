@@ -13,7 +13,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> tile_events;
     public List<string> owned_tiles;
     public bool new_events = false;
-    protected int grid_size = 9;
+    public int grid_size = 25;
     public Village village_to_add_events;
 
     public void CountOwnedTiles()
@@ -131,17 +131,17 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             case "plains":
                 next_tile_num = Random.Range(0, 10);
-                if (next_tile_num < 4)
+                if (next_tile_num < 5)
                 {
                     next_tile = "plains";
                 }
-                else if (next_tile_num < 7)
+                else if (next_tile_num < 8)
                 {
                     next_tile = "forest";
                 }
                 else if (next_tile_num < 10)
                 {
-                    next_tile = "hills";
+                    next_tile = "mountain";
                 }
                 return next_tile;
             case "forest":
@@ -157,21 +157,6 @@ public class OverworldTilesDataManager : MonoBehaviour
                 else if (next_tile_num < 10)
                 {
                     next_tile = "lake";
-                }
-                return next_tile;
-            case "hills":
-                next_tile_num = Random.Range(0, 10);
-                if (next_tile_num < 4)
-                {
-                    next_tile = "plains";
-                }
-                else if (next_tile_num < 7)
-                {
-                    next_tile = "plains";
-                }
-                else if (next_tile_num < 10)
-                {
-                    next_tile = "mountain";
                 }
                 return next_tile;
             case "mountain":
@@ -206,17 +191,17 @@ public class OverworldTilesDataManager : MonoBehaviour
                 return next_tile;
             case "desert":
                 next_tile_num = Random.Range(0, 10);
-                if (next_tile_num < 4)
+                if (next_tile_num < 5)
                 {
                     next_tile = "desert";
                 }
-                else if (next_tile_num < 7)
+                else if (next_tile_num < 8)
                 {
                     next_tile = "plains";
                 }
                 else if (next_tile_num < 10)
                 {
-                    next_tile = "plains";
+                    next_tile = "mountain";
                 }
                 return next_tile;
         }
