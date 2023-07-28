@@ -76,6 +76,24 @@ public class EventConditionChecker : MonoBehaviour
                     return true;
                 }
                 return false;
+            case "reputationinverse":
+                if (player.diplomacy.ReturnRep() <= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
+            case "gold":
+                if (GameManager.instance.villages.collected_gold >= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
+            case "goldinverse":
+                if (GameManager.instance.villages.collected_gold <= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
         }
         return false;
     }

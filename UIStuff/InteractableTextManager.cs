@@ -12,6 +12,7 @@ public class InteractableTextManager : MonoBehaviour
     public GameObject return_button;
     public Text speaker;
     public Text text;
+    public Text result_text;
     public Text option_text_1;
     public Text option_text_2;
     public Text option_text_3;
@@ -36,6 +37,7 @@ public class InteractableTextManager : MonoBehaviour
     public void Hide()
     {
         text.text = "";
+        result_text.text = "";
         speaker.text = "";
         DisableButtons();
         animator.SetTrigger("Hide");
@@ -81,5 +83,10 @@ public class InteractableTextManager : MonoBehaviour
             option_3.SetActive(true);
             option_text_3.text = choice_3;
         }
+    }
+
+    public void ShowResultText(string words)
+    {
+        result_text.text = words;
     }
 }

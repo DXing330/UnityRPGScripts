@@ -65,41 +65,35 @@ public class EventDataManager : MonoBehaviour
         {
             case "unowned":
                 // Pick a random event from the possible overworld events.
-                random_index = Random.Range(0, possible_overworld_events.Count);
-                event_string = explore_overworld_events[int.Parse(possible_overworld_events[random_index])];
-                current_event.LoadEvent(event_string);
+                random_index = Random.Range(0, explore_overworld_events.Count);
+                event_string = explore_overworld_events[random_index];
                 break;
             case "plains":
                 random_index = Random.Range(0, explore_plains_events.Count);
                 event_string = explore_plains_events[random_index];
-                current_event.LoadEvent(event_string);
                 break;
             case "forest":
                 random_index = Random.Range(0, explore_forest_events.Count);
                 event_string = explore_forest_events[random_index];
-                current_event.LoadEvent(event_string);
                 break;
             case "hills":
                 random_index = Random.Range(0, explore_hills_events.Count);
                 event_string = explore_hills_events[random_index];
-                current_event.LoadEvent(event_string);
                 break;
             case "mountain":
                 random_index = Random.Range(0, explore_mountain_events.Count);
                 event_string = explore_mountain_events[random_index];
-                current_event.LoadEvent(event_string);
                 break;
             case "lake":
                 random_index = Random.Range(0, explore_lake_events.Count);
                 event_string = explore_lake_events[random_index];
-                current_event.LoadEvent(event_string);
                 break;
             case "desert":
                 random_index = Random.Range(0, explore_desert_events.Count);
                 event_string = explore_desert_events[random_index];
-                current_event.LoadEvent(event_string);
                 break;
         }
+        current_event.LoadEvent(event_string);
         GameManager.instance.SetEvent();
     }
 

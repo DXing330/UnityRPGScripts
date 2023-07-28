@@ -11,6 +11,7 @@ public class RandomEvent : MonoBehaviour
     private string chosen_probability;
     private string result_outcome_text;
     private string result_outcome;
+    private string result_outcome_details;
     private bool success = false;
     // Overworld/village/exploring/negotiating/etc.
     public string event_type;
@@ -44,12 +45,8 @@ public class RandomEvent : MonoBehaviour
     public string result_2_fail_effect = "";
     public string result_3_fail_effect = "";
 
-    public void LoadEvent(string loaded_event, int village_num = -1)
+    public void LoadEvent(string loaded_event)
     {
-        if (village_num >= 0)
-        {
-            village_ID = village_num;
-        }
         string[] blocks = loaded_event.Split("#");
         event_type = blocks[0];
         event_name = blocks[1];
@@ -125,6 +122,7 @@ public class RandomEvent : MonoBehaviour
                 case 1:
                     result_outcome_text = result_1_success_text;
                     result_outcome = result_1_success_effect;
+                    // Add some text showing the details of the result, what you got and how much you got.
                     break;
                 case 2:
                     result_outcome_text = result_2_success_text;
@@ -159,12 +157,13 @@ public class RandomEvent : MonoBehaviour
 
     private void CheckOutcome()
     {
-        outcomeChecker.ReceiveOutcome(result_outcome, success);
+        result_outcome_details = outcomeChecker.ReceiveOutcome(result_outcome, success);
         ShowResultText();
     }
 
     private void ShowResultText()
     {
         GameManager.instance.ShowInteractableText(result_outcome_text);
+        GameManager.instance.ShowInteractableResult(result_outcome_details);
     }
 }

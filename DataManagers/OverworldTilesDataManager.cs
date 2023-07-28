@@ -252,6 +252,12 @@ public class OverworldTilesDataManager : MonoBehaviour
                 GameManager.instance.all_events.PickEvent(tile_type[tile_num]);
             }
         }
+        // If someone owns the tile and it's not you then interact with them.
+        // If you own the tile then you get a specific terrain event.
+        else
+        {
+            GameManager.instance.all_events.PickEvent(tile_type[tile_num]);
+        }
     }
 
     public void ExploreAll()
