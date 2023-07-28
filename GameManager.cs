@@ -402,7 +402,6 @@ public class GameManager : MonoBehaviour
     public void NewGame()
     {
         Directory.Delete("Assets/Saves", true);
-        SaveState();
     }
 
     public void SaveData()
@@ -463,6 +462,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Load failed");
         }
+        player.SetLevel(1);
         UpdateHlthManaStam();
         summons.LoadData();
         spells.LoadData();

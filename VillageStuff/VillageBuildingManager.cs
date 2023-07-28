@@ -145,6 +145,21 @@ public class VillageBuildingManager : MonoBehaviour
                         return "desert";
                 }
                 return "mountain";
+            case "lake":
+                switch (i)
+                {
+                    case 0:
+                        return "lake";
+                    case 1:
+                        return "lake";
+                    case 2:
+                        return "lake";
+                    case 3:
+                        return "lake";
+                    case 4:
+                        return "plains";
+                }
+                return "lake";
         }
         return "plains";
     }

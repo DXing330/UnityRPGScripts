@@ -102,9 +102,10 @@ public class OverworldTilesDataManager : MonoBehaviour
             tiles_explored.Add("No");
             tile_owner.Add("None");
         }
-        tiles_explored[40] = "Yes";
-        tile_owner[40] = "None";
-        ClaimTile(40);
+        int start = (grid_size*grid_size - 1)/2;
+        tiles_explored[start] = "Yes";
+        tile_owner[start] = "None";
+        ClaimTile(start);
     }
 
     protected void GenerateTiles()
@@ -286,48 +287,54 @@ public class OverworldTilesDataManager : MonoBehaviour
         // Every month orc encampments may spawn.
         if (GameManager.instance.current_day%28 == 0)
         {
-            for (int i = 0; i < grid_size*grid_size; i++)
+            SpawnOrcs();
+        }
+        // After updating all villages and tiles, save the game.
+        GameManager.instance.SaveState();
+    }
+
+    private void SpawnOrcs()
+    {
+        int rng = 0;
+        for (int i = 0; i < grid_size*grid_size; i++)
+        {
+            if (tile_owner[i] == "None" || tile_owner[i] == "Unknown")
             {
-                if (tile_owner[i] == "None" || tile_owner[i] == "Unknown")
+                rng = Random.Range(0, grid_size*grid_size);
+                if (rng == 0)
                 {
-                    rng = Random.Range(0, grid_size*grid_size);
-                    if (rng == 0)
+                    tile_owner[i] = "Orc";
+                    if (tiles_explored[i] == "Yes")
                     {
-                        tile_owner[i] = "Orc";
-                        if (tiles_explored[i] == "Yes")
-                        {
-                            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
-                        }
+                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
                     }
                 }
-                else if (tile_owner[i] == "Orc")
+            }
+            else if (tile_owner[i] == "Orc")
+            {
+                rng = Random.Range(0, grid_size*grid_size);
+                if (rng == 0)
                 {
-                    rng = Random.Range(0, grid_size*grid_size);
-                    if (rng == 0)
+                    tile_owner[i] = "Orc Camp";
+                    if (tiles_explored[i] == "Yes")
                     {
-                        tile_owner[i] = "Orc Camp";
-                        if (tiles_explored[i] == "Yes")
-                        {
-                            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs gather at zone "+i.ToString());
-                        }
+                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs gather at zone "+i.ToString());
                     }
                 }
-                else if (tile_owner[i] == "Orc Camp")
+            }
+            else if (tile_owner[i] == "Orc Camp")
+            {
+                rng = Random.Range(0, grid_size*grid_size);
+                if (rng == 0)
                 {
-                    rng = Random.Range(0, grid_size*grid_size);
-                    if (rng == 0)
+                    tile_owner[i] = "Orc Army";
+                    if (tiles_explored[i] == "Yes")
                     {
-                        tile_owner[i] = "Orc Army";
-                        if (tiles_explored[i] == "Yes")
-                        {
-                            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs form an army at zone "+i.ToString());
-                        }
+                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs form an army at zone "+i.ToString());
                     }
                 }
             }
         }
-        // After updating all villages and tiles, save the game.
-        GameManager.instance.SaveState();
     }
 
     public void MoveOrcs()

@@ -11,8 +11,8 @@ public class MenuTilesv2 : MonoBehaviour
     public Text tile_number;
     public Text tile_owner;
     public Text tile_type;
-    private int selected_area = -1;
-    private int selected_inner_area = -1;
+    public int selected_area = -1;
+    public int selected_inner_area = -1;
     private bool inner = false;
     public Animator animator;
     public OverworldTilesDataManager overworld_tiles;

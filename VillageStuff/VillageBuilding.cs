@@ -83,21 +83,21 @@ public class VillageBuilding : MonoBehaviour
         switch (building_name)
         {
             case "plains":
-                return "0|0|0|0|2|0|0";
+                return "0|0|0|0|2|0|0|0";
             case "forest":
-                return "0|0|0|0|1|1|0";
+                return "0|0|0|0|1|1|0|0";
             case "lake":
-                return "0|0|0|0|1|0|-1";
+                return "0|0|0|0|1|0|-1|0";
             case "mountain":
-                return "0|0|0|0|0|2|0";
+                return "0|0|0|0|0|2|0|0";
             case "cave":
-                return "0|-1|1|0|0|0|0";
+                return "0|-1|1|0|0|0|0|0";
             case "desert":
-                return "0|0|0|0|0|0|0";
+                return "0|0|0|0|0|0|0|0";
             case "farm":
-                return "0|0|0|0|3|0|0";
+                return "0|0|0|0|3|0|0|0";
             case "market":
-                return "0|0|0|1|0|0|0";
+                return "0|0|0|1|0|0|0|0";
         }
         return "0|0|0|0|0|0|0";
     }

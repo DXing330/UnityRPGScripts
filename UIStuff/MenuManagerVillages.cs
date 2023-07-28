@@ -8,7 +8,7 @@ public class MenuManagerVillages : MonoBehaviour
 {
     protected VillageDataManager villagedatamanager;
     public MenuManagerVillageTech villagetechmenu;
-    public MenuManagerOverworldTiles overworldtilesmenu;
+    public MenuTilesv2 overworldtilesmenu;
     public MenuManagerVillagePanel villagepanel;
     public MenuManagerVillageBuilding villagebuildingmenu;
     public Text collected_food;
@@ -82,7 +82,7 @@ public class MenuManagerVillages : MonoBehaviour
 
     public void SelectVillage()
     {
-        int index = overworldtilesmenu.visited_tile + (overworldtilesmenu.visited_area*9);
+        int index = overworldtilesmenu.selected_inner_area + (overworldtilesmenu.selected_area*overworldtilesmenu.grid_size);
         if (overworldtilesmenu.overworld_tiles.tile_owner[index] == "You")
         {
             village.Load(index);
