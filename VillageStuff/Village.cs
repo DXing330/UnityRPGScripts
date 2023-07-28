@@ -343,6 +343,46 @@ public class Village : MonoBehaviour
         }
     }
 
+    public string EstimateVillageOutput()
+    {
+        string outputs = "";
+        gathered_food = 0;
+        gathered_gold = 0;
+        gathered_mana = 0;
+        gathered_production = 0;
+        GetBuildingProducts();
+        gathered_food += population - assigned_buildings.Count;
+        outputs += gathered_food.ToString()+"|"+gathered_gold.ToString()+"|"+gathered_mana.ToString()+"|"+gathered_production.ToString();
+        return outputs;
+    }
+
+    public int DetermineOptimalPlacement(int priority)
+    {
+        int amount = -1;
+        int area = -1;
+        for (int i = 0; i < buildings.Count; i++)
+        {
+            // If the building is full, don't consider it.
+            if (CheckBuildingMaxCapacity(i))
+            {
+                continue;
+            }
+            string products = villagebuilding.DetermineAllProducts(buildings[i]);
+            if (CheckBuildingProducts(products, priority) > amount)
+            {
+                amount = CheckBuildingProducts(products, priority);
+                area = i;
+            }
+        }
+        return area;
+    }
+
+    protected int CheckBuildingProducts(string product, int type)
+    {
+        string[] products = product.Split("|");
+        return int.Parse(products[type]);
+    }
+
     protected void DetermineVillageStats()
     {
         // Reset gathered supply every day.
@@ -359,9 +399,8 @@ public class Village : MonoBehaviour
         food_supply += gathered_food;
         accumulated_gold += gathered_gold;
         accumulated_mana += gathered_mana;
+        accumulated_materials += gathered_production;
         discontentment += Random.Range(0, population) + gathered_discontentment;
-        accumulated_research += gathered_research * (education_level+1);
-        accumulated_materials += gathered_production * (education_level+1);
         PayUpkeepCosts();
         CheckVillageMood();
     }
@@ -380,7 +419,7 @@ public class Village : MonoBehaviour
         }
     }
 
-    protected void AssignToBuilding(int index)
+    protected bool CheckBuildingMaxCapacity(int index)
     {
         int limit = villagebuilding.DetermineWorkerLimit(buildings[index]) + int.Parse(building_bonus_sizes[index]);
         for (int i = 0; i < assigned_buildings.Count; i++)
@@ -392,9 +431,17 @@ public class Village : MonoBehaviour
         }
         if (limit <= 0)
         {
-            return;
+            return true;
         }
-        assigned_buildings.Add(index.ToString());
+        return false;
+    }
+
+    protected void AssignToBuilding(int index)
+    {
+        if (!CheckBuildingMaxCapacity(index))
+        {
+            assigned_buildings.Add(index.ToString());
+        }
     }
 
     public void RemoveFromBuilding(int index)
@@ -502,13 +549,13 @@ public class Village : MonoBehaviour
     protected void AddBuildingProducts(string products)
     {
         string[] all_products = products.Split("|");
-        population += int.Parse(all_products[0]);
-        gathered_production += int.Parse(all_products[1]);
-        gathered_food += int.Parse(all_products[2]);
-        gathered_discontentment += int.Parse(all_products[3]);
-        gathered_fear += int.Parse(all_products[4]);
-        gathered_gold += int.Parse(all_products[5]);
-        gathered_mana += int.Parse(all_products[6]);
+        population += int.Parse(all_products[1]);
+        gathered_mana += int.Parse(all_products[2]);
+        gathered_gold += int.Parse(all_products[3]);
+        gathered_food += int.Parse(all_products[4]);
+        gathered_production += int.Parse(all_products[5]);
+        gathered_fear += int.Parse(all_products[6]);
+        gathered_discontentment += int.Parse(all_products[7]);
     }
 
     protected void PassVillageTime()
