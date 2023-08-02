@@ -21,6 +21,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
     public Text product;
     public Text output;
     protected Village village;
+    private string[] area_details;
 
     public void SetVillage(Village new_village)
     {
@@ -55,8 +56,9 @@ public class MenuManagerVillagePanel : MonoBehaviour
         }
         workers_in_area.text = workers.ToString();
         max_workers_in_area.text = village.villagebuilding.DetermineWorkerLimit(area.text).ToString();
-        product.text = village.villagebuilding.DetermineMainProduct(area.text);
-        output.text = (village.villagebuilding.DetermineMainProductAmount(area.text)).ToString();
+        area_details = village.villagebuilding.DetermineMainProductandAmount(area.text).Split("|");
+        product.text = area_details[1];
+        output.text = area_details[0];
     }
 
     public void SetColors()

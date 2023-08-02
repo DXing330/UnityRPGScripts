@@ -7,19 +7,26 @@ using UnityEngine;
 public class VillageBuildingManager : MonoBehaviour
 {
     protected string building;
+    private string[] building_info;
+    private string loaded_data;
+    private List<string> loaded_buildings;
     public List<string> potential_buildings;
     public List<string> unlocked_buildings;
     public List<string> building_prerequisites;
     public List<string> all_buildings;
     public List<string> all_prerequisites;
+    public List<string> all_worker_limit;
+    public List<string> all_outputs;
+    public List<string> all_specials;
+    public List<string> all_special_specifics;
+    public List<string> all_flavor_texts;
+    public List<string> all_costs;
 
     public void SaveData()
     {
         string building_data = "";
         building_data += GameManager.instance.ConvertListToString(unlocked_buildings)+"#";
         building_data += GameManager.instance.ConvertListToString(building_prerequisites)+"#";
-        building_data += GameManager.instance.ConvertListToString(all_buildings)+"#";
-        building_data += GameManager.instance.ConvertListToString(all_prerequisites)+"#";
         File.WriteAllText("Assets/Saves/Villages/village_buildings.txt", building_data);
     }
 
@@ -30,8 +37,6 @@ public class VillageBuildingManager : MonoBehaviour
             string[] loaded_data_blocks = File.ReadAllText("Assets/Saves/Villages/village_buildings.txt").Split("#");
             unlocked_buildings = loaded_data_blocks[0].Split("|").ToList();
             building_prerequisites = loaded_data_blocks[1].Split("|").ToList();
-            all_buildings = loaded_data_blocks[2].Split("|").ToList();
-            all_prerequisites = loaded_data_blocks[3].Split("|").ToList();
         }
         else
         {
@@ -41,6 +46,31 @@ public class VillageBuildingManager : MonoBehaviour
             building_prerequisites.Add("plains");
             unlocked_buildings.Add("market");
             building_prerequisites.Add("plains");
+        }
+        if (File.Exists("Assets/Saves/Villages/all_buildings.txt"))
+        {
+            loaded_data = File.ReadAllText("Assets/Saves/Villages/all_buildings.txt");
+            loaded_buildings = loaded_data.Split("#").ToList();
+            all_buildings.Clear();
+            all_prerequisites.Clear();
+            all_worker_limit.Clear();
+            all_outputs.Clear();
+            all_specials.Clear();
+            all_special_specifics.Clear();
+            all_flavor_texts.Clear();
+            all_costs.Clear();
+            for (int i = 0; i < loaded_buildings.Count; i++)
+            {
+                building_info = loaded_buildings[i].Split("$");
+                all_buildings.Add(building_info[0]);
+                all_prerequisites.Add(building_info[1]);
+                all_worker_limit.Add(building_info[2]);
+                all_outputs.Add(building_info[3]);
+                all_specials.Add(building_info[4]);
+                all_special_specifics.Add(building_info[5]);
+                all_flavor_texts.Add(building_info[6]);
+                all_costs.Add(building_info[7]);
+            }
         }
     }
 

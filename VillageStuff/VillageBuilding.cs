@@ -8,108 +8,109 @@ public class VillageBuilding : MonoBehaviour
     protected int low_tier = 1;
     protected int mid_tier = 2;
     protected int high_tier = 3;
+    public VillageBuildingManager building_data;
 
     public int DetermineWorkerLimit(string building_name)
     {
-        switch (building_name)
+        for (int i = 0; i < building_data.all_buildings.Count; i++)
         {
-            case "plains":
-                return 1;
-            case "forest":
-                return 1;
-            case "lake":
-                return 1;
-            case "mountain":
-                return 1;
-            case "cave":
-                return 1;
-            case "desert":
-                return 0;
-            case "farm":
-                return 3;
+            if (building_data.all_buildings[i] == building_name)
+            {
+                return (int.Parse(building_data.all_worker_limit[i]));
+            }
         }
-        return 1;
+        return 0;
     }
 
-    public string DetermineMainProduct(string building_name)
+    public string DetermineMainProductandAmount(string building_name)
     {
-        switch (building_name)
+        string outputs = "";
+        string output_type = "";
+        for (int i = 0; i < building_data.all_buildings.Count; i++)
         {
-            case "plains":
-                return "F";
-            case "farm":
-                return "F";
-            case "forest":
-                return "F|M";
-            case "lake":
-                return "F";
-            case "mountain":
-                return "M";
-            case "cave":
-                return "Mana";
-            case "desert":
-                return "None";
+            if (building_data.all_buildings[i] == building_name)
+            {
+                outputs = building_data.all_outputs[i];
+                break;
+            }
         }
-        return "None";
+        string[] output_array = outputs.Split("|");
+        int amount = 0;
+        int index = -1;
+        for (int j = 0; j < output_array.Length; j++)
+        {
+            if (int.Parse(output_array[j]) > amount)
+            {
+                amount = int.Parse(output_array[j]);
+                index = j;
+            }
+        }
+        if (amount == 0)
+        {
+            return "0|None";
+        }
+        else
+        {
+            switch (index)
+            {
+                case 0:
+                    output_type = "Blood";
+                    break;
+                case 1:
+                    output_type = "Settlers";
+                    break;
+                case 2:
+                    output_type = "Mana";
+                    break;
+                case 3:
+                    output_type = "Gold";
+                    break;
+                case 4:
+                    output_type = "Food";
+                    break;
+                case 5:
+                    output_type = "Mats";
+                    break;
+            }
+        }
+        return amount.ToString()+"|"+output_type;
     }
 
-    public string DetermineMainProductAmount(string building_name)
-    {
-        switch (building_name)
-        {
-            case "plains":
-                return "2";
-            case "forest":
-                return "1|1";
-            case "lake":
-                return "1";
-            case "mountain":
-                return "2";
-            case "cave":
-                return "1";
-            case "desert":
-                return "0";
-            case "farm":
-                return "3";
-        }
-        return "0";
-    }
-
-    // order population|materials|food|anger|fear|gold|mana
     // blood|pop|mana|gold|food|mats|fear|anger
     public string DetermineAllProducts(string building_name)
     {
-        // Behold the horrors of hard coding.
-        switch (building_name)
+        for (int i = 0; i < building_data.all_buildings.Count; i++)
         {
-            case "plains":
-                return "0|0|0|0|2|0|0|0";
-            case "forest":
-                return "0|0|0|0|1|1|0|0";
-            case "lake":
-                return "0|0|0|0|1|0|-1|0";
-            case "mountain":
-                return "0|0|0|0|0|2|0|0";
-            case "cave":
-                return "0|-1|1|0|0|0|0|0";
-            case "desert":
-                return "0|0|0|0|0|0|0|0";
-            case "farm":
-                return "0|0|0|0|3|0|0|0";
-            case "market":
-                return "0|0|0|1|0|0|0|0";
-        }
-        return "0|0|0|0|0|0|0";
+            if (building_data.all_buildings[i] == building_name)
+            {
+                return ((building_data.all_outputs[i]));
+            }
+        }        
+        return "0|0|0|0|0|0|0|0";
     }
 
     public string DetermineSpecialEffects(string building_name)
     {
-        switch (building_name)
+        for (int i = 0; i < building_data.all_buildings.Count; i++)
         {
-            case "cave":
-                return "Full of deadly monsters.";
+            if (building_data.all_buildings[i] == building_name)
+            {
+                return ((building_data.all_flavor_texts[i]));
+            }
         }
         return "";
+    }
+
+    public string DetermineCost(string building_name)
+    {
+        for (int i = 0; i < building_data.all_buildings.Count; i++)
+        {
+            if (building_data.all_buildings[i] == building_name)
+            {
+                return ((building_data.all_costs[i]));
+            }
+        }
+        return "6|6|0";
     }
     
 }
