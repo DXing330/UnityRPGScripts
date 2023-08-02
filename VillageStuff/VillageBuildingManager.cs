@@ -10,7 +10,7 @@ public class VillageBuildingManager : MonoBehaviour
     private string[] building_info;
     private string loaded_data;
     private List<string> loaded_buildings;
-    public List<string> potential_buildings;
+    public List<int> potential_buildings;
     public List<string> unlocked_buildings;
     public List<string> building_prerequisites;
     public List<string> all_buildings;
@@ -74,27 +74,14 @@ public class VillageBuildingManager : MonoBehaviour
         }
     }
 
-    public int DetermineBuildingCost(string building)
-    {
-        switch (building)
-        {
-            case "farm":
-                return 6;
-            case "mine":
-                return 6;
-            case "market":
-                return 6;
-        }
-        return 0;
-    }
-    public List<string> PotentialBuildings(string area)
+    public List<int> PotentialBuildings(string area)
     {
         potential_buildings.Clear();
-        for (int i = 0; i < unlocked_buildings.Count; i++)
+        for (int i = 0; i < all_prerequisites.Count; i++)
         {
-            if (building_prerequisites[i] == area)
+            if (all_prerequisites[i] == area)
             {
-                potential_buildings.Add(unlocked_buildings[i]);
+                potential_buildings.Add(i);
             }
         }
         return potential_buildings;

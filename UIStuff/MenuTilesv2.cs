@@ -13,6 +13,8 @@ public class MenuTilesv2 : MonoBehaviour
     public Text tile_type;
     public int selected_area = -1;
     public int selected_inner_area = -1;
+    private int zone_tile_one = -1;
+    public List<int> zone_tiles;
     private bool inner = false;
     public Animator animator;
     public OverworldTilesDataManager overworld_tiles;
@@ -96,12 +98,12 @@ public class MenuTilesv2 : MonoBehaviour
 
     protected void UpdateTileInfo()
     {
-        int index = selected_inner_area + (selected_area*grid_size);
-        tile_number.text = (index + 1).ToString();
-        if (overworld_tiles.tiles_explored[index] == "Yes")
+        int zone = zone_tiles[selected_inner_area]-1;
+        tile_number.text = (zone + 1).ToString();
+        if (overworld_tiles.tiles_explored[zone] == "Yes")
         {
-            tile_type.text = overworld_tiles.tile_type[index];
-            tile_owner.text = overworld_tiles.tile_owner[index];
+            tile_type.text = overworld_tiles.tile_type[zone];
+            tile_owner.text = overworld_tiles.tile_owner[zone];
             /* Only attack tiles owned by other people.
             if (overworld_tiles.tile_owner[index] != "None" && overworld_tiles.tile_owner[index] != "You")
             {
@@ -124,9 +126,40 @@ public class MenuTilesv2 : MonoBehaviour
 
     protected void UpdateTiles()
     {
+        DetermineTileOne();
         for (int i = 0; i < texts.Count; i++)
         {
-            UpdateTile(images[i], texts[i], i + (selected_area*grid_size));
+            UpdateTile(images[i], texts[i], zone_tiles[i]-1);
+        }
+    }
+
+    protected void DetermineTileOne()
+    {
+        int tile_area = selected_area + 1;
+        int offset = 0;
+        while (tile_area > 5)
+        {
+            tile_area -= 5;
+            offset += 125;
+        }
+        tile_area -= 1;
+        tile_area *= 5;
+        tile_area += 1;
+        zone_tile_one = offset + tile_area;
+        DetermineZoneTiles();
+    }
+
+    protected void DetermineZoneTiles()
+    {
+        zone_tiles.Clear();
+        int offset = 0;
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                zone_tiles.Add(zone_tile_one+j+offset);
+            }
+            offset += 25;
         }
     }
 

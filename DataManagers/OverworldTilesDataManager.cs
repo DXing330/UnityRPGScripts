@@ -10,11 +10,13 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> tile_type;
     public List<string> tile_owner;
     public List<string> tiles_explored;
+    public List<int> tiles_visible;
     public List<string> tile_events;
     public List<string> owned_tiles;
     public bool new_events = false;
     public int grid_size = 25;
     public Village village_to_add_events;
+    public List<int> adjacent_tiles;
 
     public void CountOwnedTiles()
     {
@@ -74,11 +76,12 @@ public class OverworldTilesDataManager : MonoBehaviour
             string[] loaded_data_blocks = loaded_data.Split("#");
             tile_type = loaded_data_blocks[0].Split("|").ToList();
             tile_owner = loaded_data_blocks[1].Split("|").ToList();
-            tiles_explored = loaded_data_blocks[2].Split("|").ToList();
+            //tiles_explored = loaded_data_blocks[2].Split("|").ToList();
             owned_tiles = loaded_data_blocks[3].Split("|").ToList();
             tile_events = loaded_data_blocks[4].Split("|").ToList();
         }
         AdjustLists();
+        DetermineVisibleTiles();
     }
 
     protected void AdjustLists()
@@ -382,5 +385,98 @@ public class OverworldTilesDataManager : MonoBehaviour
     public void Negotiate()
     {
         return;
+    }
+
+    private void ResetVisibility()
+    {
+        tiles_visible.Clear();
+        tiles_explored.Clear();
+        for (int i = 0; i < grid_size * grid_size; i++)
+        {
+            tiles_explored.Add("No");
+        }
+    }
+
+    private void DetermineVisibleTiles()
+    {
+        ResetVisibility();
+        for (int i = 0; i < owned_tiles.Count; i++)
+        {
+            tiles_visible.Add(int.Parse(owned_tiles[i]));
+            GetAdjacentTile(int.Parse(owned_tiles[i]));
+            for (int j = 0; j < adjacent_tiles.Count; j++)
+            {
+                tiles_visible.Add(adjacent_tiles[j]);
+            }
+        }
+        for (int k = 0; k < tiles_visible.Count; k++)
+        {
+            Debug.Log(tiles_visible[k]);
+            tiles_explored[tiles_visible[k]] = "Yes";
+        }
+    }
+    public List<int> GetAdjacentTile(int index)
+    {
+        adjacent_tiles.Clear();
+        // Corner cases;
+        if (index == 1)
+        {
+            adjacent_tiles.Add(index+grid_size);
+            adjacent_tiles.Add(index+1);
+            return adjacent_tiles;
+        }
+        if (index == grid_size * grid_size)
+        {
+            adjacent_tiles.Add(index - grid_size);
+            adjacent_tiles.Add(index - 1);
+            return adjacent_tiles;
+        }
+        if (index == (grid_size*(grid_size-1))+1)
+        {
+            adjacent_tiles.Add(index-grid_size);
+            adjacent_tiles.Add(index+1);
+            return adjacent_tiles;
+        }
+        if (index == grid_size)
+        {
+            adjacent_tiles.Add(index-1);
+            adjacent_tiles.Add(index+grid_size);
+            return adjacent_tiles;
+        }
+        // Edge cases;
+        if (index < grid_size)
+        {
+            adjacent_tiles.Add(index+1);
+            adjacent_tiles.Add(index-1);
+            adjacent_tiles.Add(index+grid_size);
+            return adjacent_tiles;
+        }
+        if (index > (grid_size*(grid_size-1)))
+        {
+            adjacent_tiles.Add(index+1);
+            adjacent_tiles.Add(index-1);
+            adjacent_tiles.Add(index-grid_size);
+            return adjacent_tiles;
+        }
+        if (index%grid_size == 1)
+        {
+            adjacent_tiles.Add(index+grid_size);
+            adjacent_tiles.Add(index+1);
+            adjacent_tiles.Add(index-grid_size);
+            return adjacent_tiles;
+        }
+        if (index%grid_size == 0)
+        {
+            adjacent_tiles.Add(index+grid_size);
+            adjacent_tiles.Add(index-1);
+            adjacent_tiles.Add(index-grid_size);
+            return adjacent_tiles;
+        }
+        adjacent_tiles.Add(index+grid_size);
+        adjacent_tiles.Add(index-1);
+        adjacent_tiles.Add(index-grid_size);
+        adjacent_tiles.Add(index+1);
+
+        return adjacent_tiles;
     }
 }

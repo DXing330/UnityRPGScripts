@@ -483,12 +483,13 @@ public class Village : MonoBehaviour
         buildings[index] = surroundings[index];
     }
 
-    public bool UpgradeBuilding(int index, string new_building, int cost)
+    public bool UpgradeBuilding(int index, string new_building, string[] cost)
     {
-        if (accumulated_gold >= cost && accumulated_materials >= cost)
+        if (accumulated_gold >= int.Parse(cost[0]) && accumulated_materials >= int.Parse(cost[1]) && accumulated_mana >= int.Parse(cost[2]))
         {
-            accumulated_gold -= cost;
-            accumulated_materials -= cost;
+            accumulated_gold -= int.Parse(cost[0]);
+            accumulated_materials -= int.Parse(cost[1]);
+            accumulated_mana -= int.Parse(cost[2]);
             buildings[index] = new_building;
             return true;
         }
