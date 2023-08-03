@@ -36,11 +36,9 @@ public class FloatingText
 
     public void UpdateFloatingTextPosition(Vector3 input)
     {
-        //Debug.Log(input);
         input.x = input.x * 150;
         input.y = input.y * 35;
         go.transform.position -= input * Time.deltaTime;
         //go.transform.Translate(-input.x * Time.deltaTime, -input.y * Time.deltaTime, 0);
-        //Debug.Log(go.transform.position);
     }
 }

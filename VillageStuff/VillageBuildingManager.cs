@@ -22,34 +22,11 @@ public class VillageBuildingManager : MonoBehaviour
     public List<string> all_flavor_texts;
     public List<string> all_costs;
 
-    public void SaveData()
-    {
-        string building_data = "";
-        building_data += GameManager.instance.ConvertListToString(unlocked_buildings)+"#";
-        building_data += GameManager.instance.ConvertListToString(building_prerequisites)+"#";
-        File.WriteAllText("Assets/Saves/Villages/village_buildings.txt", building_data);
-    }
-
     public void LoadData()
     {
-        if (File.Exists("Assets/Saves/Villages/village_buildings.txt"))
+        if (File.Exists("Assets/Config/all_buildings.txt"))
         {
-            string[] loaded_data_blocks = File.ReadAllText("Assets/Saves/Villages/village_buildings.txt").Split("#");
-            unlocked_buildings = loaded_data_blocks[0].Split("|").ToList();
-            building_prerequisites = loaded_data_blocks[1].Split("|").ToList();
-        }
-        else
-        {
-            unlocked_buildings.Clear();
-            building_prerequisites.Clear();
-            unlocked_buildings.Add("farm");
-            building_prerequisites.Add("plains");
-            unlocked_buildings.Add("market");
-            building_prerequisites.Add("plains");
-        }
-        if (File.Exists("Assets/Saves/Villages/all_buildings.txt"))
-        {
-            loaded_data = File.ReadAllText("Assets/Saves/Villages/all_buildings.txt");
+            loaded_data = File.ReadAllText("Assets/Config/all_buildings.txt");
             loaded_buildings = loaded_data.Split("#").ToList();
             all_buildings.Clear();
             all_prerequisites.Clear();
@@ -71,6 +48,10 @@ public class VillageBuildingManager : MonoBehaviour
                 all_flavor_texts.Add(building_info[6]);
                 all_costs.Add(building_info[7]);
             }
+        }
+        else
+        {
+            Debug.Log("File Missing");
         }
     }
 

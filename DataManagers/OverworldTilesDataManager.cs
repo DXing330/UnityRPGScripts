@@ -10,9 +10,11 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> tile_type;
     public List<string> tile_owner;
     public List<string> tiles_explored;
+    public List<string> temporarily_visible;
     public List<int> tiles_visible;
     public List<string> tile_events;
     public List<string> owned_tiles;
+    // Keep track of orc owned tiles for more efficiency.
     public bool new_events = false;
     public int grid_size = 25;
     public Village village_to_add_events;
@@ -59,7 +61,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         overworld_data += "#";
         overworld_data += GameManager.instance.ConvertListToString(tile_owner);
         overworld_data += "#";
-        overworld_data += GameManager.instance.ConvertListToString(tiles_explored);
+        overworld_data += GameManager.instance.ConvertListToString(temporarily_visible);
         overworld_data += "#";
         CountOwnedTiles();
         overworld_data += GameManager.instance.ConvertListToString(owned_tiles);
@@ -76,7 +78,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             string[] loaded_data_blocks = loaded_data.Split("#");
             tile_type = loaded_data_blocks[0].Split("|").ToList();
             tile_owner = loaded_data_blocks[1].Split("|").ToList();
-            //tiles_explored = loaded_data_blocks[2].Split("|").ToList();
+            temporarily_visible = loaded_data_blocks[2].Split("|").ToList();
             owned_tiles = loaded_data_blocks[3].Split("|").ToList();
             tile_events = loaded_data_blocks[4].Split("|").ToList();
         }
@@ -220,6 +222,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             tile_owner[tile_num] = "You";
             owned_tiles.Add(tile_num.ToString());
             GameManager.instance.villages.NewVillage(tile_type[tile_num], tile_num);
+            DetermineVisibleTiles();
         }
     }
 
@@ -240,7 +243,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public void ExploreTile(int tile_num)
     {
         int rng = 0;
-        tiles_explored[tile_num] = "Yes";
+        AddTempVisionFromExploring(tile_num);
         if (tile_owner[tile_num] == "None")
         {
             // Either get a general event or a specific terrain event.
@@ -290,6 +293,12 @@ public class OverworldTilesDataManager : MonoBehaviour
             village_to_add_events.Load(tile);
             village_to_add_events.UpdateVillage();
             village_to_add_events.Save();
+        }
+        // Every week your visibility expires.
+        if (GameManager.instance.current_day%7 == 0)
+        {
+            temporarily_visible.Clear();
+            DetermineVisibleTiles();
         }
         // Traders appear randomly.
         if (GameManager.instance.current_day%3 == 0)
@@ -360,23 +369,16 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             if (tile_owner[i].Contains("Orc"))
             {
-                if ((i%9)+1 < 9 && tile_owner[i+1] == "You")
+                GetAdjacentTiles(i);
+                for (int j = 0; j < adjacent_tiles.Count; j++)
                 {
-                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i+1).ToString());
-                    // Check on the state of the village.
-                    // Orc attack -> lose 1 pop, camp attack -> lose half pop, army attack -> lose village
-                }
-                else if ((i%9)-1 > 0 && tile_owner[i-1] == "You")
-                {
-                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i-1).ToString());
-                }
-                else if ((i%9)+3 < 9 && tile_owner[i+3] == "You")
-                {
-                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i+3).ToString());
-                }
-                else if ((i%9)-3 > 0 && tile_owner[i-3] == "You")
-                {
-                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(i-3).ToString());
+                    if (tile_owner[adjacent_tiles[j]] == "You")
+                    {
+                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]).ToString());
+                        // Check on the state of the village.
+                        // Orc attack -> lose 1 pop, camp attack -> lose half pop, army attack -> lose village
+                        return;
+                    }
                 }
             }
         }
@@ -403,7 +405,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         for (int i = 0; i < owned_tiles.Count; i++)
         {
             tiles_visible.Add(int.Parse(owned_tiles[i]));
-            GetAdjacentTile(int.Parse(owned_tiles[i]));
+            GetAdjacentTiles(int.Parse(owned_tiles[i]));
             for (int j = 0; j < adjacent_tiles.Count; j++)
             {
                 tiles_visible.Add(adjacent_tiles[j]);
@@ -411,33 +413,58 @@ public class OverworldTilesDataManager : MonoBehaviour
         }
         for (int k = 0; k < tiles_visible.Count; k++)
         {
-            Debug.Log(tiles_visible[k]);
             tiles_explored[tiles_visible[k]] = "Yes";
         }
+        UpdateTemporaryVisibleTiles();
     }
-    public List<int> GetAdjacentTile(int index)
+
+    private void AddTempVisionFromExploring(int tile_index)
+    {
+        GetAdjacentTiles(tile_index);
+        temporarily_visible.Add(tile_index.ToString());
+        for (int i = 0; i < adjacent_tiles.Count; i++)
+        {
+            temporarily_visible.Add(adjacent_tiles[i].ToString());
+        }
+        UpdateTemporaryVisibleTiles();
+    }
+
+    private void UpdateTemporaryVisibleTiles()
+    {
+        for (int i = 0; i < temporarily_visible.Count; i++)
+        {
+            if (temporarily_visible[i].Length > 0)
+            {
+                tiles_explored[int.Parse(temporarily_visible[i])] = "Yes";
+            }
+        }
+    }
+
+    // Need to double check this for edge and corner cases.
+    // Pretty sure we should do an index + 1 to fit the corner cases because owned tiles are actually the tile number minus 1.
+    public List<int> GetAdjacentTiles(int index)
     {
         adjacent_tiles.Clear();
         // Corner cases;
-        if (index == 1)
+        if (index == 0)
         {
             adjacent_tiles.Add(index+grid_size);
             adjacent_tiles.Add(index+1);
             return adjacent_tiles;
         }
-        if (index == grid_size * grid_size)
+        if (index == (grid_size * grid_size) - 1)
         {
             adjacent_tiles.Add(index - grid_size);
             adjacent_tiles.Add(index - 1);
             return adjacent_tiles;
         }
-        if (index == (grid_size*(grid_size-1))+1)
+        if (index == (grid_size*(grid_size-1)))
         {
             adjacent_tiles.Add(index-grid_size);
             adjacent_tiles.Add(index+1);
             return adjacent_tiles;
         }
-        if (index == grid_size)
+        if (index == grid_size - 1)
         {
             adjacent_tiles.Add(index-1);
             adjacent_tiles.Add(index+grid_size);
@@ -458,14 +485,14 @@ public class OverworldTilesDataManager : MonoBehaviour
             adjacent_tiles.Add(index-grid_size);
             return adjacent_tiles;
         }
-        if (index%grid_size == 1)
+        if (index%grid_size == 0)
         {
             adjacent_tiles.Add(index+grid_size);
             adjacent_tiles.Add(index+1);
             adjacent_tiles.Add(index-grid_size);
             return adjacent_tiles;
         }
-        if (index%grid_size == 0)
+        if (index%grid_size == grid_size - 1)
         {
             adjacent_tiles.Add(index+grid_size);
             adjacent_tiles.Add(index-1);

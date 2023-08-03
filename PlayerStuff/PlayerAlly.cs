@@ -211,7 +211,6 @@ public class PlayerAlly : Mover
             animator.SetBool("Moving", false);
             animator.SetTrigger("Dead");
             GameManager.instance.player.summon_limit++;
-            Debug.Log(GameManager.instance.player.summon_limit++);
         }
     }
 }

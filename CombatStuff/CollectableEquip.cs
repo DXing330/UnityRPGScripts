@@ -229,7 +229,6 @@ public class CollectableEquip : Collectable
         {
             collected = true;
             GameManager.instance.all_equipment.CollectEquipmentDrop(this);
-            Debug.Log("Adding Equipment");
         }
         if (collected)
         {

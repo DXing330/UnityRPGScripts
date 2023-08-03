@@ -166,7 +166,6 @@ public class GameManager : MonoBehaviour
 
     public void EatMana()
     {
-        Debug.Log("Eating Mana");
         if (villages.collected_mana > 0)
         {
             villages.collected_mana--;
@@ -178,7 +177,6 @@ public class GameManager : MonoBehaviour
 
     public void DrinkBlood()
     {
-        Debug.Log("Drinking Blood");
         if (villages.collected_blood > 0)
         {
             villages.collected_blood--;
@@ -196,7 +194,6 @@ public class GameManager : MonoBehaviour
 
     public void FeedFamiliarMana()
     {
-        Debug.Log("Feeding Mana");
         if (villages.collected_mana > 0)
         {
             villages.collected_mana--;
@@ -206,7 +203,6 @@ public class GameManager : MonoBehaviour
 
     public void FeedFamiliarBlood()
     {
-        Debug.Log("Feeding Blood");
         if (villages.collected_blood > 0)
         {
             villages.collected_blood--;
@@ -224,10 +220,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ExploreTile(int tile_num)
+    public void ExploreTile(int tile_num, bool explored = false)
     {
+        // Exploring an invisible area takes more time.
+        if (!explored)
+        {
+            NewWeek();
+        }
+        else
+        {
+            NewDay();
+        }
         villages.tiles.ExploreTile(tile_num);
-        NewWeek();
     }
 
     // Player resources.

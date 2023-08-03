@@ -31,8 +31,8 @@ public class MenuManagerVillages : MonoBehaviour
     public void SaveVillage()
     {
         // Costs a day to travel to a village.
-        GameManager.instance.NewDay();
         ReturnFromVillage();
+        GameManager.instance.NewDay();
     }
 
     public void ReturnFromVillage()
@@ -43,7 +43,6 @@ public class MenuManagerVillages : MonoBehaviour
 
     public void Show()
     {
-        Debug.Log("Showing");
         animator.SetTrigger("Show");
     }
 

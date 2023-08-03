@@ -16,6 +16,7 @@ public class MenuTilesv2 : MonoBehaviour
     private int zone_tile_one = -1;
     public List<int> zone_tiles;
     private bool inner = false;
+    private bool explored = false;
     public Animator animator;
     public OverworldTilesDataManager overworld_tiles;
 
@@ -90,7 +91,7 @@ public class MenuTilesv2 : MonoBehaviour
     {
         if (inner && selected_inner_area >= 0)
         {
-            GameManager.instance.ExploreTile(selected_inner_area + (selected_area*grid_size));
+            GameManager.instance.ExploreTile(zone_tiles[selected_inner_area] - 1, explored);
             UpdateTileInfo();
             UpdateTiles();
         }
@@ -102,6 +103,7 @@ public class MenuTilesv2 : MonoBehaviour
         tile_number.text = (zone + 1).ToString();
         if (overworld_tiles.tiles_explored[zone] == "Yes")
         {
+            explored = true;
             tile_type.text = overworld_tiles.tile_type[zone];
             tile_owner.text = overworld_tiles.tile_owner[zone];
             /* Only attack tiles owned by other people.
@@ -112,6 +114,7 @@ public class MenuTilesv2 : MonoBehaviour
         }
         else
         {
+            explored = false;
             tile_type.text = "Unknown";
             tile_owner.text = "Unknown";
         }

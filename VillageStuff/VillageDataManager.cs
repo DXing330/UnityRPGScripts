@@ -62,7 +62,6 @@ public class VillageDataManager : MonoBehaviour
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
         tiles.SaveData();
         trading.SaveData();
-        current_village.villagebuildingmanager.SaveData();
     }
 
     public void LoadData()

@@ -380,7 +380,6 @@ public class Village : MonoBehaviour
         return area;
     }
     
-
     protected int CheckBuildingProducts(string product, int type)
     {
         string[] products = product.Split("|");
