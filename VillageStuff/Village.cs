@@ -485,6 +485,38 @@ public class Village : MonoBehaviour
         buildings[index] = surroundings[index];
     }
 
+    private void DamageBuilding(int index)
+    {
+        // A building that is already damaged gets destroyed.
+        if (buildings[index].Contains("/Damaged"))
+        {
+            DestroyBuilding(index);
+            return;
+        }
+        buildings[index] = buildings[index]+"/Damaged";
+    }
+
+    public void RepairBuilding(int index)
+    {
+        if (buildings[index].Contains("/Damaged"))
+        {
+            string[] fixed_b = buildings[index].Split("/");
+            buildings[index] = fixed_b[0];
+        }
+    }
+
+    public int DetermineRepairCost(int index)
+    {
+        int cost = 0;
+        if (buildings[index].Contains("/Damaged"))
+        {
+            string[] fixed_b = buildings[index].Split("/");
+            string[] all_costs = villagebuilding.DetermineCost(fixed_b[0]).Split("|");
+            cost = int.Parse(all_costs[1])/2;
+        }
+        return cost;
+    }
+
     public bool UpgradeBuilding(int index, string new_building, string[] cost)
     {
         if (accumulated_gold >= int.Parse(cost[0]) && accumulated_materials >= int.Parse(cost[1]) && accumulated_mana >= int.Parse(cost[2]))
@@ -718,7 +750,10 @@ public class Village : MonoBehaviour
         {
             DestroyBuilding(area);
         }
-        // Otherwise damage the building, meaning it costs a flat fee to repair, based on half the cost.
+        else
+        {
+            DamageBuilding(area);
+        }
     }
 
     public string VillageStatusReport()

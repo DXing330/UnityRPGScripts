@@ -20,6 +20,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
     public Text max_workers_in_area;
     public Text product;
     public Text output;
+    public Text upgrade_repair;
     protected Village village;
     private string[] area_details;
 
@@ -59,13 +60,29 @@ public class MenuManagerVillagePanel : MonoBehaviour
         area_details = village.villagebuilding.DetermineMainProductandAmount(area.text).Split("|");
         product.text = area_details[1];
         output.text = area_details[0];
+        AdjustUpdateRepairButton(selected_area);
+    }
+
+    private void AdjustUpdateRepairButton(int selected_area)
+    {
+        upgrade_repair.text = "Upgrade";
+        if (village.buildings[selected_area].Contains("/Damaged"))
+        {
+            int repair_cost = village.DetermineRepairCost(selected_area);
+            upgrade_repair.text = "Repair"+"\n"+"("+repair_cost.ToString()+" Mats)";
+        }
     }
 
     public void SetColors()
     {
         for (int i = 0; i < village_panels.Count; i++)
         {
-            village_panels[i].color = DetermineColor(village.buildings[i]);
+            if (village.buildings[i].Contains("/Damaged"))
+            {
+                village_panels[i].color = Color.red;
+                continue;
+            }
+            village_panels[i].color = DetermineColor(village.surroundings[i]);
         }
     }
 
@@ -74,8 +91,6 @@ public class MenuManagerVillagePanel : MonoBehaviour
         switch (building)
         {
             case "plains":
-                return Color.green;
-            case "farm":
                 return Color.green;
             case "desert":
                 return Color.yellow;

@@ -172,10 +172,26 @@ public class MenuManagerVillages : MonoBehaviour
     {
         if (selected_area >= 0)
         {
+            // Can't upgrade damaged buildings.
+            if (village.buildings[selected_area].Contains("/Damaged"))
+            {
+                Repair();
+                return;
+            }
             animator.SetTrigger("Build");
             villagebuildingmenu.UpdateCurrentBuilding(selected_area);
         }
     }
 
-
+    private void Repair()
+    {
+        int repair_cost = village.DetermineRepairCost(selected_area);
+        if (village.accumulated_materials >= repair_cost)
+        {
+            village.accumulated_materials -= repair_cost;
+            village.RepairBuilding(selected_area);
+            UpdateSelectedArea();
+            villagepanel.UpdateVillageInformation();
+        }
+    }
 }
