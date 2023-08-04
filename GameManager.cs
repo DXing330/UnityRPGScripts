@@ -342,25 +342,10 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDefeated()
     {
-        villages.collected_gold -= player.max_health + player.max_mana;
         player.health = 1;
         player.current_mana = 0;
         OnHealthChange();
         OnManaChange();
-        if (villages.collected_gold < 0)
-        {
-            villages.collected_gold = 0;
-        }
-        experience -= player.max_health;
-        if (experience < 0)
-        {
-            experience = 0;
-        }
-        danger_level -= player.playerLevel;
-        if (danger_level < 0)
-        {
-            danger_level = 0;
-        }
         bag.DropItems();
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         NewWeek();

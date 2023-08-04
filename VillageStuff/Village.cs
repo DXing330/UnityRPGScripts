@@ -27,7 +27,7 @@ public class Village : MonoBehaviour
     public int accumulated_gold;
     public int accumulated_mana;
     // Affects technology and efficiency.
-    public int education_level;
+    public int defense_level;
     public List<string> facility_level;
     public List<string> facility_experience;
     // Building things takes time.
@@ -42,7 +42,7 @@ public class Village : MonoBehaviour
     // Daily gathered things.
     protected int gathered_discontentment;
     protected int gathered_production;
-    protected int gathered_research;
+    protected int gathered_defense;
     protected int gathered_fear;
     protected int gathered_food;
     protected int gathered_gold;
@@ -165,9 +165,7 @@ public class Village : MonoBehaviour
         if (population >= 3)
         {
             population -= 2;
-            GameManager.instance.villages.collected_settlers++;
-            fear++;
-            discontentment++;
+            GameManager.instance.GainResource(1,1);
         }
     }
 
@@ -393,8 +391,11 @@ public class Village : MonoBehaviour
         gathered_gold = 0;
         gathered_mana = 0;
         gathered_discontentment = 0;
+        gathered_fear = 0;
         gathered_production = 0;
-        gathered_research = 0;
+        gathered_defense = 0;
+        // Reset defense every time as well, need to keep assigning defenders to keep the defense level up.
+        defense_level = 0;
         GetBuildingProducts();
         // Unassigned people gather food for themselves.
         gathered_food += population - assigned_buildings.Count;
@@ -404,6 +405,8 @@ public class Village : MonoBehaviour
         accumulated_mana += gathered_mana;
         accumulated_materials += gathered_production;
         discontentment += Random.Range(0, population) + gathered_discontentment;
+        fear += gathered_fear;
+        defense_level += gathered_defense;
         PayUpkeepCosts();
         CheckVillageMood();
     }
@@ -522,9 +525,12 @@ public class Village : MonoBehaviour
     {
         for (int i = 0; i < assigned_buildings.Count; i++)
         {
-            string new_products = villagebuilding.DetermineAllProducts(buildings[int.Parse(assigned_buildings[i])]);
+            string building_name = buildings[int.Parse(assigned_buildings[i])];
+            string new_products = villagebuilding.DetermineAllProducts(building_name);
             AddBuildingProducts(new_products);
             UpdateBuildingExperience(int.Parse(assigned_buildings[i]));
+            string special_effect = villagebuilding.GetSpecialEffects(building_name);
+            AddSpecialBuildingProducts(special_effect);
         }
     }
 
@@ -553,13 +559,30 @@ public class Village : MonoBehaviour
     protected void AddBuildingProducts(string products)
     {
         string[] all_products = products.Split("|");
-        population += int.Parse(all_products[1]);
+        GameManager.instance.villages.collected_blood += int.Parse(all_products[0]);
+        GameManager.instance.villages.collected_settlers += int.Parse(all_products[1]);
         gathered_mana += int.Parse(all_products[2]);
         gathered_gold += int.Parse(all_products[3]);
         gathered_food += int.Parse(all_products[4]);
         gathered_production += int.Parse(all_products[5]);
         gathered_fear += int.Parse(all_products[6]);
         gathered_discontentment += int.Parse(all_products[7]);
+    }
+
+    protected void AddSpecialBuildingProducts(string product)
+    {
+        string[] special_amount = product.Split("|");
+        switch (special_amount[0])
+        {
+            case "None":
+                break;
+            case "Defense":
+                gathered_defense += int.Parse(special_amount[1]);
+                break;
+            case "Population":
+                population += int.Parse(special_amount[1]);
+                break;
+        }
     }
 
     protected void PassVillageTime()
@@ -585,7 +608,7 @@ public class Village : MonoBehaviour
             int rng = Random.Range(0, 6);
             if (rng == 0)
             {
-                Robbed();
+                Robbed(Random.Range(0, buildings.Count));
             }
         }
     }
@@ -605,39 +628,97 @@ public class Village : MonoBehaviour
         return events.Contains(event_to_check);
     }
 
-    protected void Robbed()
+    protected void Robbed(int area)
     {
-        if (accumulated_gold > 0)
+        if (buildings[area] == surroundings[area])
         {
-            accumulated_gold--;
-            discontentment++;
+            return;
         }
-        if (food_supply > 0)
+        string[] building_output = villagebuilding.DetermineMainProductandAmount(buildings[area]).Split("|");
+        int output_amount = int.Parse(building_output[0]);
+        if (output_amount <= 0)
         {
-            food_supply--;
-            discontentment++;
+            return;
         }
-        if (accumulated_materials > 0)
+        switch (building_output[1])
         {
-            accumulated_materials--;
-            discontentment++;
+            case "None":
+                break;
+            case "Mana":
+                accumulated_mana -= Mathf.Min(accumulated_mana, output_amount);
+                break;
+            case "Gold":
+                accumulated_gold -= Mathf.Min(accumulated_gold, output_amount);
+                break;
+            case "Food":
+                food_supply -= Mathf.Min(food_supply, output_amount);
+                break;
+            case "Mats":
+                accumulated_materials -= Mathf.Min(accumulated_materials, output_amount);
+                break;
         }
-        if (accumulated_mana > 0)
-        {
-            accumulated_mana--;
-            discontentment++;
-        }
-        discontentment++;
     }
 
-    public void OrcAttack()
+    // Area is what area they attack, -1 is for the center.
+    public void ReceiveAttack(int strength = 1, int area = -1)
     {
-        population = population/2;
-        fear += population;
-        // Destroy buildings.
-        gathered_food = 0;
-        gathered_gold = 0;
-        gathered_mana = 0;
+        // The center has some basic defense.
+        if (area == -1)
+        {
+            strength -= population;
+        }
+        strength -= defense_level;
+        if (strength > 0)
+        {
+            if (area == -1)
+            {
+                population -= strength;
+                for (int i = 0; i < strength; i++)
+                {
+                    RandomlyRemoveFromBuilding();
+                }
+                return;
+            }
+            DamageArea(strength, area);
+        }
+        fear += strength;
+        discontentment += strength;
+        Save();
+    }
+
+    private void DamageArea(int strength, int area)
+    {
+        if (area > buildings.Count - 1)
+        {
+            return;
+        }
+        int max_deaths = strength;
+        for (int i = 0; i < assigned_buildings.Count; i++)
+        {
+            if (max_deaths <= 0)
+            {
+                break;
+            }
+            if (int.Parse(assigned_buildings[i]) == area)
+            {
+                max_deaths--;
+                population--;
+                assigned_buildings.RemoveAt(i);
+            }
+        }
+        // Nothing to destroy or rob if there's no building.
+        if (buildings[area] == surroundings[area])
+        {
+            return;
+        }
+        Robbed(area);
+        string[] all_costs = villagebuilding.DetermineCost(buildings[area]).Split("|");
+        int mats_cost = int.Parse(all_costs[1]);
+        if (strength > mats_cost)
+        {
+            DestroyBuilding(area);
+        }
+        // Otherwise damage the building, meaning it costs a flat fee to repair, based on half the cost.
     }
 
     public string VillageStatusReport()

@@ -126,7 +126,7 @@ public class VillageDataManager : MonoBehaviour
         village_data += village.food_supply.ToString()+"|";
         village_data += village.accumulated_gold.ToString()+"|";
         village_data += village.accumulated_mana.ToString()+"|";
-        village_data += village.education_level.ToString()+"|";
+        village_data += village.defense_level.ToString()+"|";
         village_data += village.accumulated_materials.ToString()+"|";
         village_data += village.accumulated_research.ToString()+"|";
         village_data += village.last_update_day.ToString()+"|";
@@ -158,7 +158,7 @@ public class VillageDataManager : MonoBehaviour
         village.food_supply = int.Parse(village_int_data[5]);
         village.accumulated_gold = int.Parse(village_int_data[6]);
         village.accumulated_mana = int.Parse(village_int_data[7]);
-        village.education_level = int.Parse(village_int_data[8]);
+        village.defense_level = int.Parse(village_int_data[8]);
         village.accumulated_materials = int.Parse(village_int_data[9]);
         village.accumulated_research = int.Parse(village_int_data[10]);
         village.last_update_day = int.Parse(village_int_data[11]);

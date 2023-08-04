@@ -18,7 +18,7 @@ public class VillageBuildingManager : MonoBehaviour
     public List<string> all_worker_limit;
     public List<string> all_outputs;
     public List<string> all_specials;
-    public List<string> all_special_specifics;
+    public List<string> all_special_amounts;
     public List<string> all_flavor_texts;
     public List<string> all_costs;
 
@@ -33,7 +33,7 @@ public class VillageBuildingManager : MonoBehaviour
             all_worker_limit.Clear();
             all_outputs.Clear();
             all_specials.Clear();
-            all_special_specifics.Clear();
+            all_special_amounts.Clear();
             all_flavor_texts.Clear();
             all_costs.Clear();
             for (int i = 0; i < loaded_buildings.Count; i++)
@@ -44,7 +44,7 @@ public class VillageBuildingManager : MonoBehaviour
                 all_worker_limit.Add(building_info[2]);
                 all_outputs.Add(building_info[3]);
                 all_specials.Add(building_info[4]);
-                all_special_specifics.Add(building_info[5]);
+                all_special_amounts.Add(building_info[5]);
                 all_flavor_texts.Add(building_info[6]);
                 all_costs.Add(building_info[7]);
             }

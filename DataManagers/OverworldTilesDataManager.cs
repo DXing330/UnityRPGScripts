@@ -7,6 +7,7 @@ using UnityEngine;
 public class OverworldTilesDataManager : MonoBehaviour
 {
     public string loaded_data;
+    // The zone number is one more than the tile index.
     public List<string> tile_type;
     public List<string> tile_owner;
     public List<string> tiles_explored;
@@ -14,6 +15,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<int> tiles_visible;
     public List<string> tile_events;
     public List<string> owned_tiles;
+    public List<string> orc_tiles;
     // Keep track of orc owned tiles for more efficiency.
     public bool new_events = false;
     public int grid_size = 25;
@@ -66,7 +68,8 @@ public class OverworldTilesDataManager : MonoBehaviour
         CountOwnedTiles();
         overworld_data += GameManager.instance.ConvertListToString(owned_tiles);
         overworld_data += "#";
-        overworld_data += GameManager.instance.ConvertListToString(tile_events);
+        overworld_data += GameManager.instance.ConvertListToString(tile_events)+"#";
+        overworld_data += GameManager.instance.ConvertListToString(orc_tiles)+"#";
         File.WriteAllText("Assets/Saves/Villages/overworld_data.txt", overworld_data);
     }
 
@@ -294,11 +297,12 @@ public class OverworldTilesDataManager : MonoBehaviour
             village_to_add_events.UpdateVillage();
             village_to_add_events.Save();
         }
-        // Every week your visibility expires.
+        // Every week your visibility expires and orcs move around.
         if (GameManager.instance.current_day%7 == 0)
         {
             temporarily_visible.Clear();
             DetermineVisibleTiles();
+            MoveOrcs();
         }
         // Traders appear randomly.
         if (GameManager.instance.current_day%3 == 0)
@@ -320,68 +324,82 @@ public class OverworldTilesDataManager : MonoBehaviour
 
     private void SpawnOrcs()
     {
-        int rng = 0;
-        for (int i = 0; i < grid_size*grid_size; i++)
+        int rng = Random.Range(0, grid_size*grid_size);
+        CombineOrcs(rng);
+    }
+
+    private void CombineOrcs(int tile_index)
+    {
+        int i = tile_index + 1;
+        if (tile_owner[tile_index] == "None")
         {
-            if (tile_owner[i] == "None" || tile_owner[i] == "Unknown")
+            tile_owner[tile_index] = "Orc";
+            if (tiles_explored[tile_index] == "Yes")
             {
-                rng = Random.Range(0, grid_size*grid_size);
-                if (rng == 0)
-                {
-                    tile_owner[i] = "Orc";
-                    if (tiles_explored[i] == "Yes")
-                    {
-                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
-                    }
-                }
+                AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
             }
-            else if (tile_owner[i] == "Orc")
+        }
+        else if (tile_owner[tile_index] == "Orc")
+        {
+            tile_owner[tile_index] = "Orc Camp";
+            if (tiles_explored[tile_index] == "Yes")
             {
-                rng = Random.Range(0, grid_size*grid_size);
-                if (rng == 0)
-                {
-                    tile_owner[i] = "Orc Camp";
-                    if (tiles_explored[i] == "Yes")
-                    {
-                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs gather at zone "+i.ToString());
-                    }
-                }
+                AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs gather at zone "+i.ToString());
             }
-            else if (tile_owner[i] == "Orc Camp")
+        }
+        else if (tile_owner[tile_index] == "Orc Camp")
+        {
+            tile_owner[tile_index] = "Orc Army";
+            if (tiles_explored[tile_index] == "Yes")
             {
-                rng = Random.Range(0, grid_size*grid_size);
-                if (rng == 0)
-                {
-                    tile_owner[i] = "Orc Army";
-                    if (tiles_explored[i] == "Yes")
-                    {
-                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs form an army at zone "+i.ToString());
-                    }
-                }
+                AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs form an army at zone "+i.ToString());
             }
         }
     }
 
-    public void MoveOrcs()
+    private void MoveOrcs()
     {
-        // Orcs only move and attack within the area they spawned in.
-        for (int i = 0; i < tile_owner.Count; i++)
+        int attack_power = 1;
+        int attack_area = -1;
+        for (int i = 0; i < orc_tiles.Count; i++)
         {
-            if (tile_owner[i].Contains("Orc"))
+            GetAdjacentTiles(int.Parse(orc_tiles[i]));
+            // First the orcs look around for people to attack.
+            for (int j = 0; j < adjacent_tiles.Count; j++)
             {
-                GetAdjacentTiles(i);
-                for (int j = 0; j < adjacent_tiles.Count; j++)
+                if (tile_owner[adjacent_tiles[j]] == "You")
                 {
-                    if (tile_owner[adjacent_tiles[j]] == "You")
-                    {
-                        AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]).ToString());
-                        // Check on the state of the village.
-                        // Orc attack -> lose 1 pop, camp attack -> lose half pop, army attack -> lose village
-                        return;
-                    }
+                    attack_power = DetermineOrcAttackPower(tile_owner[int.Parse(orc_tiles[i])]);
+                    attack_area = Random.Range(-1, village_to_add_events.buildings.Count);
+                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]).ToString());
+                    village_to_add_events.Load(adjacent_tiles[j]);
+                    village_to_add_events.ReceiveAttack(attack_power, attack_area);
+                    break;
                 }
             }
+            // Then they'll move in a random direction.
+            int k = Random.Range(0, adjacent_tiles.Count);
+            if (tile_owner[adjacent_tiles[k]] == "None" || tile_owner[adjacent_tiles[k]] == tile_owner[int.Parse(orc_tiles[i])])
+            {
+                // Move onto an empty tile or combine with orcs already there.
+                CombineOrcs(adjacent_tiles[k]);
+                tile_owner[int.Parse(orc_tiles[i])] =  "None";
+            }
         }
+    }
+
+    private int DetermineOrcAttackPower(string orc_group)
+    {
+        switch (orc_group)
+        {
+            case "Orc":
+                return Random.Range(1, 3);
+            case "Orc Camp":
+                return Random.Range(3, 7);
+            case "Orc Army":
+                return Random.Range(7, 15);
+        }
+        return 1;
     }
 
     public void Negotiate()

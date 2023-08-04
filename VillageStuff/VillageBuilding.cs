@@ -8,32 +8,36 @@ public class VillageBuilding : MonoBehaviour
     protected int low_tier = 1;
     protected int mid_tier = 2;
     protected int high_tier = 3;
+    private int b_index = -1;
     public VillageBuildingManager building_data;
+
+    private void ResetBIndex(string building_name)
+    {
+        b_index = -1;
+        b_index = building_data.all_buildings.IndexOf(building_name);
+    }
 
     public int DetermineWorkerLimit(string building_name)
     {
-        for (int i = 0; i < building_data.all_buildings.Count; i++)
+        ResetBIndex(building_name);
+        if (b_index == -1)
         {
-            if (building_data.all_buildings[i] == building_name)
-            {
-                return (int.Parse(building_data.all_worker_limit[i]));
-            }
+            return 0;
         }
-        return 0;
+        return (int.Parse(building_data.all_worker_limit[b_index]));
+        
     }
 
     public string DetermineMainProductandAmount(string building_name)
     {
         string outputs = "";
         string output_type = "";
-        for (int i = 0; i < building_data.all_buildings.Count; i++)
+        ResetBIndex(building_name);
+        if (b_index == -1)
         {
-            if (building_data.all_buildings[i] == building_name)
-            {
-                outputs = building_data.all_outputs[i];
-                break;
-            }
+            return "0|None";
         }
+        outputs = building_data.all_outputs[b_index];
         string[] output_array = outputs.Split("|");
         int amount = 0;
         int index = -1;
@@ -79,38 +83,48 @@ public class VillageBuilding : MonoBehaviour
     // blood|pop|mana|gold|food|mats|fear|anger
     public string DetermineAllProducts(string building_name)
     {
-        for (int i = 0; i < building_data.all_buildings.Count; i++)
+        ResetBIndex(building_name);
+        if (b_index == -1)
         {
-            if (building_data.all_buildings[i] == building_name)
-            {
-                return ((building_data.all_outputs[i]));
-            }
-        }        
-        return "0|0|0|0|0|0|0|0";
+            return "0|0|0|0|0|0|0|0";
+        }
+        return ((building_data.all_outputs[b_index]));
     }
 
     public string DetermineSpecialEffects(string building_name)
     {
-        for (int i = 0; i < building_data.all_buildings.Count; i++)
+        ResetBIndex(building_name);
+        if (b_index == -1)
         {
-            if (building_data.all_buildings[i] == building_name)
-            {
-                return ((building_data.all_flavor_texts[i]));
-            }
+            return "";
         }
-        return "";
+        return ((building_data.all_flavor_texts[b_index]));
+    }
+
+    public string GetSpecialEffects(string building_name)
+    {
+        string special = "";
+        ResetBIndex(building_name);
+        if (b_index == -1)
+        {
+            return "None|0";
+        }
+        if (building_data.all_specials[b_index] == "None")
+        {
+            return "None|0";
+        }
+        special += building_data.all_specials[b_index]+"|"+building_data.all_special_amounts[b_index];
+        return special;
     }
 
     public string DetermineCost(string building_name)
     {
-        for (int i = 0; i < building_data.all_buildings.Count; i++)
+        ResetBIndex(building_name);
+        if (b_index == -1)
         {
-            if (building_data.all_buildings[i] == building_name)
-            {
-                return ((building_data.all_costs[i]));
-            }
+            return "6|6|0";
         }
-        return "6|6|0";
+        return ((building_data.all_costs[b_index]));
     }
     
 }

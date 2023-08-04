@@ -11,6 +11,7 @@ public class MenuTilesv2 : MonoBehaviour
     public Text tile_number;
     public Text tile_owner;
     public Text tile_type;
+    public Text explore_text;
     public int selected_area = -1;
     public int selected_inner_area = -1;
     private int zone_tile_one = -1;
@@ -70,11 +71,13 @@ public class MenuTilesv2 : MonoBehaviour
             UpdateTexts();
             selected_area = -1;
             selected_inner_area = -1;
+            ResetTileInfo();
         }
         else
         {
             animator.SetTrigger("Hide");
         }
+        UpdateExploreText();
     }
 
     public void ClaimArea()
@@ -118,11 +121,29 @@ public class MenuTilesv2 : MonoBehaviour
             tile_type.text = "Unknown";
             tile_owner.text = "Unknown";
         }
+        UpdateExploreText();
+    }
+
+    protected void UpdateExploreText()
+    {
+        if (!inner)
+        {
+            explore_text.text = "Explore";
+            return;
+        }
+        if (!explored)
+        {
+            explore_text.text = "Explore"+"\n"+"(1 Week)";
+        }
+        else if (explored)
+        {
+            explore_text.text = "Explore"+"\n"+"(1 Day)";
+        }
     }
 
     protected void ResetTileInfo()
     {
-        tile_number.text = "-1";
+        tile_number.text = "0";
         tile_owner.text = "Unknown";
         tile_type.text = "Unknown";
     }
