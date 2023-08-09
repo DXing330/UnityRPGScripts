@@ -9,7 +9,7 @@ public class Test : MonoBehaviour
         string orc1 = "Orc Camp"; //works
         string orc2 = "OrcCamp"; // works
         string orc3 = "ORC Camp"; // doesn't
-        string orc4 = "Orc/Damaged"; // doesn't
+        string orc4 = "Orc-Damaged"; // doesn't
         if (orc1.Contains("Orc"))
         {
             Debug.Log("Camp");
@@ -22,7 +22,7 @@ public class Test : MonoBehaviour
         {
             Debug.Log("Camp3");
         }
-        if (orc4.Contains("/Damaged"))
+        if (orc4.Contains("-Damaged"))
         {
             Debug.Log("Damaged");
         }

@@ -66,7 +66,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
     private void AdjustUpdateRepairButton(int selected_area)
     {
         upgrade_repair.text = "Upgrade";
-        if (village.buildings[selected_area].Contains("/Damaged"))
+        if (village.buildings[selected_area].Contains("-Damaged"))
         {
             int repair_cost = village.DetermineRepairCost(selected_area);
             upgrade_repair.text = "Repair"+"\n"+"("+repair_cost.ToString()+" Mats)";
@@ -77,7 +77,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
     {
         for (int i = 0; i < village_panels.Count; i++)
         {
-            if (village.buildings[i].Contains("/Damaged"))
+            if (village.buildings[i].Contains("-Damaged"))
             {
                 village_panels[i].color = Color.red;
                 continue;

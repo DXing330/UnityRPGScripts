@@ -25,7 +25,7 @@ public class MenuTilesv2 : MonoBehaviour
     {
         for (int i = 0; i < texts.Count; i++)
         {
-            texts[i].fontSize = 26;
+            texts[i].fontSize = 20;
         }
         overworld_tiles = GameManager.instance.villages.tiles;
         grid_size = overworld_tiles.grid_size;
@@ -115,6 +115,13 @@ public class MenuTilesv2 : MonoBehaviour
                 clear_area_button.SetActive(true);
             }*/
         }
+        // P for previously explored, meaning you know the terrain but not the owner.
+        if (overworld_tiles.tiles_explored[zone] == "P")
+        {
+            explored = false;
+            tile_owner.text = "Unknown";
+            tile_type.text = overworld_tiles.tile_type[zone];
+        }
         else
         {
             explored = false;
@@ -193,6 +200,11 @@ public class MenuTilesv2 : MonoBehaviour
         {
             image.color = Color.black;
             text.text = "";
+        }
+        else if (overworld_tiles.tiles_explored[i] == "P")
+        {
+            image.color = DetermineColor(overworld_tiles.tile_type[i]);
+            text.text = overworld_tiles.tile_type[i];
         }
         else
         {

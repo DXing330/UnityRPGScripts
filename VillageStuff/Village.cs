@@ -488,19 +488,19 @@ public class Village : MonoBehaviour
     private void DamageBuilding(int index)
     {
         // A building that is already damaged gets destroyed.
-        if (buildings[index].Contains("/Damaged"))
+        if (buildings[index].Contains("-Damaged"))
         {
             DestroyBuilding(index);
             return;
         }
-        buildings[index] = buildings[index]+"/Damaged";
+        buildings[index] = buildings[index]+"-Damaged";
     }
 
     public void RepairBuilding(int index)
     {
-        if (buildings[index].Contains("/Damaged"))
+        if (buildings[index].Contains("-Damaged"))
         {
-            string[] fixed_b = buildings[index].Split("/");
+            string[] fixed_b = buildings[index].Split("-");
             buildings[index] = fixed_b[0];
         }
     }
@@ -508,9 +508,9 @@ public class Village : MonoBehaviour
     public int DetermineRepairCost(int index)
     {
         int cost = 0;
-        if (buildings[index].Contains("/Damaged"))
+        if (buildings[index].Contains("-Damaged"))
         {
-            string[] fixed_b = buildings[index].Split("/");
+            string[] fixed_b = buildings[index].Split("-");
             string[] all_costs = villagebuilding.DetermineCost(fixed_b[0]).Split("|");
             cost = int.Parse(all_costs[1])/2;
         }

@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class OverworldTilesDataManager : MonoBehaviour
 {
+    public int grid_size = 25;
     public string loaded_data;
     // The zone number is one more than the tile index.
     public List<string> tile_type;
@@ -15,10 +16,11 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<int> tiles_visible;
     public List<string> tile_events;
     public List<string> owned_tiles;
-    public List<string> orc_tiles;
     // Keep track of orc owned tiles for more efficiency.
+    public List<string> orc_tiles;
+    public List<string> visited_tiles;
+    public int current_tile = 312;
     public bool new_events = false;
-    public int grid_size = 25;
     public Village village_to_add_events;
     public List<int> adjacent_tiles;
 
@@ -70,6 +72,8 @@ public class OverworldTilesDataManager : MonoBehaviour
         overworld_data += "#";
         overworld_data += GameManager.instance.ConvertListToString(tile_events)+"#";
         overworld_data += GameManager.instance.ConvertListToString(orc_tiles)+"#";
+        overworld_data += GameManager.instance.ConvertListToString(visited_tiles)+"#";
+        overworld_data += current_tile.ToString()+"#";
         File.WriteAllText("Assets/Saves/Villages/overworld_data.txt", overworld_data);
     }
 
@@ -84,6 +88,12 @@ public class OverworldTilesDataManager : MonoBehaviour
             temporarily_visible = loaded_data_blocks[2].Split("|").ToList();
             owned_tiles = loaded_data_blocks[3].Split("|").ToList();
             tile_events = loaded_data_blocks[4].Split("|").ToList();
+            visited_tiles = loaded_data_blocks[5].Split("|").ToList();
+            current_tile = int.Parse(loaded_data_blocks[6]);
+        }
+        else
+        {
+            ResetTiles();
         }
         AdjustLists();
         DetermineVisibleTiles();
@@ -96,6 +106,20 @@ public class OverworldTilesDataManager : MonoBehaviour
             if (tile_events[i].Length <= 0)
             {
                 tile_events.RemoveAt(i);
+            }
+        }
+        for (int j = 0; j < visited_tiles.Count; j++)
+        {
+            if (visited_tiles[j].Length <= 0)
+            {
+                visited_tiles.RemoveAt(j);
+            }
+        }
+        if (visited_tiles.Count <= 0)
+        {
+            for (int k = 0; k < owned_tiles.Count; k++)
+            {
+                visited_tiles.Add(owned_tiles[k]);
             }
         }
     }
@@ -266,6 +290,18 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             GameManager.instance.all_events.PickEvent(tile_type[tile_num]);
         }
+        // Every time you pass a tile add it your list of visited tiles.
+        AddVisitedTile(tile_num);
+    }
+
+    private void AddVisitedTile(int tile_num)
+    {
+        // Don't add repeat tiles.
+        if (visited_tiles.Contains(tile_num.ToString()))
+        {
+            return;
+        }
+        visited_tiles.Add(tile_num.ToString());
     }
 
     public void ExploreAll()
@@ -433,6 +469,13 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             tiles_explored[tiles_visible[k]] = "Yes";
         }
+        for (int l = 0; l < visited_tiles.Count; l++)
+        {
+            if (tiles_explored[int.Parse(visited_tiles[l])] == "No")
+            {
+                tiles_explored[int.Parse(visited_tiles[l])] = "P";
+            }
+        }
         UpdateTemporaryVisibleTiles();
     }
 
@@ -524,4 +567,92 @@ public class OverworldTilesDataManager : MonoBehaviour
 
         return adjacent_tiles;
     }
+
+    public int GetDistanceBetweenTiles(int tile_one, int tile_two)
+    {
+        int column_one = tile_one % grid_size;
+        int column_two = tile_two % grid_size;
+        int row_one = DetermineTileRow(tile_one);
+        int row_two = DetermineTileRow(tile_two);
+        int horz_dist = Mathf.Abs(column_one-column_two);
+        int vert_dist = Mathf.Abs(row_one-row_two);
+        return  (horz_dist + vert_dist);
+    }
+
+    public int DetermineTileRow(int tile_num)
+    {
+        if (tile_num < grid_size)
+        {
+            return 0;
+        }
+        int row = 0;
+        while (tile_num >= grid_size)
+        {
+            row++;
+            tile_num -= grid_size;
+        }
+        return row;
+    }
+
+    public int DetermineTileCol(int tile_num)
+    {
+        return tile_num % grid_size;
+    }
+
+    private void MoveUp()
+    {
+        if (DetermineTileRow(current_tile) > 0)
+        {
+            current_tile -= grid_size;
+            AddVisitedTile(current_tile);
+        }
+    }
+
+    private void MoveDown()
+    {
+        if (DetermineTileRow(current_tile) < grid_size - 1)
+        {
+            current_tile += grid_size;
+            AddVisitedTile(current_tile);
+        }
+    }
+
+    private void MoveLeft()
+    {
+        if (DetermineTileCol(current_tile) > 0)
+        {
+            current_tile--;
+            AddVisitedTile(current_tile);
+        }
+    }
+
+    private void MoveRight()
+    {
+        if (DetermineTileCol(current_tile) < grid_size - 1)
+        {
+            current_tile++;
+            AddVisitedTile(current_tile);
+        }
+    }
+
+    public void Move(int direction)
+    {
+        switch (direction)
+        {
+            case 0:
+                MoveUp();
+                break;
+            case 1:
+                MoveRight();
+                break;
+            case 2:
+                MoveDown();
+                break;
+            case 3:
+                MoveLeft();
+                break;
+        }
+        DetermineVisibleTiles();
+    }
+
 }

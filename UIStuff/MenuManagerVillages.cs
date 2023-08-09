@@ -173,7 +173,7 @@ public class MenuManagerVillages : MonoBehaviour
         if (selected_area >= 0)
         {
             // Can't upgrade damaged buildings.
-            if (village.buildings[selected_area].Contains("/Damaged"))
+            if (village.buildings[selected_area].Contains("-Damaged"))
             {
                 Repair();
                 return;

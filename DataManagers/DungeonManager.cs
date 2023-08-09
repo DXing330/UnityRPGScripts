@@ -13,7 +13,7 @@ public class DungeonManager : MonoBehaviour
     [ContextMenu("Start")]
     public void Start()
     {
-        string_path = "Assets/Saves/Dungeons" + "/" + dungeon_ID;
+        string_path = "Assets/Saves/Dungeons" + "-" + dungeon_ID;
         LoadData();
         AdjustChests();
     }

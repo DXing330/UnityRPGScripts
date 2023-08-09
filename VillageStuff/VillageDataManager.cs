@@ -85,10 +85,7 @@ public class VillageDataManager : MonoBehaviour
             collected_blood = int.Parse(collected_taxes[4]);
             collected_settlers = int.Parse(collected_taxes[5]);
         }
-        if (File.Exists("Assets/Saves/Villages/overworld_data.txt"))
-        {
-            tiles.LoadData();
-        }
+        tiles.LoadData();
         if (File.Exists("Assets/Saves/Villages/trade_data.txt"))
         {
             trading.LoadData();
