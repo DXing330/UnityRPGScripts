@@ -44,6 +44,12 @@ public class MenuManager : MonoBehaviour
         showing = show;
     }
 
+    public void HideAll()
+    {
+        animator.SetTrigger("HideAll");
+        showing = false;
+    }
+
     public void ShowOrHideMenu()
     {
         if (showing)

@@ -37,6 +37,16 @@ public class VillageDataManager : MonoBehaviour
     public Village current_village;
     public int current_village_buildings;
 
+    private void NewData()
+    {
+        collected_food = 0;
+        collected_blood = 0;
+        collected_settlers = 0;
+        collected_mana = 0;
+        collected_gold = 0;
+        collected_materials = 0;
+    }
+
     public void SaveData()
     {
         if (!Directory.Exists("Assets/Saves/Villages"))
@@ -84,6 +94,10 @@ public class VillageDataManager : MonoBehaviour
             collected_mana = int.Parse(collected_taxes[3]);
             collected_blood = int.Parse(collected_taxes[4]);
             collected_settlers = int.Parse(collected_taxes[5]);
+        }
+        else
+        {
+            NewData();
         }
         tiles.LoadData();
         if (File.Exists("Assets/Saves/Villages/trade_data.txt"))

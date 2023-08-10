@@ -117,6 +117,9 @@ public class OverworldTilesDataManager : MonoBehaviour
 
     protected void ResetTiles()
     {
+        visited_tiles.Clear();
+        temporarily_visible.Clear();
+        orc_tiles.Clear();
         GenerateTiles();
         tile_owner.Clear();
         tiles_explored.Clear();
@@ -129,6 +132,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         tiles_explored[start] = "Yes";
         tile_owner[start] = "None";
         ClaimTile(start);
+        current_tile = start;
     }
 
     protected void GenerateTiles()

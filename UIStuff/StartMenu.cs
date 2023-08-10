@@ -41,4 +41,9 @@ public class StartMenu : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void GameOverScreen()
+    {
+        animator.SetTrigger("Over");
+    }
 }

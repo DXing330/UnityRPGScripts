@@ -412,7 +412,27 @@ public class GameManager : MonoBehaviour
     [ContextMenu("New Game")]
     public void NewGame()
     {
+        Debug.Log("Deleting everything");
         Directory.Delete("Assets/Saves", true);
+    }
+
+    private void Reset()
+    {
+        player.SetLevel(1);
+        UpdateHlthManaStam();
+        familiar.Reset();
+        experience = 0;
+        current_day = 1;
+        player.diplomacy.SetReputation(0);
+    }
+
+    public void GameOver()
+    {
+        NewGame();
+        LoadState();
+        SaveState();
+        ClearInteractableText();
+        startMenu.GameOverScreen();
     }
 
     public void SaveData()
@@ -470,9 +490,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Load failed");
-            player.SetLevel(1);
-            UpdateHlthManaStam();
+            Reset();
         }
         summons.LoadData();
         spells.LoadData();

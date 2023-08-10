@@ -19,6 +19,16 @@ public class StoryDataManager : MonoBehaviour
     protected int current_payment = 1;
     protected int current_deadline = 60;
 
+    private void Reset()
+    {
+        story_chapter= 0;
+        chapter_page = 0;
+        trust = 0;
+        current_debt = 0;
+        current_payment = 1;
+        current_deadline = 60;
+    }
+
     protected void ConvertSelfToString()
     {
         save_string = "";
@@ -52,6 +62,10 @@ public class StoryDataManager : MonoBehaviour
             current_debt = int.Parse(loaded_data[3]);
             current_payment = int.Parse(loaded_data[4]);
             current_deadline = int.Parse(loaded_data[5]);
+        }
+        else
+        {
+            Reset();
         }
         if (current_deadline < 60)
         {
@@ -147,8 +161,7 @@ public class StoryDataManager : MonoBehaviour
             }
             else if (trust + GameManager.instance.player.playerLevel < 0)
             {
-                // Show some kind of game over message.
-                //GameManager.instance.NewGame();
+                GameManager.instance.GameOver();
             }
         }
     }

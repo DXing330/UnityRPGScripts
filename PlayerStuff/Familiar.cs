@@ -213,4 +213,11 @@ public class Familiar : MonoBehaviour
         stat_string += bonus_heal.ToString();
         return stat_string.Split("|");
     }
+
+    public void Reset()
+    {
+        SetLevel(1);
+        SetExp(0);
+        SetCBlood(0);
+    }
 }
