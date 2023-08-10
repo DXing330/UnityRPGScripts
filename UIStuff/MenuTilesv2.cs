@@ -17,7 +17,6 @@ public class MenuTilesv2 : MonoBehaviour
     private int zone_tile_one = -1;
     public List<int> zone_tiles;
     private bool inner = false;
-    private bool explored = false;
     public Animator animator;
     public OverworldTilesDataManager overworld_tiles;
 
@@ -94,7 +93,7 @@ public class MenuTilesv2 : MonoBehaviour
     {
         if (inner && selected_inner_area >= 0)
         {
-            GameManager.instance.ExploreTile(zone_tiles[selected_inner_area] - 1, explored);
+            GameManager.instance.ExploreTile(zone_tiles[selected_inner_area] - 1);
             UpdateTileInfo();
             UpdateTiles();
         }
@@ -106,7 +105,6 @@ public class MenuTilesv2 : MonoBehaviour
         tile_number.text = (zone + 1).ToString();
         if (overworld_tiles.tiles_explored[zone] == "Yes")
         {
-            explored = true;
             tile_type.text = overworld_tiles.tile_type[zone];
             tile_owner.text = overworld_tiles.tile_owner[zone];
             /* Only attack tiles owned by other people.
@@ -118,13 +116,11 @@ public class MenuTilesv2 : MonoBehaviour
         // P for previously explored, meaning you know the terrain but not the owner.
         if (overworld_tiles.tiles_explored[zone] == "P")
         {
-            explored = false;
             tile_owner.text = "Unknown";
             tile_type.text = overworld_tiles.tile_type[zone];
         }
         else
         {
-            explored = false;
             tile_type.text = "Unknown";
             tile_owner.text = "Unknown";
         }
@@ -138,11 +134,12 @@ public class MenuTilesv2 : MonoBehaviour
             explore_text.text = "Explore";
             return;
         }
-        if (!explored)
+        int distance = overworld_tiles.GetDistanceBetweenTiles(zone_tiles[selected_inner_area] - 1, overworld_tiles.current_tile);
+        if (distance > 1)
         {
-            explore_text.text = "Explore"+"\n"+"(1 Week)";
+            explore_text.text = "Explore"+"\n"+"("+distance.ToString()+" Days)";
         }
-        else if (explored)
+        else if (distance <= 1)
         {
             explore_text.text = "Explore"+"\n"+"(1 Day)";
         }

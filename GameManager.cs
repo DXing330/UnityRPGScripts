@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
             return;
         }
         instance = this;
-        SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
         DontDestroyOnLoad(gameObject);
     }
@@ -48,6 +47,7 @@ public class GameManager : MonoBehaviour
     public RectTransform stamBar;
     public Text stamText;
     public HUDControls controls;
+    public StartMenu startMenu;
 
     // Resources/Logic.
     public int experience;
@@ -96,6 +96,17 @@ public class GameManager : MonoBehaviour
         return returned;
     }
 
+    public List<string> RemoveEmptyListItems(List<string> string_list)
+    {
+        for (int i = 0; i < string_list.Count; i++)
+        {
+            if (string_list[i].Length < 1)
+            {
+                string_list.RemoveAt(i);
+            }
+        }
+        return string_list;
+    }
     public List<string> InverstListOrder(List<string> list_to_reverse, List<string> newly_reversed_list)
     {
         newly_reversed_list.Clear();
@@ -114,9 +125,9 @@ public class GameManager : MonoBehaviour
     }
 
     // Fixed Textbox.
-    public void ShowFixedText(string speaker, string speakers_words)
+    public void ShowFixedText(string speakers_words, string speakers)
     {
-        fixedTextManager.ShowText(speaker, speakers_words);
+        fixedTextManager.ShowText(speakers_words, speakers);
     }
 
     // Interactable Text.
@@ -129,6 +140,11 @@ public class GameManager : MonoBehaviour
     public void ReceiveChoice(int choice)
     {
         current_event.ReceiveChoice(choice);
+    }
+
+    public void ClearInteractableText()
+    {
+        interactableTextManager.Hide();
     }
 
     public void ShowInteractableText(string words, string name = "", string choice_1="", string choice_2="", string choice_3="")
@@ -220,18 +236,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ExploreTile(int tile_num, bool explored = false)
+    public void ExploreTile(int tile_num)
     {
-        // Exploring an invisible area takes more time.
-        if (!explored)
-        {
-            NewWeek();
-        }
-        else
-        {
-            NewDay();
-        }
-        villages.tiles.ExploreTile(tile_num);
+        // Need to move to the tile and trigger the event there.
+        villages.tiles.TravelToTile(tile_num);
     }
 
     // Player resources.
@@ -290,6 +298,7 @@ public class GameManager : MonoBehaviour
 
     public void GainResource(int type, int amount)
     {
+        Debug.Log(amount);
         string new_text = "";
         if (amount > 0)
         {
@@ -303,7 +312,10 @@ public class GameManager : MonoBehaviour
         {
             case 0:
                 villages.collected_blood += amount;
-                villages.collected_blood = Mathf.Max(0, villages.collected_blood);
+                if (villages.collected_blood < 0)
+                {
+                    villages.collected_blood = 0;
+                }
                 ShowText(new_text+" blood crystals", 25, Color.red, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 1:
@@ -316,17 +328,26 @@ public class GameManager : MonoBehaviour
                 break;
             case 3:
                 villages.collected_gold += amount;
-                villages.collected_gold = Mathf.Max(0, villages.collected_gold);
+                if (villages.collected_gold < 0)
+                {
+                    villages.collected_gold = 0;
+                }
                 ShowText(new_text+" coins", 20, Color.yellow, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 4:
                 villages.collected_food += amount;
-                villages.collected_food = Mathf.Max(0, villages.collected_food);
+                if (villages.collected_food < 0)
+                {
+                    villages.collected_food = 0;
+                }
                 ShowText(new_text+" food", 20, Color.green, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 5:
                 villages.collected_materials += amount;
-                villages.collected_materials = Mathf.Max(0, villages.collected_materials);
+                if (villages.collected_materials < 0)
+                {
+                    villages.collected_materials = 0;
+                }
                 ShowText(new_text+" materials", 20, Color.grey, player.transform.position, Vector3.up*25, 1.0f);
                 break;
             case 6:
@@ -350,6 +371,7 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         NewWeek();
         SaveState();
+        ClearInteractableText();
         ShowInteractableText("You were defeated but I dragged you back, a few weeks regenerating in your coffin and you're as good as new.", "Spirit Guardian Blaty");
     }
 
@@ -371,7 +393,7 @@ public class GameManager : MonoBehaviour
     {
         float ratio = (float)player.current_stamina / (float)player.max_stamina;
         stamBar.localScale = new Vector3(ratio, 1, 1);
-        stamText.text = (ratio * 100.0f).ToString() + "%";
+        stamText.text = ((player.current_stamina * 100)/player.max_stamina).ToString() + "%";
     }
 
     public void UpdateHlthManaStam()
@@ -427,9 +449,8 @@ public class GameManager : MonoBehaviour
         all_events.SaveData();
     }
 
-    public void LoadState(Scene scene, LoadSceneMode mode)
+    public void LoadState()
     {
-        SceneManager.sceneLoaded -= LoadState;
         if (File.Exists("Assets/Saves/save_data.txt"))
         {
             string save_data = File.ReadAllText("Assets/Saves/save_data.txt");
@@ -450,9 +471,9 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Load failed");
+            player.SetLevel(1);
+            UpdateHlthManaStam();
         }
-        player.SetLevel(1);
-        UpdateHlthManaStam();
         summons.LoadData();
         spells.LoadData();
         all_equipment.LoadData();

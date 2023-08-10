@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Storyteller : MonoBehaviour
 {
+    /*
     private bool told_story = false;
     private float told_time;
     private float told_cooldown = 0.6f;
@@ -19,5 +20,10 @@ public class Storyteller : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }*/
+
+    protected virtual void PlayStory()
+    {
+        GameManager.instance.story.PlayStory();
     }
 }

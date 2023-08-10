@@ -425,11 +425,7 @@ public class Player : Mover
 
     public void EatMana()
     {
-        current_mana += playerLevel;
-        if (current_mana > max_mana)
-        {
-            current_mana = max_mana;
-        }
+        current_mana += max_mana;
     }
 
     public void DrinkBlood()

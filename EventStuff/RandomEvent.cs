@@ -157,7 +157,7 @@ public class RandomEvent : MonoBehaviour
 
     private void CheckOutcome()
     {
-        result_outcome_details = outcomeChecker.ReceiveOutcome(result_outcome, success);
+        result_outcome_details = outcomeChecker.ReceiveOutcomeText(result_outcome, success);
         ShowResultText();
     }
 
@@ -165,5 +165,6 @@ public class RandomEvent : MonoBehaviour
     {
         GameManager.instance.ShowInteractableText(result_outcome_text);
         GameManager.instance.ShowInteractableResult(result_outcome_details);
+        outcomeChecker.ReceiveOutcome(result_outcome, success);
     }
 }

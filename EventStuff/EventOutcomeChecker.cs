@@ -9,22 +9,29 @@ public class EventOutcomeChecker : MonoBehaviour
     private bool success;
     private string outcome_text;
 
-    public string ReceiveOutcome(string outcome, bool succeed)
+    public void ReceiveOutcome(string outcome, bool succeed)
     {
         success = succeed;
         outcomes = outcome.Split("|");
-        DetermineOutcomes();
+        DetermineOutcomes(true);
+    }
+
+    public string ReceiveOutcomeText(string outcome, bool succeed)
+    {
+        success = succeed;
+        outcomes = outcome.Split("|");
+        DetermineOutcomes(false);
         return outcome_text;
     }
 
-    private void DetermineOutcomes()
+    private void DetermineOutcomes(bool act)
     {
         outcome_text = "";
         for (int i = 0; i < outcomes.Length; i++)
         {
             if (outcomes[i].Length >= 3)
             {
-                outcome_text += DetermineOutcome(outcomes[i]);
+                outcome_text += DetermineOutcome(outcomes[i], act);
                 if (i < outcomes.Length - 1)
                 {
                     outcome_text += "  ";
@@ -33,7 +40,7 @@ public class EventOutcomeChecker : MonoBehaviour
         }
     }
 
-    private string DetermineOutcome(string outcome)
+    private string DetermineOutcome(string outcome, bool act = false)
     {
         single_outcome = outcome.Split("=");
         // Don't bother with things that don't change anything.
@@ -50,7 +57,11 @@ public class EventOutcomeChecker : MonoBehaviour
                 {
                     single_outcome[1] = (-int.Parse(single_outcome[1])).ToString();
                 }
-                GameManager.instance.GainResource(int.Parse(single_outcome[0]), int.Parse(single_outcome[1]));
+                if (act)
+                {
+                    GameManager.instance.GainResource(int.Parse(single_outcome[0]), int.Parse(single_outcome[1]));
+                    return "";
+                }
                 switch (int.Parse(single_outcome[0]))
                 {
                     case 0:
@@ -73,13 +84,22 @@ public class EventOutcomeChecker : MonoBehaviour
             switch (single_outcome[0])
             {
                 case "health":
-                    GameManager.instance.player.PayHealth(int.Parse(single_outcome[1]));
+                    if (act)
+                    {
+                        GameManager.instance.player.PayHealth(int.Parse(single_outcome[1]));
+                    }
                     return  "-"+(int.Parse(single_outcome[1])).ToString()+" health";
                 case "mana":
-                    GameManager.instance.player.PayMana(int.Parse(single_outcome[1]));
+                    if (act)
+                    {
+                        GameManager.instance.player.PayMana(int.Parse(single_outcome[1]));
+                    }
                     return  "-"+(int.Parse(single_outcome[1])).ToString()+" mana";
                 case "stamina":
-                    GameManager.instance.player.PayStam(int.Parse(single_outcome[1]));
+                    if (act)
+                    {
+                        GameManager.instance.player.PayStam(int.Parse(single_outcome[1]));
+                    }
                     return  "-"+(int.Parse(single_outcome[1])).ToString()+" stamina";
             }
         }

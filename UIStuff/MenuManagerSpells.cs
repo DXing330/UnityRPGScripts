@@ -14,7 +14,6 @@ public class MenuManagerSpells : MonoBehaviour
     public void Start()
     {
         spell_data = GameManager.instance.spells;
-        UpdateText();
     }
 
     public void UpdateText(int spell_index = 0)

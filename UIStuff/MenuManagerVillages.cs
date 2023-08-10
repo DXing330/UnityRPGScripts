@@ -9,6 +9,7 @@ public class MenuManagerVillages : MonoBehaviour
     protected VillageDataManager villagedatamanager;
     public MenuManagerVillageTech villagetechmenu;
     public MenuTilesv2 overworldtilesmenu;
+    public ExploreMenu exploremenu;
     public MenuManagerVillagePanel villagepanel;
     public MenuManagerVillageBuilding villagebuildingmenu;
     public Text collected_food;
@@ -21,6 +22,7 @@ public class MenuManagerVillages : MonoBehaviour
     public Village village;
     protected int page = 0;
     protected int selected_area = -1;
+    private bool exploring = false;
 
     protected void Start()
     {
@@ -48,7 +50,14 @@ public class MenuManagerVillages : MonoBehaviour
 
     public void Hide()
     {
-        animator.SetTrigger("Hide");
+        if (exploring)
+        {
+            animator.SetTrigger("Explore");
+        }
+        else
+        {
+            animator.SetTrigger("Hide");
+        }
     }
 
     public void ShowVillage()
@@ -74,6 +83,7 @@ public class MenuManagerVillages : MonoBehaviour
 
     public void SelectVillage()
     {
+        exploring = false;
         int index = overworldtilesmenu.selected_inner_area + (overworldtilesmenu.selected_area*overworldtilesmenu.grid_size);
         if (overworldtilesmenu.overworld_tiles.tile_owner[index] == "You")
         {
@@ -81,6 +91,27 @@ public class MenuManagerVillages : MonoBehaviour
             villagepanel.SetVillage(village);
             UpdateVillageInformation();
             ShowVillage();
+        }
+    }
+
+    public void SelectVillageFromExplore()
+    {
+        exploring = true;
+        int index = exploremenu.overworld_tiles.current_tile;
+        if (exploremenu.overworld_tiles.tile_owner[index] == "You")
+        {
+            village.Load(index);
+            villagepanel.SetVillage(village);
+            UpdateVillageInformation();
+            ShowVillage();
+        }
+        else if (exploremenu.overworld_tiles.tile_owner[index] == "None")
+        {
+            // Try to make a village.
+        }
+        else
+        {
+            // Give some error message about not being able to claim an occupied tile.
         }
     }
 

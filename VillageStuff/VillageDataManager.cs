@@ -117,7 +117,7 @@ public class VillageDataManager : MonoBehaviour
         string village_data = "";
         village_data += village.village_number.ToString()+"|";
         village_data += village.population.ToString()+"|";
-        village_data += village.buildable_areas.ToString()+"|";
+        village_data += village.merchant_reputation.ToString()+"|";
         village_data += village.fear.ToString()+"|";
         village_data += village.discontentment.ToString()+"|";
         village_data += village.food_supply.ToString()+"|";
@@ -149,7 +149,7 @@ public class VillageDataManager : MonoBehaviour
         string[] village_int_data = village_data_blocks[0].Split("|");
         village.village_number = int.Parse(village_int_data[0]);
         village.population = int.Parse(village_int_data[1]);
-        village.buildable_areas = int.Parse(village_int_data[2]);
+        village.merchant_reputation = int.Parse(village_int_data[2]);
         village.fear = int.Parse(village_int_data[3]);
         village.discontentment = int.Parse(village_int_data[4]);
         village.food_supply = int.Parse(village_int_data[5]);
@@ -215,7 +215,7 @@ public class VillageDataManager : MonoBehaviour
             case "food":
                 collected_food++;
                 break;
-            case "materials":
+            case "mats":
                 collected_materials++;
                 break;
             case "gold":

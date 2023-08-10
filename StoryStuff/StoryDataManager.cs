@@ -57,6 +57,7 @@ public class StoryDataManager : MonoBehaviour
         {
             current_deadline = 60;
         }
+        PlayStory();
     }
 
     public string ReturnPaymentDeadline()
@@ -132,7 +133,7 @@ public class StoryDataManager : MonoBehaviour
     {
         Debug.Log("failure");
         current_deadline += 60;
-        current_payment += current_payment + GameManager.instance.current_day/45;
+        current_payment += current_payment + GameManager.instance.current_day/60;
         trust--;
         if (trust <= 0)
         {
@@ -144,7 +145,7 @@ public class StoryDataManager : MonoBehaviour
                 GameManager.instance.player.SetLevel(new_level);
                 GameManager.instance.ShowInteractableText("Looks like you've had a bit too much blood to drink.  No worries, we'll help you get it out of your system. Next time make you sure finish your quota before indulging.", "Big Guy");
             }
-            else
+            else if (trust + GameManager.instance.player.playerLevel < 0)
             {
                 // Show some kind of game over message.
                 //GameManager.instance.NewGame();

@@ -7,6 +7,7 @@ using System;
 public class VillageTradingManager : MonoBehaviour
 {
     public string trade_data;
+    public Village current_village;
     // Trading safely slighty increases reputation.
     // Stealing greatly decreases reputation.
     // Having orcs or bandits around moderately decreases reputation.
@@ -36,6 +37,17 @@ public class VillageTradingManager : MonoBehaviour
     protected int mats_price_sell;
     protected int mana_price_sell;
 
+    void Start()
+    {
+        UpdateVillage();
+    }
+
+    protected void UpdateVillage()
+    {
+        current_village = GameManager.instance.villages.current_village;
+        reputation = current_village.merchant_reputation;
+    }
+
     public string[] ReturnSupplyPriceData()
     {
         string supply_data = "";
@@ -59,7 +71,6 @@ public class VillageTradingManager : MonoBehaviour
             Directory.CreateDirectory("Assets/Saves/Villages");
         }
         trade_data = "";
-        trade_data += reputation.ToString()+"|";
         trade_data += food_demand.ToString()+"|";
         trade_data += mats_demand.ToString()+"|";
         trade_data += mana_demand.ToString()+"|";
@@ -73,11 +84,10 @@ public class VillageTradingManager : MonoBehaviour
         {
             trade_data = File.ReadAllText("Assets/Saves/Villages/trade_data.txt");
             string[] trade_data_list = trade_data.Split("|");
-            reputation = int.Parse(trade_data_list[0]);
-            food_demand = Math.Max(0, int.Parse(trade_data_list[1]));
-            mats_demand = Math.Max(0, int.Parse(trade_data_list[2]));
-            mana_demand = Math.Max(0, int.Parse(trade_data_list[3]));
-            last_visited_day = int.Parse(trade_data_list[4]);
+            food_demand = Math.Max(0, int.Parse(trade_data_list[0]));
+            mats_demand = Math.Max(0, int.Parse(trade_data_list[1]));
+            mana_demand = Math.Max(0, int.Parse(trade_data_list[2]));
+            last_visited_day = int.Parse(trade_data_list[3]);
         }
     }
 
@@ -98,6 +108,7 @@ public class VillageTradingManager : MonoBehaviour
     {
         if (GameManager.instance.villages.current_village.CheckEvent("traders"))
         {
+            UpdateVillage();
             if (GameManager.instance.current_day > last_visited_day)
             {
                 last_visited_day = GameManager.instance.current_day;
@@ -140,36 +151,36 @@ public class VillageTradingManager : MonoBehaviour
         switch (product)
         {
             case "food":
-                if (GameManager.instance.villages.collected_gold >=  food_price_sell && food_supply > 0)
+                if (current_village.accumulated_gold >=  food_price_sell && food_supply > 0)
                 {
-                    GameManager.instance.villages.collected_food++;
-                    GameManager.instance.villages.collected_gold -= food_price_sell;
+                    current_village.food_supply++;
+                    current_village.accumulated_gold -= food_price_sell;
                     gold_supply += food_price_sell;
                     food_demand++;
                     food_supply--;
-                    reputation++;
+                    current_village.merchant_reputation++;
                 }
                 break;
             case "mats":
-                if (GameManager.instance.villages.collected_gold >=  mats_price_sell && mats_supply > 0)
+                if (current_village.accumulated_gold >=  mats_price_sell && mats_supply > 0)
                 {
-                    GameManager.instance.villages.collected_materials++;
-                    GameManager.instance.villages.collected_gold -= mats_price_sell;
+                    current_village.accumulated_materials++;
+                    current_village.accumulated_gold -= mats_price_sell;
                     gold_supply += mats_price_sell;
                     mats_demand++;
                     mats_supply--;
-                    reputation++;
+                    current_village.merchant_reputation++;
                 }
                 break;
             case "mana":
-                if (GameManager.instance.villages.collected_gold >=  mana_price_sell && mana_supply > 0)
+                if (current_village.accumulated_gold >=  mana_price_sell && mana_supply > 0)
                 {
-                    GameManager.instance.villages.collected_mana++;
-                    GameManager.instance.villages.collected_gold -= mana_price_sell;
+                    current_village.accumulated_mana++;
+                    current_village.accumulated_gold -= mana_price_sell;
                     gold_supply += mana_price_sell;
                     mats_demand++;
                     mana_supply--;
-                    reputation++;
+                    current_village.merchant_reputation++;
                 }
                 break;
         }
@@ -181,36 +192,36 @@ public class VillageTradingManager : MonoBehaviour
         switch (product)
         {
             case "food":
-                if (GameManager.instance.villages.collected_food > 0 && gold_supply >= food_price_buy)
+                if (current_village.food_supply > 0 && gold_supply >= food_price_buy)
                 {
-                    GameManager.instance.villages.collected_food--;
-                    GameManager.instance.villages.collected_gold += food_price_buy;
+                    current_village.food_supply--;
+                    current_village.accumulated_gold += food_price_buy;
                     gold_supply -= food_price_buy;
                     food_demand--;
                     food_supply++;
-                    reputation++;
+                    current_village.merchant_reputation++;
                 }
                 break;
             case "mats":
-                if (GameManager.instance.villages.collected_materials > 0 && gold_supply >= mats_price_buy)
+                if (current_village.accumulated_materials > 0 && gold_supply >= mats_price_buy)
                 {
-                    GameManager.instance.villages.collected_materials--;
-                    GameManager.instance.villages.collected_gold += mats_price_buy;
+                    current_village.accumulated_materials--;
+                    current_village.accumulated_gold += mats_price_buy;
                     gold_supply -= mats_price_buy;
                     mats_demand--;
                     mats_supply++;
-                    reputation++;
+                    current_village.merchant_reputation++;
                 }
                 break;
             case "mana":
-                if (GameManager.instance.villages.collected_mana > 0 && gold_supply >= mana_price_buy)
+                if (current_village.accumulated_mana > 0 && gold_supply >= mana_price_buy)
                 {
-                    GameManager.instance.villages.collected_mana--;
-                    GameManager.instance.villages.collected_gold += mana_price_buy;
+                    current_village.accumulated_mana--;
+                    current_village.accumulated_gold += mana_price_buy;
                     gold_supply -= mana_price_buy;
                     mana_demand--;
                     mana_supply++;
-                    reputation++;
+                    current_village.merchant_reputation++;
                 }
                 break;
         }
@@ -224,24 +235,24 @@ public class VillageTradingManager : MonoBehaviour
             case "food":
                 if (food_supply > 0)
                 {
-                    GameManager.instance.villages.collected_food++;
-                    reputation -= food_price_sell;
+                    current_village.food_supply++;
+                    current_village.merchant_reputation -= food_price_sell;
                     ResetSupply();
                 }
                 break;
             case "mats":
                 if (mats_supply > 0)
                 {
-                    GameManager.instance.villages.collected_materials++;
-                    reputation -= mats_price_sell;
+                    current_village.accumulated_materials++;
+                    current_village.merchant_reputation -= mats_price_sell;
                     ResetSupply();
                 }
                 break;
             case "mana":
                 if (mana_supply > 0)
                 {
-                    GameManager.instance.villages.collected_mana++;
-                    reputation -= mana_price_sell;
+                    current_village.accumulated_mana++;
+                    current_village.merchant_reputation -= mana_price_sell;
                     ResetSupply();
                 }
                 break;

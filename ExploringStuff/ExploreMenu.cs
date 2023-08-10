@@ -9,10 +9,13 @@ public class ExploreMenu : MonoBehaviour
     public List<Text> texts;
     public List<Image> images;
     public Text current_tile_number;
+    public Text village_action;
+    public Text tile_action;
     private int zone_tile_one = -1;
     private int current_tile;
     private int c_row;
     private int c_col;
+    private string c_tile_owner;
     public List<int> zone_tiles;
     public Animator animator;
     public OverworldTilesDataManager overworld_tiles;
@@ -25,8 +28,31 @@ public class ExploreMenu : MonoBehaviour
         }
         overworld_tiles = GameManager.instance.villages.tiles;
         grid_size = overworld_tiles.grid_size;
+    }
+
+    public void StartUpdating()
+    {
         UpdateCurrentTile();
         UpdateTiles();
+    }
+
+    public void TileInteract()
+    {
+        switch (c_tile_owner)
+        {
+            case "You":
+                overworld_tiles.ExploreTile(current_tile);
+                break;
+            case "None":
+                overworld_tiles.ExploreTile(current_tile);
+                break;
+        }
+        // explore/attack/etc.
+    }
+
+    public void VillageInteract()
+    {
+        // In the MenuManagerVillages
     }
 
     public void Return()
@@ -34,12 +60,48 @@ public class ExploreMenu : MonoBehaviour
         animator.SetTrigger("Hide");
     }
 
+    public void PortalHome()
+    {
+        if (GameManager.instance.villages.collected_mana > 0)
+        {
+            GameManager.instance.villages.collected_mana--;
+            overworld_tiles.PortalHome();
+            UpdateCurrentTile();
+            UpdateTiles();
+        }
+    }
+
+    protected void UpdateActions()
+    {
+        switch (c_tile_owner)
+        {
+            case "You":
+                village_action.text = "Visit Village"+"\n"+"(1 Day)";
+                tile_action.text = "Explore Area"+"\n"+"(1 Day)";
+                break;
+            case "None":
+                village_action.text = "Make Village"+"\n"+"(1 Mana,"+"\n"+ "1 Settler)";
+                tile_action.text = "Explore Area"+"\n"+"(1 Days)";
+                break;
+            case "Orc":
+                village_action.text = "Make Village"+"\n"+"(1 Mana,"+"\n"+ "1 Settler)";
+                tile_action.text = "Attack Area"+"\n"+"(1 Days)";
+                break;
+            case "Vampire":
+                village_action.text = "Make Village"+"\n"+"(1 Mana,"+"\n"+ "1 Settler)";
+                tile_action.text = "Attack Area"+"\n"+"(1 Days)";
+                break;
+        }
+    }
+
     protected void UpdateCurrentTile()
     {
         current_tile = overworld_tiles.current_tile;
+        c_tile_owner = overworld_tiles.tile_owner[current_tile];
         current_tile_number.text = (1 + current_tile).ToString();
         DetermineColumn();
         DetermineRow();
+        UpdateActions();
     }
 
     protected void DetermineRow()
@@ -56,7 +118,6 @@ public class ExploreMenu : MonoBehaviour
     protected void DetermineColumn()
     {
         c_col = current_tile % grid_size;
-        Debug.Log(c_col);
     }
 
     protected void UpdateTiles()

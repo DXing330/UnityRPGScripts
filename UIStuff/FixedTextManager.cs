@@ -27,7 +27,7 @@ public class FixedTextManager : MonoBehaviour
         }
     }
 
-    public void ShowText(string speaker, string speakers_words)
+    public void ShowText(string speakers_words, string speaker = "")
     {
         if (!showing && Time.time - last_shown > show_cooldown)
         {

@@ -12,7 +12,7 @@ public class Village : MonoBehaviour
     // Affects how often you can feed and how much you regen from feeding.
     public int population;
     // Affected by the local area, determines how many buildings there can be.
-    public int buildable_areas;
+    public int merchant_reputation;
     // Affects rebellions and productivity.
     public int fear;
     protected int last_fear_estimate;
@@ -84,13 +84,7 @@ public class Village : MonoBehaviour
 
     protected void AdjustLists()
     {
-        for (int i = 0; i < assigned_buildings.Count; i++)
-        {
-            if (assigned_buildings[i].Length <= 0)
-            {
-                assigned_buildings.RemoveAt(i);
-            }
-        }
+        assigned_buildings = GameManager.instance.RemoveEmptyListItems(assigned_buildings);
         for (int i = 0; i < events.Count; i++)
         {
             if (events[i].Length <= 1)
@@ -653,6 +647,7 @@ public class Village : MonoBehaviour
         events.Add(new_string);
         new_string = ev_and_time[1];
         event_durations.Add(new_string);
+        Save();
     }
 
     public bool CheckEvent(string event_to_check)

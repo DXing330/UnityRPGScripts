@@ -15,7 +15,6 @@ public class MenuManagerSummons : MonoBehaviour
     public void Start()
     {
         summon_data = GameManager.instance.summons;
-        UpdateText();
     }
 
     public void UpdateText(int index=0)
