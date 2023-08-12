@@ -42,7 +42,6 @@ public class SpellDataManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Load failed");
             blood_bullet_stats = "1|2|None|1|2";
             SaveData();
         }

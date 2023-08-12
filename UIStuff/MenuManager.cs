@@ -31,7 +31,6 @@ public class MenuManager : MonoBehaviour
     // Components.
     private Animator animator;
 
-    // Get the animator.
     public void Start()
     {
         animator = GetComponent<Animator>();
@@ -94,9 +93,9 @@ public class MenuManager : MonoBehaviour
 
     /*public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (GameManager.instance.dead)
         {
-            ShowOrHideMenu();
+            HideAll();
         }
     }*/
 
@@ -108,21 +107,9 @@ public class MenuManager : MonoBehaviour
     // Character info.
     public void UpdateMenu()
     {
-        // Use the game manager to get the information.
         UpdateFamiliarMenu();
         UpdateCharacterMenu();
         UpdateItemMenu();
-        /*/ Weapon.
-        int weapon_level = GameManager.instance.weapon.weaponLevel;
-        weapon_level_text.text = weapon_level.ToString();
-        upgrade_cost.text = GameManager.instance.DeterminePrice("weapon").ToString();
-        // EXP Bar.
-        int currect_exp = GameManager.instance.experience;
-        int exp_to_level = GameManager.instance.GetExptoLevel();
-
-        float exp_ratio = (float)currect_exp / (float)exp_to_level;
-        exp_bar.localScale = new Vector3(exp_ratio, 1, 1);
-        exp_text.text = currect_exp.ToString() + " / " + exp_to_level.ToString();*/
     }
 
     // Character stats.

@@ -64,7 +64,7 @@ public class InteractableTextManager : MonoBehaviour
         }
         speaker.text = name;
         text.text = words;
-        if (choice_1.Length > 6)
+        if (choice_1.Length >= 6)
         {
             option_1.SetActive(true);
             option_text_1.text = choice_1;
@@ -73,12 +73,12 @@ public class InteractableTextManager : MonoBehaviour
         {
             EnableReturnButton();
         }
-        if (choice_2.Length > 6)
+        if (choice_2.Length >= 6)
         {
             option_2.SetActive(true);
             option_text_2.text = choice_2;
         }
-        if (choice_3.Length > 6)
+        if (choice_3.Length >= 6)
         {
             option_3.SetActive(true);
             option_text_3.text = choice_3;

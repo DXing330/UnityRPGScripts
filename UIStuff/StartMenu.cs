@@ -35,6 +35,7 @@ public class StartMenu : MonoBehaviour
     public void NewGame()
     {
         GameManager.instance.NewGame();
+        GameManager.instance.LoadState();
     }
 
     public void Quit()

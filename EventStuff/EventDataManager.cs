@@ -28,6 +28,7 @@ public class EventDataManager : MonoBehaviour
         File.WriteAllText("Assets/Events/unlocked_exploring.txt", save_string);
     }
 
+    [ContextMenu("Load")]
     public void LoadData()
     {
         if (File.Exists("Assets/Events/unlocked_exploring.txt"))

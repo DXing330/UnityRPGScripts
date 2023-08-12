@@ -70,6 +70,12 @@ public class EventConditionChecker : MonoBehaviour
                     return true;
                 }
                 return false;
+            case "stamina":
+                if (player.current_stamina >= int.Parse(condition_details[1]))
+                {
+                    return true;
+                }
+                return false;
             case "reputation":
                 if (player.diplomacy.ReturnRep() >= int.Parse(condition_details[1]))
                 {

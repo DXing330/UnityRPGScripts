@@ -2,6 +2,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StoryDataManager : MonoBehaviour
 {
@@ -104,15 +105,14 @@ public class StoryDataManager : MonoBehaviour
     {
         if (GameManager.instance.current_day >= current_deadline)
         {
-            Debug.Log("checking payment");
+            current_deadline += 60;
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
             if (CheckPayment())
             {
-                Debug.Log("payment");
                 Success();
             }
             else
             {
-                Debug.Log("no payment");
                 Fail();
             }
         }
@@ -129,8 +129,6 @@ public class StoryDataManager : MonoBehaviour
 
     protected void Success()
     {
-        Debug.Log("success");
-        current_deadline += 60;
         current_payment += 1 + GameManager.instance.current_day/60;
         GameManager.instance.ShowInteractableText("Good job paying off your quota this time, we'll be back in a few months to check back in on you, collect "+current_payment+" blood by then.", "Big Guy");
         trust++;
@@ -145,13 +143,11 @@ public class StoryDataManager : MonoBehaviour
 
     protected void Fail()
     {
-        Debug.Log("failure");
-        current_deadline += 60;
         current_payment += current_payment + GameManager.instance.current_day/60;
         trust--;
         if (trust <= 0)
         {
-            GameManager.instance.ShowInteractableText("You're not very good at this.", "Big Guy");
+            GameManager.instance.ShowInteractableText("You're not very good at this.  You better work harder to gather blood for us.", "Big Guy");
             if (GameManager.instance.player.playerLevel > 1)
             {
                 
@@ -174,7 +170,7 @@ public class StoryDataManager : MonoBehaviour
             if (chapter_page == 0)
             {
                 string name = "Dracula";
-                string words = "I've gifted you a village to get you started. I'll return in 3 months, collect some blood by then.";
+                string words = "I've gifted you a village to get you started. I'll return in 2 months, collect some blood by then.";
                 GameManager.instance.ShowInteractableText(words, name);
                 chapter_page++;
             }

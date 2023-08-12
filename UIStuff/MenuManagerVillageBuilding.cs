@@ -66,7 +66,7 @@ public class MenuManagerVillageBuilding : MonoBehaviour
     {
         if (right)
         {
-            if (potential_upgrade_indices.Count > possible_upgrades.Count * current_page)
+            if (potential_upgrade_indices.Count > possible_upgrades.Count * (current_page + 1))
             {
                 current_page++;
                 UpdateCurrentPage();

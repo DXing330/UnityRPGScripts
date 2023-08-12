@@ -9,6 +9,7 @@ public class ExploreMenu : MonoBehaviour
     public List<Text> texts;
     public List<Image> images;
     public Text current_tile_number;
+    public Text current_night;
     public Text village_action;
     public Text tile_action;
     private int zone_tile_one = -1;
@@ -94,11 +95,12 @@ public class ExploreMenu : MonoBehaviour
         }
     }
 
-    protected void UpdateCurrentTile()
+    public void UpdateCurrentTile()
     {
         current_tile = overworld_tiles.current_tile;
         c_tile_owner = overworld_tiles.tile_owner[current_tile];
         current_tile_number.text = (1 + current_tile).ToString();
+        current_night.text = GameManager.instance.current_day.ToString();
         DetermineColumn();
         DetermineRow();
         UpdateActions();

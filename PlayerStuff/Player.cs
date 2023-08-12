@@ -452,4 +452,12 @@ public class Player : Mover
         push_direction = Vector3.zero;
         GameManager.instance.PlayerDefeated();
     }
+
+    public void Reset()
+    {
+        SetLevel(1);
+        SetHealth(10);
+        RecoverStamina();
+        diplomacy.SetReputation(0);
+    }
 }

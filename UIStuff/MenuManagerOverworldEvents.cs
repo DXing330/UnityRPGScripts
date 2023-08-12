@@ -21,6 +21,11 @@ public class MenuManagerOverworldEvents : MonoBehaviour
     protected void Start()
     {
         tiles = GameManager.instance.villages.tiles;
+        GetEvents();
+    }
+
+    private void GetEvents()
+    {
         total_events = tiles.tile_events.Count;
         total_pages = total_events/4;
         all_events = GameManager.instance.InverstListOrder(tiles.tile_events, all_events);
@@ -48,6 +53,7 @@ public class MenuManagerOverworldEvents : MonoBehaviour
 
     public void UpdateEvents()
     {
+        GetEvents();
         event_0.text = "N/A";
         event_1.text = "N/A";
         event_2.text = "N/A";

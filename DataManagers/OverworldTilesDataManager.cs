@@ -123,6 +123,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         GenerateTiles();
         tile_owner.Clear();
         tiles_explored.Clear();
+        tile_events.Clear();
         for (int i = 0; i < grid_size*grid_size; i++)
         {
             tiles_explored.Add("No");
@@ -266,6 +267,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public void TravelToTile(int tile_num)
     {
         int distance = GetDistanceBetweenTiles(tile_num, current_tile);
+        ExploreTile(tile_num);
         if (distance > 1)
         {
             for (int i = 0; i < distance; i++)
@@ -273,7 +275,6 @@ public class OverworldTilesDataManager : MonoBehaviour
                 GameManager.instance.NewDay();
             }
         }
-        ExploreTile(tile_num);
     }
     // Need to explore a tile to see what kind of terrain it is and who lives there.
     public void ExploreTile(int tile_num)
@@ -285,9 +286,22 @@ public class OverworldTilesDataManager : MonoBehaviour
 
     private void VisitTile(int tile_num)
     {
+        // Only do this sometimes.
         TriggerTileEvent(tile_num);
         AddVisitedTile(tile_num);
         // Visiting a tile takes a day.
+        GameManager.instance.NewDay();
+    }
+
+    // When just moving through a tile, less likely to trigger an event.
+    private void MoveThroughTile(int tile_num)
+    {
+        int rng = Random.Range(0, 3);
+        if (rng == 0)
+        {
+            TriggerTileEvent(tile_num);
+        }
+        AddVisitedTile(tile_num);
         GameManager.instance.NewDay();
     }
 
@@ -297,7 +311,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (tile_owner[tile_num] == "None")
         {
             // Either get a general event or a specific terrain event.
-            rng = Random.Range(0, 2);
+            rng = Random.Range(0, 6);
             if (rng == 0)
             {
                 GameManager.instance.all_events.PickEvent("unowned");
@@ -630,7 +644,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (DetermineTileRow(current_tile) > 0)
         {
             current_tile -= grid_size;
-            VisitTile(current_tile);
+            MoveThroughTile(current_tile);
         }
     }
 
@@ -639,7 +653,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (DetermineTileRow(current_tile) < grid_size - 1)
         {
             current_tile += grid_size;
-            VisitTile(current_tile);
+            MoveThroughTile(current_tile);
         }
     }
 
@@ -648,7 +662,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (DetermineTileCol(current_tile) > 0)
         {
             current_tile--;
-            VisitTile(current_tile);
+            MoveThroughTile(current_tile);
         }
     }
 
@@ -657,7 +671,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (DetermineTileCol(current_tile) < grid_size - 1)
         {
             current_tile++;
-            VisitTile(current_tile);
+            MoveThroughTile(current_tile);
         }
     }
 

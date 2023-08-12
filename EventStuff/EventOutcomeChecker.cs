@@ -101,6 +101,18 @@ public class EventOutcomeChecker : MonoBehaviour
                         GameManager.instance.player.PayStam(int.Parse(single_outcome[1]));
                     }
                     return  "-"+(int.Parse(single_outcome[1])).ToString()+" stamina";
+                case "reputation":
+                    if (act)
+                    {
+                        // Reputation can be added or subtracted.
+                        if (!success)
+                        {
+                            single_outcome[1] = (-int.Parse(single_outcome[1])).ToString();
+                        }
+                        GameManager.instance.player.diplomacy.AdjustReputation(int.Parse(single_outcome[1]));
+                    }
+                    // Reputation is hidden from the player.
+                    return "";
             }
         }
         return "";

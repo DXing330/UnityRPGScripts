@@ -117,6 +117,10 @@ public class Village : MonoBehaviour
         max_population = 1;
         food_supply = 1;
         last_update_day = current_day;
+        if (last_update_day < 1)
+        {
+            last_update_day = 1;
+        }
         Save();
     }
 
@@ -141,7 +145,7 @@ public class Village : MonoBehaviour
             {
                 GameManager.instance.GainResource(0,1);
             }
-            population--;
+            PopulationLoss();
             fear++;
             discontentment++;
             if (population <= 0)
@@ -158,33 +162,28 @@ public class Village : MonoBehaviour
         // Need at least three people, two to go, one to stay.
         if (population >= 3)
         {
-            population -= 2;
+            PopulationLoss();
+            PopulationLoss();
             GameManager.instance.GainResource(1,1);
         }
     }
 
+
     // If there's enough food, more people are made, otherwise people die/leave.
     protected void PopulationChange()
     {
-        // Population adjusts every month based on food supply.
-        if (last_update_day%28==0)
+        // Population adjusts randomly based on food supply and satisfaction.
+        if (food_supply > population && population < max_population)
         {
-            if (food_supply >= population)
-            {
-                if (population < max_population)
-                {
-                    population++;
-                    food_supply--;
-                    GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has gained population.");
-                }
-            }
-            else if (food_supply < population)
-            {
-                // Starving people don't stay long.
-                population = food_supply;
-                discontentment++;
-                GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has lost population due to lack of food.");
-            }
+            population++;
+            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has gained population.");
+        }
+        else if (food_supply < population)
+        {
+            // Starving people don't stay long.
+            population--;
+            discontentment++;
+            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has lost population due to lack of food.");
         }
         // If there are not enough people to work.
         while (population < assigned_buildings.Count)
@@ -307,7 +306,10 @@ public class Village : MonoBehaviour
             if (last_update_day%7==0)
             {
                 DetermineVillageStats();
+                PayUpkeepCosts();
             }
+            // Every day there is a chance for the population to change.
+            PopulationChange();
             last_update_day++;
             PassVillageTime();
         }
@@ -315,26 +317,27 @@ public class Village : MonoBehaviour
 
     protected void PayUpkeepCosts()
     {
+        // People need to eat.
         food_supply -= population;
-        PopulationChange();
+        // People naturally grow angry about things.
     }
 
     protected void CheckVillageMood()
     {
         // Scared people run.
-        if (fear > population && population > 0)
+        if (fear > population + GameManager.instance.player.playerLevel && population > 0)
         {
             fear -= population;
             PopulationLoss();
-            GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has people fleeing.");
+            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has people fleeing.");
         }
         // Angry people rebel.
-        if (discontentment > population && population > 0)
+        if (discontentment > population + GameManager.instance.player.playerLevel && population > 0)
         {
             discontentment -= population;
             PopulationLoss();
             AddEvent("bandits|-1");
-            GameManager.instance.villages.tiles.AddEvent("Village at area "+village_number.ToString()+" has people turning to banditry.");
+            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has people turning to banditry.");
         }
     }
 
@@ -398,10 +401,9 @@ public class Village : MonoBehaviour
         accumulated_gold += gathered_gold;
         accumulated_mana += gathered_mana;
         accumulated_materials += gathered_production;
-        discontentment += Random.Range(0, population) + gathered_discontentment;
+        discontentment += gathered_discontentment;
         fear += gathered_fear;
         defense_level += gathered_defense;
-        PayUpkeepCosts();
         CheckVillageMood();
     }
 

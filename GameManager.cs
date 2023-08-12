@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
     public int danger_level;
     public int current_depth;
     public int current_max_depth;
+    private bool game_over = false;
 
     // Useful Generic Functions
     public int ReturnDiceRollSum(int dice_faces, int dice_rolls = 1)
@@ -107,6 +108,7 @@ public class GameManager : MonoBehaviour
         }
         return string_list;
     }
+
     public List<string> InverstListOrder(List<string> list_to_reverse, List<string> newly_reversed_list)
     {
         newly_reversed_list.Clear();
@@ -412,26 +414,37 @@ public class GameManager : MonoBehaviour
     [ContextMenu("New Game")]
     public void NewGame()
     {
-        Debug.Log("Deleting everything");
-        Directory.Delete("Assets/Saves", true);
+        if (Directory.Exists("Assets/Saves"))
+        {
+            Directory.Delete("Assets/Saves", true);
+        }
     }
 
     private void Reset()
     {
-        player.SetLevel(1);
+        game_over = false;
+        NewGame();
+        player.Reset();
         UpdateHlthManaStam();
         familiar.Reset();
         experience = 0;
         current_day = 1;
-        player.diplomacy.SetReputation(0);
+        summons.LoadData();
+        spells.LoadData();
+        all_equipment.LoadData();
+        villages.LoadData();
+        story.LoadData();
+        all_events.LoadData();
+        blood_deadline = story.ReturnDeadlineDate();
+        SaveState();
     }
 
     public void GameOver()
     {
+        game_over = true;
         NewGame();
-        LoadState();
-        SaveState();
         ClearInteractableText();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         startMenu.GameOverScreen();
     }
 
@@ -471,6 +484,11 @@ public class GameManager : MonoBehaviour
 
     public void LoadState()
     {
+        if (game_over)
+        {
+            Reset();
+            return;
+        }
         if (File.Exists("Assets/Saves/save_data.txt"))
         {
             string save_data = File.ReadAllText("Assets/Saves/save_data.txt");
