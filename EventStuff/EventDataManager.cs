@@ -6,11 +6,18 @@ using UnityEngine;
 
 public class EventDataManager : MonoBehaviour
 {
+    private int detail_index = 0;
     protected string raw_data;
     protected string save_string;
     protected int story_progress;
     protected int current_night;
     public RandomEvent current_event;
+    public List<string> condition_ID;
+    public List<string> condition_details;
+    public List<string> reward_ID;
+    public List<string> reward_details;
+    public List<string> punish_ID;
+    public List<string> punish_details;
     // Indices of unlocked events.
     public List<string> possible_overworld_events;
     // List of all events that can happen while exploring the overworld.
@@ -53,6 +60,17 @@ public class EventDataManager : MonoBehaviour
             raw_data = File.ReadAllText("Assets/Events/desert.txt");
             explore_desert_events = raw_data.Split("$").ToList();
         }
+        raw_data = File.ReadAllText("Assets/Events/Config/condition_ID.txt");
+        condition_ID = raw_data.Split("#").ToList();
+        raw_data = File.ReadAllText("Assets/Events/Config/condition_details.txt");
+        condition_details = raw_data.Split("#").ToList();
+        raw_data = File.ReadAllText("Assets/Events/Config/reward_ID.txt");
+        reward_ID = raw_data.Split("#").ToList();
+        raw_data = File.ReadAllText("Assets/Events/Config/reward_details.txt");
+        reward_details = raw_data.Split("#").ToList();raw_data = File.ReadAllText("Assets/Events/Config/punish_ID.txt");
+        punish_ID = raw_data.Split("#").ToList();
+        raw_data = File.ReadAllText("Assets/Events/Config/punish_details.txt");
+        punish_details = raw_data.Split("#").ToList();
     }
 
     public void PickEvent(string type)
@@ -91,4 +109,39 @@ public class EventDataManager : MonoBehaviour
         GameManager.instance.SetEvent();
     }
 
+    public string ReturnConditionDetails(string ID)
+    {
+        detail_index = condition_ID.IndexOf(ID);
+        if (detail_index < 0)
+        {
+            detail_index  = 0;
+        }
+        return condition_details[detail_index];
+    }
+
+    public string ReturnRewardDetails(string ID)
+    {
+        detail_index = reward_ID.IndexOf(ID);
+        if (detail_index < 0)
+        {
+            detail_index  = 0;
+        }
+        Debug.Log(detail_index);
+        Debug.Log(ID);
+        Debug.Log(reward_details[detail_index]);
+        return reward_details[detail_index];
+    }
+
+    public string ReturnPunishDetails(string ID)
+    {
+        detail_index = punish_ID.IndexOf(ID);
+        if (detail_index < 0)
+        {
+            detail_index  = 0;
+        }
+        Debug.Log(detail_index);
+        Debug.Log(ID);
+        Debug.Log(reward_details[detail_index]);
+        return punish_details[detail_index];
+    }
 }

@@ -110,7 +110,7 @@ public class RandomEvent : MonoBehaviour
         }
         else
         {
-            success = false;
+            success = conditionChecker.CheckProbability(chosen_probability, true);
         }
         DetermineResult();
     }

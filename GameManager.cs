@@ -69,6 +69,11 @@ public class GameManager : MonoBehaviour
         return sum;
     }
 
+    public int ReturnPlayerLevelRNG()
+    {
+        return Random.Range(1, player.playerLevel + 1);
+    }
+
     public string ConvertArrayToString(string[] string_array)
     {
         string returned = "";

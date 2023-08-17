@@ -9,17 +9,28 @@ public class EventOutcomeChecker : MonoBehaviour
     private bool success;
     private string outcome_text;
 
-    public void ReceiveOutcome(string outcome, bool succeed)
+    private void GetOutcome(string outcome, bool succeed)
     {
         success = succeed;
-        outcomes = outcome.Split("|");
+        if (success)
+        {
+            outcomes = GameManager.instance.all_events.ReturnRewardDetails(outcome).Split("|");
+        }
+        else
+        {
+            outcomes = GameManager.instance.all_events.ReturnPunishDetails(outcome).Split("|");
+        }
+    }
+
+    public void ReceiveOutcome(string outcome, bool succeed)
+    {
+        GetOutcome(outcome, succeed);
         DetermineOutcomes(true);
     }
 
     public string ReceiveOutcomeText(string outcome, bool succeed)
     {
-        success = succeed;
-        outcomes = outcome.Split("|");
+        GetOutcome(outcome, succeed);
         DetermineOutcomes(false);
         return outcome_text;
     }

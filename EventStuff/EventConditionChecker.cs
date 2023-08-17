@@ -16,9 +16,13 @@ public class EventConditionChecker : MonoBehaviour
         player = GameManager.instance.player;
     }
 
-    public bool CheckProbability(string probability)
+    public bool CheckProbability(string probability, bool low_chance = false)
     {
         int rng = Random.Range(0, 10);
+        if (low_chance)
+        {
+            rng = Random.Range(0, 20);
+        }
         if (rng < int.Parse(probability))
         {
             return true;
@@ -28,7 +32,7 @@ public class EventConditionChecker : MonoBehaviour
 
     public bool CheckConditions(string condition)
     {
-        all_conditions = condition.Split("|");
+        all_conditions = GameManager.instance.all_events.ReturnConditionDetails(condition).Split("|");
         for (int i = 0; i < all_conditions.Length; i++)
         {
             if (all_conditions[i].Length >= 3)

@@ -111,6 +111,8 @@ public class VillageTradingManager : MonoBehaviour
             UpdateVillage();
             if (GameManager.instance.current_day > last_visited_day)
             {
+                // Everytime they visit a village that village becomes a bit more of a reputable trading up.
+                current_village.merchant_reputation++;
                 last_visited_day = GameManager.instance.current_day;
                 GenerateSupply();
                 GeneratePrices();
@@ -140,9 +142,9 @@ public class VillageTradingManager : MonoBehaviour
         food_price_buy = Math.Max(1, UnityEngine.Random.Range(0, food_demand)/UnityEngine.Random.Range(1, food_supply));
         mats_price_buy = Math.Max(1, UnityEngine.Random.Range(0, mats_demand)/UnityEngine.Random.Range(1, mana_supply));
         mana_price_buy = (Math.Max(1, UnityEngine.Random.Range(0, mana_demand)/UnityEngine.Random.Range(1, mana_supply)))*mana_premium;
-        food_price_sell = food_price_buy+1;
-        mats_price_sell = mats_price_buy+1;
-        mana_price_sell = mana_price_buy+1;
+        food_price_sell = food_price_buy;
+        mats_price_sell = mats_price_buy;
+        mana_price_sell = mana_price_buy;
     }
 
     // When buying and sell, need to check price, adjust supply.
@@ -158,7 +160,6 @@ public class VillageTradingManager : MonoBehaviour
                     gold_supply += food_price_sell;
                     food_demand++;
                     food_supply--;
-                    current_village.merchant_reputation++;
                 }
                 break;
             case "mats":
@@ -169,7 +170,6 @@ public class VillageTradingManager : MonoBehaviour
                     gold_supply += mats_price_sell;
                     mats_demand++;
                     mats_supply--;
-                    current_village.merchant_reputation++;
                 }
                 break;
             case "mana":
@@ -180,7 +180,6 @@ public class VillageTradingManager : MonoBehaviour
                     gold_supply += mana_price_sell;
                     mats_demand++;
                     mana_supply--;
-                    current_village.merchant_reputation++;
                 }
                 break;
         }
@@ -199,7 +198,6 @@ public class VillageTradingManager : MonoBehaviour
                     gold_supply -= food_price_buy;
                     food_demand--;
                     food_supply++;
-                    current_village.merchant_reputation++;
                 }
                 break;
             case "mats":
@@ -210,7 +208,6 @@ public class VillageTradingManager : MonoBehaviour
                     gold_supply -= mats_price_buy;
                     mats_demand--;
                     mats_supply++;
-                    current_village.merchant_reputation++;
                 }
                 break;
             case "mana":
@@ -221,7 +218,6 @@ public class VillageTradingManager : MonoBehaviour
                     gold_supply -= mana_price_buy;
                     mana_demand--;
                     mana_supply++;
-                    current_village.merchant_reputation++;
                 }
                 break;
         }
