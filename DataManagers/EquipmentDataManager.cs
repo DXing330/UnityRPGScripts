@@ -292,7 +292,6 @@ public class EquipmentDataManager : MonoBehaviour
             // If a slot has an equipment add the appropriate resistance.
             if (e_stats != null && e_stats.Length > 8)
             {
-                Debug.Log("Tried adding stats");
                 physical_resist += int.Parse(e_stats[5]);
                 fire_resist += int.Parse(e_stats[6]);
                 poison_resist += int.Parse(e_stats[7]);

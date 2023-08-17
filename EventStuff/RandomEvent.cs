@@ -13,6 +13,7 @@ public class RandomEvent : MonoBehaviour
     private string result_outcome;
     private string result_outcome_details;
     private bool success = false;
+    private bool finished = false;
     // Overworld/village/exploring/negotiating/etc.
     public string event_type;
     // In case it affects a village, keep track of the appropiate village.
@@ -72,6 +73,7 @@ public class RandomEvent : MonoBehaviour
         result_1_fail_effect = blocks[21];
         result_2_fail_effect = blocks[22];
         result_3_fail_effect = blocks[23];
+        finished = false;
     }
 
     public void ReceiveChoice(int new_choice)
@@ -165,6 +167,15 @@ public class RandomEvent : MonoBehaviour
     {
         GameManager.instance.ShowInteractableText(result_outcome_text);
         GameManager.instance.ShowInteractableResult(result_outcome_details);
+    }
+
+    public void ApplyOutcome()
+    {
+        if (finished)
+        {
+            return;
+        }
         outcomeChecker.ReceiveOutcome(result_outcome, success);
+        finished = true;
     }
 }

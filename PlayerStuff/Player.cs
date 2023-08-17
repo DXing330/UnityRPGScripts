@@ -436,7 +436,7 @@ public class Player : Mover
         }
     }
 
-    public void RecoverStamina()
+    private void RecoverStamina()
     {
         if (current_stamina < max_stamina)
         {
@@ -444,6 +444,16 @@ public class Player : Mover
             GameManager.instance.OnStamChange();
         }
         AdjustStatsFromExhaustion();
+    }
+
+    public void Sleep()
+    {
+        RecoverStamina();
+        if (health < max_health)
+        {
+            health += playerLevel;
+            GameManager.instance.OnHealthChange();
+        }
     }
 
     protected override void Death()

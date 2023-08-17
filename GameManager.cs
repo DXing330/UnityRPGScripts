@@ -144,6 +144,15 @@ public class GameManager : MonoBehaviour
         current_event.ReceiveChoice(choice);
     }
 
+    public void ApplyOutcome()
+    {
+        if (current_event != null)
+        {
+            current_event.ApplyOutcome();
+            current_event = null;
+        }
+    }
+
     public void ClearInteractableText()
     {
         interactableTextManager.Hide();
@@ -206,7 +215,7 @@ public class GameManager : MonoBehaviour
 
     public void Sleep()
     {
-        player.RecoverStamina();
+        player.Sleep();
         NewDay();
     }
 
@@ -300,7 +309,6 @@ public class GameManager : MonoBehaviour
 
     public void GainResource(int type, int amount)
     {
-        Debug.Log(amount);
         string new_text = "";
         if (amount > 0)
         {
@@ -371,10 +379,13 @@ public class GameManager : MonoBehaviour
         OnManaChange();
         bag.DropItems();
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
-        NewWeek();
+        if (interactableTextManager.showing)
+        {
+            ClearInteractableText();
+        }
+        ShowInteractableText("You were defeated but I dragged you back, a little time regenerating in your coffin and you're as good as new.", "Spirit Guardian Blaty");
+        NewDay();
         SaveState();
-        ClearInteractableText();
-        ShowInteractableText("You were defeated but I dragged you back, a few weeks regenerating in your coffin and you're as good as new.", "Spirit Guardian Blaty");
     }
 
     public void OnHealthChange()

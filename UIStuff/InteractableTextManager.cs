@@ -16,7 +16,7 @@ public class InteractableTextManager : MonoBehaviour
     public Text option_text_1;
     public Text option_text_2;
     public Text option_text_3;
-    protected bool showing;
+    public bool showing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +43,7 @@ public class InteractableTextManager : MonoBehaviour
         animator.SetTrigger("Hide");
         showing = false;
         GameManager.instance.player.TakeInputs();
+        GameManager.instance.ApplyOutcome();
     }
 
     public void DisableButtons()
