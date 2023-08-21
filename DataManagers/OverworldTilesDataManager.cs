@@ -20,6 +20,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> orc_tiles;
     public List<string> visited_tiles;
     public int current_tile = 312;
+    public int home_base_tile = 312;
     public bool new_events = false;
     public Village village_to_add_events;
     public List<int> adjacent_tiles;
@@ -74,6 +75,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         overworld_data += GameManager.instance.ConvertListToString(orc_tiles)+"#";
         overworld_data += GameManager.instance.ConvertListToString(visited_tiles)+"#";
         overworld_data += current_tile.ToString()+"#";
+        overworld_data += home_base_tile.ToString()+"#";
         File.WriteAllText("Assets/Saves/Villages/overworld_data.txt", overworld_data);
     }
 
@@ -91,6 +93,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             orc_tiles = loaded_data_blocks[5].Split("|").ToList();
             visited_tiles = loaded_data_blocks[6].Split("|").ToList();
             current_tile = int.Parse(loaded_data_blocks[7]);
+            home_base_tile = int.Parse(loaded_data_blocks[8]);
         }
         else
         {
@@ -129,11 +132,12 @@ public class OverworldTilesDataManager : MonoBehaviour
             tiles_explored.Add("No");
             tile_owner.Add("None");
         }
-        int start = (grid_size*grid_size - 1)/2;
+        int start = Random.Range(0, grid_size * grid_size);
         tiles_explored[start] = "Yes";
         tile_owner[start] = "None";
         ClaimTile(start);
         current_tile = start;
+        home_base_tile = start;
     }
 
     protected void GenerateTiles()
@@ -245,6 +249,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             tile_owner[tile_num] = "You";
             owned_tiles.Add(tile_num.ToString());
             GameManager.instance.villages.NewVillage(tile_type[tile_num], tile_num);
+            SaveData();
             DetermineVisibleTiles();
         }
     }
@@ -380,7 +385,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             rng = Random.Range(0, owned_tiles.Count);
             int location_index = int.Parse(owned_tiles[rng]);
-            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+location_index.ToString());
+            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+(location_index+1).ToString());
             village_to_add_events.Load(location_index);
             village_to_add_events.AddEvent("traders|3");
         }

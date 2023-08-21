@@ -7,6 +7,8 @@ using UnityEngine;
 // Also provides misc bonuses depending on various factors.
 public class Village : MonoBehaviour
 {
+    // Constants.
+    private int base_expand_cost = 5;
     public int current_day;
     public int village_number;
     // Affects how often you can feed and how much you regen from feeding.
@@ -116,12 +118,21 @@ public class Village : MonoBehaviour
         population = 1;
         max_population = 1;
         food_supply = 1;
-        last_update_day = current_day;
+        last_update_day = GameManager.instance.current_day;
+        ResetResources();
         if (last_update_day < 1)
         {
             last_update_day = 1;
         }
         Save();
+    }
+
+    private void ResetResources()
+    {
+        accumulated_gold = 0;
+        accumulated_materials = 0;
+        accumulated_mana = 0;
+        merchant_reputation = 0;
     }
 
     protected void Start()
@@ -191,7 +202,6 @@ public class Village : MonoBehaviour
         return false;
     }
 
-
     // If there's enough food, more people are made, otherwise people die/leave.
     protected void PopulationGrowth()
     {
@@ -200,7 +210,7 @@ public class Village : MonoBehaviour
         {
             population++;
             food_supply--;
-            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has gained population.");
+            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has gained population.");
         }
     }
 
@@ -317,7 +327,8 @@ public class Village : MonoBehaviour
         current_day = GameManager.instance.current_day;
         while (current_day > last_update_day)
         {
-            if (last_update_day%7==0)
+            // Week = 5 days kek.
+            if (last_update_day%5==0)
             {
                 // When discontement is used.
                 DetermineVillageStats();
@@ -352,6 +363,11 @@ public class Village : MonoBehaviour
         }
         // People naturally grow angry about things.
         discontentment += Random.Range(0, population);
+        // People can only be so happy.
+        if (discontentment < -max_population)
+        {
+            discontentment = -max_population;
+        }
     }
 
     protected void CheckVillageMood()
@@ -377,7 +393,9 @@ public class Village : MonoBehaviour
         {
             fear -= population;
             PopulationLoss();
-            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has people fleeing.");
+            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people fleeing.");
+            // This doesn't look good for merchants.
+            merchant_reputation -= fear;
         }
     }
 
@@ -391,7 +409,9 @@ public class Village : MonoBehaviour
             discontentment -= population;
             PopulationLoss();
             AddEvent("bandits|-1");
-            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has people turning to banditry.");
+            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people turning to banditry.");
+            // This doesn't look good for merchants.
+            merchant_reputation -= discontentment;
         }
     }
 
@@ -464,13 +484,11 @@ public class Village : MonoBehaviour
     public void UpgradeVillageSize()
     {
         // Let's set six as the baseline cost for a new house.
-        // Other builds can cost most.
-        // It can be low since it's simple to make a house.
-        // Also for gameplay its ok if they expand their population a lot since it'll cause problems later.
-        if (accumulated_materials >= 6 && accumulated_gold >= 6)
+        // Cost increases as max population increases to encourage horizontal village expansion, ie building new villages instead of having one mega village.
+        if (accumulated_materials >= base_expand_cost + max_population && accumulated_gold >= base_expand_cost + max_population)
         {
-            accumulated_materials -= 6;
-            accumulated_gold -= 6;
+            accumulated_materials -= base_expand_cost + max_population;
+            accumulated_gold -= base_expand_cost + max_population;
             max_population++;
         }
     }

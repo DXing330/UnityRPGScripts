@@ -126,9 +126,6 @@ public class EventDataManager : MonoBehaviour
         {
             detail_index  = 0;
         }
-        Debug.Log(detail_index);
-        Debug.Log(ID);
-        Debug.Log(reward_details[detail_index]);
         return reward_details[detail_index];
     }
 
@@ -139,9 +136,6 @@ public class EventDataManager : MonoBehaviour
         {
             detail_index  = 0;
         }
-        Debug.Log(detail_index);
-        Debug.Log(ID);
-        Debug.Log(reward_details[detail_index]);
         return punish_details[detail_index];
     }
 }
