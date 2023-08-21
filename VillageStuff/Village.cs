@@ -177,7 +177,7 @@ public class Village : MonoBehaviour
         }
         int growth_rate = 0;
         // People want food.
-        growth_rate += Mathf.Max(0, food_supply - population);
+        growth_rate += food_supply - population;
         // People want to feel good.
         growth_rate += Mathf.Max(0, population - fear);
         growth_rate += Mathf.Max(0, population - discontentment);
@@ -199,6 +199,7 @@ public class Village : MonoBehaviour
         if (DetermineIfGrowth())
         {
             population++;
+            food_supply--;
             GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+village_number.ToString()+" has gained population.");
         }
     }

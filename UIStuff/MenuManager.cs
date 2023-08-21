@@ -147,6 +147,7 @@ public class MenuManager : MonoBehaviour
             GameManager.instance.FeedFamiliarMana();
         }
         UpdateFamiliarMenu();
+        UpdateItemMenu();
     }
 
     public void PressEatButton(bool blood)
@@ -160,6 +161,7 @@ public class MenuManager : MonoBehaviour
             GameManager.instance.EatMana();
         }
         UpdateCharacterMenu();
+        UpdateItemMenu();
     }
 
     public void PressSave()

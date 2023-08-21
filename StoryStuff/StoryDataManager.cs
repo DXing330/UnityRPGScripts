@@ -131,6 +131,9 @@ public class StoryDataManager : MonoBehaviour
     {
         current_payment += 1 + GameManager.instance.current_day/60;
         GameManager.instance.ShowInteractableText("Good job paying off your quota this time, we'll be back in a few months to check back in on you, collect "+current_payment+" blood by then.", "Big Guy");
+        // You get paid in mana for doing good work.
+        GameManager.instance.ShowInteractableResult("+"+current_payment+" mana");
+        GameManager.instance.GainResource(2, current_payment);
         trust++;
         chapter_page++;
         if (chapter_page > story_chapter)
@@ -164,7 +167,7 @@ public class StoryDataManager : MonoBehaviour
 
     public void PlayStory()
     {
-
+        // Load all the story from a text file, since the mainstory is pretty linear.
         if (story_chapter == 0)
         {
             if (chapter_page == 0)

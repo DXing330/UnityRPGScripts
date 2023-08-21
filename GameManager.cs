@@ -587,6 +587,7 @@ public class GameManager : MonoBehaviour
         current_depth = 0;
         current_max_depth = 0;
         bag.StoreItems();
+        SaveState();
     }
 
     public void AdjustDepth(int depth_change)

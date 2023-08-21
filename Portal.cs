@@ -41,7 +41,6 @@ public class Portal : Collideable
             {
                 // Reset depth counters when returning to main.
                 GameManager.instance.ReturnHome();
-                GameManager.instance.SaveState();
             }
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
             GameManager.instance.hud.Unfade();
