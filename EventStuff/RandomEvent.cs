@@ -175,7 +175,17 @@ public class RandomEvent : MonoBehaviour
         {
             return;
         }
+        if (result_outcome.Contains("Fight"))
+        {
+            finished = true;
+            CombatEvent();
+        }
         outcomeChecker.ReceiveOutcome(result_outcome, success);
         finished = true;
+    }
+
+    private void CombatEvent()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(result_outcome);
     }
 }

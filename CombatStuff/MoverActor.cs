@@ -9,7 +9,7 @@ public class MoverActor : Mover
     public int drop_value = 0;
     public bool facing_right = true;
     protected bool horizontal_flip = false;
-    protected bool chasing;
+    //protected bool chasing;
     protected bool moving = false;
     protected bool attacking = false;
     public float attack_cooldown;
@@ -23,10 +23,10 @@ public class MoverActor : Mover
     protected Animator animator;
     protected NavMeshAgent agent;
     public ContactFilter2D filter;
-    protected Collider2D[] hits = new Collider2D[10];
+    protected Collider2D[] hits = new Collider2D[16];
     public BoxCollider2D hitbox;
     public CircleCollider2D detection_range;
-    protected Transform target_transform = null;
+    public Transform target_transform;
     protected Vector3 dVector;
     protected bool sprinting = false;
     public float sprint_bonus = 0.6f;
@@ -213,10 +213,6 @@ public class MoverActor : Mover
         // While idle, check around for enemies.
         if (target_transform == null && !dead)
         {
-            if (chasing)
-            {
-                chasing = false;
-            }
             RandomizeDirection();
             UpdateMotor(direction);
             detection_range.OverlapCollider(filter, hits);
@@ -229,7 +225,6 @@ public class MoverActor : Mover
                 if (hits[j].tag == "Fighter")
                 {
                     target_transform = hits[j].transform;
-                    chasing = true;
                     // If you find an enemy, immediately alert others one time.
                     AlertSurroundingEnemies(target_transform);
                     return;
@@ -238,7 +233,7 @@ public class MoverActor : Mover
             }
         }
         // While chasing, follow the target.
-        if (chasing && !dead)
+        if (target_transform != null && !dead)
         {
             CheckSprint();
             if (!attacking && push_direction.magnitude <= recovery_speed)
@@ -246,6 +241,10 @@ public class MoverActor : Mover
                 agent.SetDestination(target_transform.position);
                 AdjustDirection();
             }
+        }
+        if (health <= 0)
+        {
+            Death();
         }
         if (dead)
         {

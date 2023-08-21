@@ -36,7 +36,7 @@ public class EnemyAnimated : MoverActor
             }
         }
         // While chasing the player, use the move animation.
-        if (chasing && !moving && !dead)
+        if (target_transform != null && !moving && !dead)
         {
             moving = true;
             animator.SetBool("Moving", moving);

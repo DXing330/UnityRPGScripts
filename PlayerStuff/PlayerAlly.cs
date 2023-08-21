@@ -183,6 +183,10 @@ public class PlayerAlly : Mover
                 Destroy(gameObject);
             }
         }
+        if (health <= 0)
+        {
+            Death();
+        }
         if (!persistant)
         {
             if (Time.time - start_time > time_limit)

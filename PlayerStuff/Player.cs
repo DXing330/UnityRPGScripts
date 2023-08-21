@@ -108,7 +108,7 @@ public class Player : Mover
 
     public virtual void SwingWeapon()
     {
-        if (Time.time - last_attack > attack_cooldown && current_form == 0)
+        if (Time.time - last_attack > attack_cooldown)
         {
             last_attack = Time.time;
             player_weapon.Swing();
@@ -425,7 +425,10 @@ public class Player : Mover
 
     public void EatMana()
     {
-        current_mana += max_mana;
+        if (current_mana < max_mana)
+        {
+            current_mana += Mathf.Min(max_mana, max_mana - current_mana);
+        }
     }
 
     public void DrinkBlood()
