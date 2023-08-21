@@ -71,6 +71,8 @@ public class VillageBuildingManager : MonoBehaviour
     public void DetermineSurroundings(Village village, string base_surrounding)
     {
         int rng = 0;
+        village.surroundings.Clear();
+        village.buildings.Clear();
         while (village.surroundings.Count < 8)
         {
             rng = Random.Range(0, 5);

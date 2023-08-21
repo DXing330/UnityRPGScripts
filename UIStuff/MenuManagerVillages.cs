@@ -103,11 +103,20 @@ public class MenuManagerVillages : MonoBehaviour
             village.Load(index);
             villagepanel.SetVillage(village);
             UpdateVillageInformation();
+            villagepanel.UpdateSelectedArea(-1);
             ShowVillage();
         }
         else if (exploremenu.overworld_tiles.tile_owner[index] == "None")
         {
-            // Try to make a village.
+            // Costs mana and people to setup a village.
+            if (villagedatamanager.collected_settlers > 0 && villagedatamanager.collected_mana > 0)
+            {
+                villagedatamanager.collected_settlers--;
+                villagedatamanager.collected_mana--;
+                villagedatamanager.tiles.ClaimTile(index);
+                exploremenu.UpdateCurrentTile();
+                exploremenu.StartUpdating();
+            }
         }
         else
         {

@@ -21,6 +21,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
     public Text product;
     public Text output;
     public Text upgrade_repair;
+    public Text expand_cost;
     protected Village village;
     private string[] area_details;
 
@@ -42,10 +43,24 @@ public class MenuManagerVillagePanel : MonoBehaviour
         gold.text = village.accumulated_gold.ToString();
         mana.text = village.accumulated_mana.ToString();
         materials.text = village.accumulated_materials.ToString();
+        UpdateExpandCost();
+    }
+
+    private void UpdateExpandCost()
+    {
+        int mp = village.max_population;
+        // Cost to expand increases as village grows.
+        int cost = mp + 5;
+        expand_cost.text = "(Expand"+"\n"+cost+" Mats "+cost+" Gold)";
     }
 
     public void UpdateSelectedArea(int selected_area)
     {
+        if (selected_area < 0)
+        {
+            ResetSelectedAreaText();
+            return;
+        }
         area.text = village.buildings[selected_area];
         int workers = 0;
         for (int i = 0; i < village.assigned_buildings.Count; i++)
@@ -61,6 +76,15 @@ public class MenuManagerVillagePanel : MonoBehaviour
         product.text = area_details[1];
         output.text = area_details[0];
         AdjustUpdateRepairButton(selected_area);
+    }
+
+    private void ResetSelectedAreaText()
+    {
+        area.text = "";
+        workers_in_area.text = "";
+        max_workers_in_area.text = "";
+        product.text = "";
+        output.text = "";
     }
 
     private void AdjustUpdateRepairButton(int selected_area)
