@@ -133,6 +133,11 @@ public class Village : MonoBehaviour
         accumulated_materials = 0;
         accumulated_mana = 0;
         merchant_reputation = 0;
+        fear = 0;
+        discontentment = 0;
+        assigned_buildings.Clear();
+        events.Clear();
+        event_durations.Clear();
     }
 
     protected void Start()
@@ -150,7 +155,7 @@ public class Village : MonoBehaviour
             return;
         }
         // As long as they're afraid or much weaker they'll let you do as you please.
-        if (fear >= discontentment || population <= GameManager.instance.player.playerLevel || player != 0)
+        if (fear + GameManager.instance.P_Level() >= discontentment - GameManager.instance.P_Level() || population <= GameManager.instance.P_Level() || player != 0)
         {
             if (player == 0)
             {
@@ -159,11 +164,6 @@ public class Village : MonoBehaviour
             PopulationLoss();
             fear++;
             discontentment++;
-            if (population <= 0)
-            {
-                fear = 0;
-                discontentment = 0;
-            }
         }
     }
 
@@ -177,6 +177,12 @@ public class Village : MonoBehaviour
             PopulationLoss();
             GameManager.instance.GainResource(1,1);
         }
+        // Repopulate an empty village with settlers.
+        else if (population <= 0 && GameManager.instance.villages.collected_settlers > 0)
+        {
+            GameManager.instance.villages.collected_settlers--;
+            population++;
+        }
     }
 
     private bool DetermineIfGrowth()
@@ -186,13 +192,17 @@ public class Village : MonoBehaviour
         {
             return false;
         }
+        // Village can't be empty.
+        if (population <= 0)
+        {
+            return false;
+        }
         int growth_rate = 0;
         // People want food.
         growth_rate += food_supply - population;
         // People want to feel good.
-        growth_rate += Mathf.Max(0, population - fear);
-        growth_rate += Mathf.Max(0, population - discontentment);
-        growth_rate += Mathf.Max(0, merchant_reputation - population);
+        growth_rate += population - fear;
+        growth_rate += population - discontentment;
         // Average growth is once every two weeks, with adequate food.
         int rng = Random.Range(0, 14);
         if (growth_rate > rng)
@@ -209,7 +219,15 @@ public class Village : MonoBehaviour
         if (DetermineIfGrowth())
         {
             population++;
-            food_supply--;
+            if (food_supply > 0)
+            {
+                food_supply--;
+            }
+            // Otherwise the newcomer is unhappy.
+            else
+            {
+                discontentment++;
+            }
             GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has gained population.");
         }
     }
@@ -363,22 +381,32 @@ public class Village : MonoBehaviour
         }
         // People naturally grow angry about things.
         discontentment += Random.Range(0, population);
+        // People naturally aclimate to their environment.
+        discontentment--;
+        fear--;
+        // Min fear is zero to represent people unafraid.
+        if (fear < 0)
+        {
+            fear = 0;
+        }
         // People can only be so happy.
         if (discontentment < -max_population)
         {
             discontentment = -max_population;
         }
+        // Reputation has a floor of zero, basically a place you don't want to go.
+        merchant_reputation = Mathf.Max(0, merchant_reputation);
     }
 
     protected void CheckVillageMood()
     {
         // Scared people run.
-        if (fear > population + GameManager.instance.player.playerLevel && population > 0)
+        if (fear > population + GameManager.instance.P_Level() && population > 0)
         {
             DetermineIfFlee();
         }
         // Angry people rebel.
-        if (discontentment > population + GameManager.instance.player.playerLevel && population > 0)
+        if (discontentment > population + GameManager.instance.P_Level() && population > 0)
         {
             DetermineIfRebel();
         }
@@ -387,7 +415,7 @@ public class Village : MonoBehaviour
     private void DetermineIfFlee()
     {
         int flee = 0;
-        flee += fear - population - GameManager.instance.player.playerLevel;
+        flee += fear - population - GameManager.instance.P_Level();
         int rng = GameManager.instance.ReturnPlayerLevelRNG();
         if (flee > rng)
         {
@@ -395,14 +423,14 @@ public class Village : MonoBehaviour
             PopulationLoss();
             GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people fleeing.");
             // This doesn't look good for merchants.
-            merchant_reputation -= fear;
+            merchant_reputation--;
         }
     }
 
     private void DetermineIfRebel()
     {
         int rebellions = 0;
-        rebellions += discontentment - population - GameManager.instance.player.playerLevel;
+        rebellions += discontentment - population - GameManager.instance.P_Level();
         int rng = GameManager.instance.ReturnPlayerLevelRNG();
         if (rebellions > rng)
         {
@@ -411,7 +439,7 @@ public class Village : MonoBehaviour
             AddEvent("bandits|-1");
             GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people turning to banditry.");
             // This doesn't look good for merchants.
-            merchant_reputation -= discontentment;
+            merchant_reputation--;
         }
     }
 
@@ -601,7 +629,7 @@ public class Village : MonoBehaviour
     public void SelectAssignedBuilding(int index)
     {
         // If there are still people who haven't been assigned.
-        if (assigned_buildings.Count <= population)
+        if (assigned_buildings.Count < population)
         {
             AssignToBuilding(index);
         }

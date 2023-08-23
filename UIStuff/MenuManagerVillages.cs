@@ -117,6 +117,7 @@ public class MenuManagerVillages : MonoBehaviour
                 exploremenu.UpdateCurrentTile();
                 exploremenu.StartUpdating();
             }
+            // Otherwises can show some kind of error message.
         }
         else
         {

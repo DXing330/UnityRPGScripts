@@ -373,21 +373,17 @@ public class OverworldTilesDataManager : MonoBehaviour
             village_to_add_events.UpdateVillage();
             village_to_add_events.Save();
         }
-        // Every week your visibility expires and orcs move around.
+        // Every week: visibility expires, orcs move around, traders appear randomly.
         if (GameManager.instance.current_day%7 == 0)
-        {
-            temporarily_visible.Clear();
-            DetermineVisibleTiles();
-            MoveOrcs();
-        }
-        // Traders appear randomly.
-        if (GameManager.instance.current_day%3 == 0)
         {
             rng = Random.Range(0, owned_tiles.Count);
             int location_index = int.Parse(owned_tiles[rng]);
             AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+(location_index+1).ToString());
             village_to_add_events.Load(location_index);
-            village_to_add_events.AddEvent("traders|3");
+            village_to_add_events.AddEvent("traders|5");
+            temporarily_visible.Clear();
+            DetermineVisibleTiles();
+            MoveOrcs();
         }
         // Every month orc encampments may spawn.
         if (GameManager.instance.current_day%28 == 0)
@@ -452,7 +448,7 @@ public class OverworldTilesDataManager : MonoBehaviour
                 {
                     attack_power = DetermineOrcAttackPower(tile_owner[int.Parse(orc_tiles[i])]);
                     attack_area = Random.Range(-1, village_to_add_events.buildings.Count);
-                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]).ToString());
+                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]+1).ToString());
                     village_to_add_events.Load(adjacent_tiles[j]);
                     village_to_add_events.ReceiveAttack(attack_power, attack_area);
                     break;
@@ -702,8 +698,7 @@ public class OverworldTilesDataManager : MonoBehaviour
 
     public void PortalHome()
     {
-        // The home base portal is always the center, regardless of whether or not you own it.
-        current_tile = (grid_size*grid_size - 1)/2;
+        current_tile = home_base_tile;
         DetermineVisibleTiles();
     }
 

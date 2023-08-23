@@ -167,6 +167,7 @@ public class MenuManager : MonoBehaviour
     public void PressSave()
     {
         GameManager.instance.SaveState();
+        GameManager.instance.ShowInteractableText("I will store everything you have done in my perfect memory, master.", "Keeper of Records Blaty");
     }
 
     public void UpdateSummonMenu()

@@ -142,7 +142,7 @@ public class MenuManagerVillageBuilding : MonoBehaviour
             selected_gold.text = selected_outputs[3];
             selected_mats.text = selected_outputs[5];
             selected_mana.text = selected_outputs[2];
-            selected_note.text = village.villagebuilding.DetermineSpecialEffects(name);
+            selected_note.text = village.villagebuilding.DetermineSpecialEffects(s_name);
         }
         else
         {
