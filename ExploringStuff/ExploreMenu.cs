@@ -241,7 +241,7 @@ public class ExploreMenu : MonoBehaviour
 
     public void Move(int direction)
     {
-        overworld_tiles.Move(direction);
+        overworld_tiles.PlayerMove(direction);
         UpdateCurrentTile();
         UpdateTiles();
     }

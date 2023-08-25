@@ -640,60 +640,80 @@ public class OverworldTilesDataManager : MonoBehaviour
         return tile_num % grid_size;
     }
 
-    private void MoveUp()
+    private int MoveUp(int current_location)
     {
-        if (DetermineTileRow(current_tile) > 0)
+        if (DetermineTileRow(current_location) > 0)
         {
-            current_tile -= grid_size;
-            MoveThroughTile(current_tile);
+            current_location -= grid_size;
         }
+        return current_location;
     }
 
-    private void MoveDown()
+    private int MoveDown(int current_location)
     {
-        if (DetermineTileRow(current_tile) < grid_size - 1)
+        if (DetermineTileRow(current_location) < grid_size - 1)
         {
-            current_tile += grid_size;
-            MoveThroughTile(current_tile);
+            current_location += grid_size;
         }
+        return current_location;
     }
 
-    private void MoveLeft()
+    private int MoveLeft(int current_location)
     {
-        if (DetermineTileCol(current_tile) > 0)
+        if (DetermineTileCol(current_location) > 0)
         {
-            current_tile--;
-            MoveThroughTile(current_tile);
+            current_location--;
         }
+        return current_location;
     }
 
-    private void MoveRight()
+    private int MoveRight(int current_location)
     {
-        if (DetermineTileCol(current_tile) < grid_size - 1)
+        if (DetermineTileCol(current_location) < grid_size - 1)
         {
-            current_tile++;
-            MoveThroughTile(current_tile);
+            current_location++;
         }
+        return current_location;
     }
 
-    public void Move(int direction)
+    public int Move(int direction, int location)
     {
         switch (direction)
         {
             case 0:
-                MoveUp();
+                return MoveUp(location);
+            case 1:
+                return MoveRight(location);
+            case 2:
+                return MoveDown(location);
+            case 3:
+                return MoveLeft(location);
+        }
+    }
+
+    public void PlayerMove(int direction)
+    {
+        int previous_tile = current_tile;
+        switch (direction)
+        {
+            case 0:
+                current_tile = MoveUp(current_tile);
                 break;
             case 1:
-                MoveRight();
+                current_tile = MoveRight(current_tile);
                 break;
             case 2:
-                MoveDown();
+                current_tile = MoveDown(current_tile);
                 break;
             case 3:
-                MoveLeft();
+                current_tile = MoveLeft(current_tile);
                 break;
         }
-        DetermineVisibleTiles();
+        if (previous_tile != current_tile)
+        {
+            MoveThroughTile(current_tile);
+            DetermineVisibleTiles();
+        }
     }
 
     public void PortalHome()
