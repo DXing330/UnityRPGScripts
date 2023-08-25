@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public VillageDataManager villages;
     public EquipmentDataManager all_equipment;
     public EventDataManager all_events;
+    public MinionDataManager all_minions;
     // UI Stuff.
     public FloatingTextManager floatingTextManager;
     public FixedTextManager fixedTextManager;

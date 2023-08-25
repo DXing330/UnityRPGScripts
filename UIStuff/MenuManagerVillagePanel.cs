@@ -22,6 +22,7 @@ public class MenuManagerVillagePanel : MonoBehaviour
     public Text output;
     public Text upgrade_repair;
     public Text expand_cost;
+    public Text take_give_settlers;
     protected Village village;
     private string[] area_details;
 
@@ -43,7 +44,20 @@ public class MenuManagerVillagePanel : MonoBehaviour
         gold.text = village.accumulated_gold.ToString();
         mana.text = village.accumulated_mana.ToString();
         materials.text = village.accumulated_materials.ToString();
+        UpdateSettlerButton();
         UpdateExpandCost();
+    }
+
+    private void UpdateSettlerButton()
+    {
+        if (village.population > 0)
+        {
+            take_give_settlers.text = "Take Settlers"+"\n"+"(2 Population)";
+        }
+        else
+        {
+            take_give_settlers.text = "Give Settlers"+"\n"+"(1 Settler)";
+        }
     }
 
     private void UpdateExpandCost()

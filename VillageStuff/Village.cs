@@ -381,7 +381,7 @@ public class Village : MonoBehaviour
         }
         // People naturally grow angry about things.
         discontentment += Random.Range(0, population);
-        // People naturally aclimate to their environment.
+        // People naturally acclimate to their environment.
         discontentment--;
         fear--;
         // Min fear is zero to represent people unafraid.
@@ -498,6 +498,8 @@ public class Village : MonoBehaviour
         GetBuildingProducts();
         // Unassigned people gather food for themselves.
         gathered_food += population - assigned_buildings.Count;
+        // People who don't work are happier.
+        discontentment -= population - assigned_buildings.Count;
         // Accumulate resources;
         food_supply += gathered_food;
         accumulated_gold += gathered_gold;
