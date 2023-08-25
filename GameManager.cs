@@ -80,6 +80,11 @@ public class GameManager : MonoBehaviour
         return player.playerLevel;
     }
 
+    public int Current_Tile()
+    {
+        return villages.tiles.current_tile;
+    }
+
     public string ConvertArrayToString(string[] string_array)
     {
         string returned = "";
@@ -502,6 +507,7 @@ public class GameManager : MonoBehaviour
         all_equipment.SaveData();
         villages.SaveData();
         all_events.SaveData();
+        all_minions.SaveData();
     }
 
     public void LoadState()
@@ -538,6 +544,7 @@ public class GameManager : MonoBehaviour
         villages.LoadData();
         story.LoadData();
         all_events.LoadData();
+        all_minions.LoadData();
         blood_deadline = story.ReturnDeadlineDate();
     }
 

@@ -689,6 +689,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             case 3:
                 return MoveLeft(location);
         }
+        return location;
     }
 
     public void PlayerMove(int direction)
