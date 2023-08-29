@@ -806,14 +806,32 @@ public class Village : MonoBehaviour
                 for (int i = 0; i < strength; i++)
                 {
                     PopulationLoss();
+                    AdjustMoodAfterAttack(strength, "Extreme");
                 }
                 return;
             }
             DamageArea(strength, area);
         }
-        fear += strength;
-        discontentment += strength;
         Save();
+    }
+
+    private void AdjustMoodAfterAttack(int attack_strength, string severity = "High")
+    {
+        switch (severity)
+        {
+            case "High":
+                fear += attack_strength;
+                discontentment -= attack_strength;
+                break;
+            case "Low":
+                fear++;
+                discontentment--;
+                break;
+            case "Extreme":
+                fear += attack_strength * 2;
+                discontentment -= attack_strength;
+                break;
+        }
     }
 
     private void DamageArea(int strength, int area)
@@ -833,12 +851,14 @@ public class Village : MonoBehaviour
             {
                 max_deaths--;
                 population--;
+                AdjustMoodAfterAttack(strength, "Low");
                 assigned_buildings.RemoveAt(i);
             }
         }
         // Nothing to destroy or rob if there's no building.
         if (buildings[area] == surroundings[area])
         {
+            AdjustMoodAfterAttack(strength, "Low");
             return;
         }
         Robbed(area);
@@ -847,10 +867,12 @@ public class Village : MonoBehaviour
         if (strength > mats_cost)
         {
             DestroyBuilding(area);
+            AdjustMoodAfterAttack(strength, "Extreme");
         }
         else
         {
             DamageBuilding(area);
+            AdjustMoodAfterAttack(strength);
         }
     }
 
