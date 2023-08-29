@@ -15,6 +15,10 @@ public class ImageManager : MonoBehaviour
         {
             case "Bat":
                 return 1;
+            case "Ghoul":
+                return 2;
+            case "Wolf":
+                return 3;
         }
         return -1;
     }

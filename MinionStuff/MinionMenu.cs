@@ -53,10 +53,7 @@ public class MinionMenu : MonoBehaviour
 
     public void CreateMinion()
     {
-        //resources_text.text = "Blood: "+GameManager.instance.villages.collected_blood+", Mana: "+GameManager.instance.villages.collected_mana;
-        //EnableInfoButtons();
-        minionData.AddMinion("Bat");
-        UpdateInformation();
+        animator.SetTrigger("Build");
     }
 
     public void UpdateInformation()
@@ -72,7 +69,6 @@ public class MinionMenu : MonoBehaviour
     private void UpdateMinionInfoByIndex(int index, int i)
     {
         info_texts[i].text = minionData.minion_types[index]+"; Location: "+(int.Parse(minionData.minion_locations[index])+1)+"; Health: "+minionData.minion_health[index]+"; Energy: "+minionData.minion_energy[index];
-        //info_texts[i].text = minionData.minion_types[index];
     }
 
     public void SelectOption(int i)
@@ -87,5 +83,10 @@ public class MinionMenu : MonoBehaviour
         {
             current_info_page--;
         }
+        else if (right && (current_info_page + 1) * info_buttons.Count < minionData.minions.Count)
+        {
+            current_info_page++;
+        }
+        UpdateInformation();
     }
 }

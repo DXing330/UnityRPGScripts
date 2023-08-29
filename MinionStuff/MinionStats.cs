@@ -90,6 +90,15 @@ public class MinionStats : MonoBehaviour
         return "0|0";
     }
 
+    public string ReturnCostbyIndex(int index)
+    {
+        if (index >= 0)
+        {
+            return blood_costs[index]+"|"+mana_costs[index];
+        }
+        return "0|0";
+    }
+
     public string ReturnMinionDescription(string type)
     {
         m_index = types.IndexOf(type);

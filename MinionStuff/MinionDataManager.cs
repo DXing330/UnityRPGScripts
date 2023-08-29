@@ -93,6 +93,7 @@ public class MinionDataManager : MonoBehaviour
         minion_energy.Add(minionStats.ReturnMinionEnergy(type));
         minion_acted.Add("0");
         SaveData();
+        GameManager.instance.SaveState();
     }
 
     public void RemoveMinion(int ID)
