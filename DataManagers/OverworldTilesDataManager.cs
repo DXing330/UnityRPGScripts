@@ -12,6 +12,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> tile_type;
     public List<string> tile_owner;
     public List<string> tiles_explored;
+    public List<string> no_tiles_explored;
     public List<string> temporarily_visible;
     public List<int> tiles_visible;
     public List<string> tile_events;
@@ -115,6 +116,11 @@ public class OverworldTilesDataManager : MonoBehaviour
             {
                 visited_tiles.Add(owned_tiles[k]);
             }
+        }
+        no_tiles_explored.Clear();
+        for (int i = 0; i < grid_size * grid_size; i++)
+        {
+            no_tiles_explored.Add("No");
         }
     }
 
@@ -287,6 +293,13 @@ public class OverworldTilesDataManager : MonoBehaviour
         AddTempVisionFromExploring(tile_num);
         current_tile = tile_num;
         VisitTile(current_tile);
+    }
+
+    // Just scanning grants vision but not events.
+    public void ScanTile(int tile_num)
+    {
+        AddTempVisionFromExploring(tile_num);
+        AddVisitedTile(tile_num);
     }
 
     private void VisitTile(int tile_num)
@@ -486,12 +499,11 @@ public class OverworldTilesDataManager : MonoBehaviour
 
     private void ResetVisibility()
     {
-        tiles_visible.Clear();
-        tiles_explored.Clear();
-        for (int i = 0; i < grid_size * grid_size; i++)
+        if (GameManager.instance.current_day%7 == 0)
         {
-            tiles_explored.Add("No");
+            tiles_visible.Clear();
         }
+        tiles_explored = no_tiles_explored;
     }
 
     private void DetermineVisibleTiles()

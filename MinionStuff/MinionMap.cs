@@ -6,11 +6,10 @@ using UnityEngine.UI;
 public class MinionMap : MonoBehaviour
 {
     public int gridSize = 25;
-    public PanelListTextImages tileMap;
+    public PanelTiles tileMap;
     public Animator animator;
     public MinionDataManager minionData;
     public OverworldTilesDataManager overworld_tiles;
-    private Minion currentMinion;
     private int currentTile;
     private int currentColumn;
     private int firstTile;
@@ -18,42 +17,73 @@ public class MinionMap : MonoBehaviour
     public Text typeText;
     public Text healthText;
     public Text moveText;
+    public Text energyText;
     public Text locationText;
     public Text actionText;
+    public Text restText;
 
     void Start()
     {
         minionData = GameManager.instance.all_minions;
-        currentMinion = minionData.currentMinion;
         overworld_tiles = GameManager.instance.villages.tiles;
         gridSize = overworld_tiles.grid_size;
+    }
+
+    public void NextMinion()
+    {
+        int current_index = minionData.GetIndexFromID();
+        // If you're at the end, then move back to the beginning.
+        if (current_index == minionData.minions.Count - 1)
+        {
+            current_index = 0;
+        }
+        else
+        {
+            current_index++;
+        }
+        minionData.SaveMinion();
+        minionData.LoadbyIndex(current_index);
+        UpdateInfomation();
+        UpdateTiles();
     }
 
     public void StartUpdating()
     {
         UpdateInfomation();
         UpdateTiles();
-        UpdateAction();
     }
 
     private void UpdateInfomation()
     {
-        typeText.text = currentMinion.type;
-        healthText.text = "Health: "+currentMinion.health;
-        moveText.text = "Movement: "+currentMinion.movement;
-        locationText.text = "Location: "+(currentMinion.location+1);
+        typeText.text = minionData.currentMinion.type;
+        healthText.text = "Health: "+minionData.currentMinion.health;
+        moveText.text = "Movement: "+minionData.currentMinion.movement;
+        energyText.text = "Energy: "+minionData.currentMinion.energy;
+        locationText.text = "Location: "+(minionData.currentMinion.location+1);
+        UpdateAction();
+        UpdateRestOption();
         UpdateLocation();
+    }
+
+    private void UpdateRestOption()
+    {
+        restText.text = "";
+        if (minionData.currentMinion.Restable())
+        {
+            restText.text = "Rest";
+        }
     }
 
     private void UpdateAction()
     {
-        actionText.text = currentMinion.type+"'s Action";
+        actionText.text = minionData.actionManager.ActionText(minionData.currentMinion.type, minionData.currentMinion.location);
     }
 
     private void UpdateLocation()
     {
-        currentTile = currentMinion.location;
+        currentTile = minionData.currentMinion.location;
         DetermineColumn();
+        DetermineTileOne();
     }
 
     private void DetermineColumn()
@@ -116,72 +146,32 @@ public class MinionMap : MonoBehaviour
     private void UpdateTiles()
     {
         DetermineTileOne();
-        for (int i = 0; i < tileMap.texts.Count; i++)
+        for (int i = 0; i < tileMap.tiles.Count; i++)
         {
-            UpdateTile(tileMap.images[i], tileMap.texts[i], zoneTiles[i]-1);
+            tileMap.UpdateTilebyIndex(zoneTiles[i]-1, i);
         }
-    }
-
-    private void UpdateTile(Image image, Text text, int i)
-    {
-        if (i < overworld_tiles.tiles_explored.Count && i >= 0)
-        {
-            if (overworld_tiles.tiles_explored[i] == "No")
-            {
-                image.color = Color.grey;
-                text.text = "";
-            }
-            else if (overworld_tiles.tiles_explored[i] == "P")
-            {
-                image.color = DetermineColor(overworld_tiles.tile_type[i]);
-                text.text = overworld_tiles.tile_type[i];
-            }
-            else
-            {
-                image.color = DetermineColor(overworld_tiles.tile_type[i]);
-                if (overworld_tiles.tile_owner[i] == "You")
-                {
-                    text.text = "V";
-                }
-                else if (overworld_tiles.tile_owner[i] == "None")
-                {
-                    text.text = overworld_tiles.tile_type[i];
-                }
-                else
-                {
-                    text.text = overworld_tiles.tile_owner[i]+" "+overworld_tiles.tile_type[i];
-                }
-            }
-        }
-        else
-        {
-            image.color = Color.black;
-            text.text = "";
-        }
-    }
-
-    private Color DetermineColor(string tile_type)
-    {
-        switch (tile_type)
-        {
-            case "plains":
-                return Color.green;
-            case "forest":
-                return Color.green;
-            case "mountain":
-                return Color.gray;
-            case "lake":
-                return Color.blue;
-            case "desert":
-                return Color.yellow;
-        }
-        return Color.black;
     }
 
     public void Move(int direction)
     {
-        currentMinion.Move(direction);
+        minionData.currentMinion.Move(direction);
         UpdateLocation();
+        UpdateInfomation();
+        UpdateTiles();
+    }
+
+    public void Rest()
+    {
+        minionData.currentMinion.Rest();
+    }
+
+    public void Act()
+    {
+        if (minionData.currentMinion.acted > 0)
+        {
+            return;
+        }
+        minionData.currentMinion.Act();
         UpdateInfomation();
         UpdateTiles();
     }

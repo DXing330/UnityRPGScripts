@@ -6,8 +6,7 @@ using UnityEngine.UI;
 public class ExploreMenu : MonoBehaviour
 {
     public int grid_size;
-    public List<Text> texts;
-    public List<Image> images;
+    public PanelTiles tileMap;
     public Text current_tile_number;
     public Text current_night;
     public Text village_action;
@@ -23,10 +22,6 @@ public class ExploreMenu : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < texts.Count; i++)
-        {
-            texts[i].fontSize = 20;
-        }
         overworld_tiles = GameManager.instance.villages.tiles;
         grid_size = overworld_tiles.grid_size;
     }
@@ -125,9 +120,9 @@ public class ExploreMenu : MonoBehaviour
     protected void UpdateTiles()
     {
         DetermineTileOne();
-        for (int i = 0; i < texts.Count; i++)
+        for (int i = 0; i < tileMap.tiles.Count; i++)
         {
-            UpdateTile(images[i], texts[i], zone_tiles[i]-1);
+            tileMap.UpdateTilebyIndex(zone_tiles[i]-1, i);
         }
     }
 
@@ -181,62 +176,6 @@ public class ExploreMenu : MonoBehaviour
             }
             offset += 25;
         }
-    }
-
-    protected void UpdateTile(Image image, Text text, int i)
-    {
-        if (i < overworld_tiles.tiles_explored.Count && i >= 0)
-        {
-            if (overworld_tiles.tiles_explored[i] == "No")
-            {
-                image.color = Color.grey;
-                text.text = "";
-            }
-            else if (overworld_tiles.tiles_explored[i] == "P")
-            {
-                image.color = DetermineColor(overworld_tiles.tile_type[i]);
-                text.text = overworld_tiles.tile_type[i];
-            }
-            else
-            {
-                image.color = DetermineColor(overworld_tiles.tile_type[i]);
-                if (overworld_tiles.tile_owner[i] == "You")
-                {
-                    text.text = "V";
-                }
-                else if (overworld_tiles.tile_owner[i] == "Orc")
-                {
-                    text.text = "Orc "+overworld_tiles.tile_type[i];
-                }
-                else
-                {
-                    text.text = overworld_tiles.tile_type[i];
-                }
-            }
-        }
-        else
-        {
-            image.color = Color.black;
-            text.text = "";
-        }
-    }
-
-    protected Color DetermineColor(string tile_type)
-    {
-        switch (tile_type)
-        {
-            case "plains":
-                return Color.green;
-            case "forest":
-                return Color.green;
-            case "mountain":
-                return Color.gray;
-            case "lake":
-                return Color.blue;
-            case "desert":
-                return Color.yellow;
-        }
-        return Color.black;
     }
 
     public void Move(int direction)
