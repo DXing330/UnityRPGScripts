@@ -6,93 +6,86 @@ using UnityEngine.UI;
 public class MinionMenu : MonoBehaviour
 {
     public Animator animator;
-    private MinionStats minionStats;
-    public GameObject action_zero_button;
-    public GameObject action_one_button;
-    public Text action_zero;
-    public Text action_one;
-    public Text resources_text;
+    private MinionDataManager minionData;
     public List<Text> info_texts;
     public List<GameObject> info_buttons;
     private int current_info_page = 0;
-    private int state = 0;
+    private int enabled_buttons;
+    private int minionIndex;
     private int total_types;
 
     void Start()
     {
-        minionStats = GameManager.instance.all_minions.minionStats;
+        minionData = GameManager.instance.all_minions;
     }
 
     public void Return()
     {
-        if (state == 0)
-        {
-            animator.SetTrigger("Hide");
-        }
-        else
-        {
-            SwitchState();
-        }
-    }
-
-    public void SwitchState(int new_state = 0)
-    {
-        if (state == 0 && new_state != 0)
-        {
-            state = new_state;
-            action_zero_button.SetActive(false);
-            action_one_button.SetActive(false);
-        }
-        else
-        {
-            state = 0;
-            action_zero_button.SetActive(true);
-            action_one_button.SetActive(true);
-        }
-    }
-
-    private void UpdateActions()
-    {
-        if (state == 0)
-        {
-            action_zero.text = "Create Minions";
-            action_one.text = "View Minions";
-        }
-    }
-
-    public void ActionZero()
-    {
-        if (state == 0)
-        {
-            SwitchState(1);
-            return;
-        }
-    }
-
-    public void ActionOne()
-    {
-        if (state == 0)
-        {
-            SwitchState(2);
-            return;
-        }
+        animator.SetTrigger("Hide");
     }
 
     private void EnableInfoButtons()
     {
-        for (int i = 0; i < info_buttons.Count; i++)
+        DisableInfoButtons();
+        enabled_buttons = 0;
+        if (minionData.minion_types.Count == 0)
         {
-            info_buttons[i].SetActive(true);
+            return;
+        }
+        int difference = minionData.minion_types.Count -(current_info_page * info_buttons.Count);
+        if (difference > 0)
+        {
+            for (int i = 0; i < difference; i++)
+            {
+                info_buttons[i].SetActive(true);
+                enabled_buttons++;
+            }
         }
     }
 
-    private void CreateMinionInfo()
+    private void DisableInfoButtons()
     {
-        resources_text.text = "Blood: "+GameManager.instance.villages.collected_blood+", Mana: "+GameManager.instance.villages.collected_mana;
-        EnableInfoButtons();
+        for (int i = 0; i < info_buttons.Count; i++)
+        {
+            info_buttons[i].SetActive(false);
+        }
     }
 
-    public void SelectOption()
+    public void CreateMinion()
     {
+        //resources_text.text = "Blood: "+GameManager.instance.villages.collected_blood+", Mana: "+GameManager.instance.villages.collected_mana;
+        //EnableInfoButtons();
+        minionData.AddMinion("Bat");
+        UpdateInformation();
+    }
+
+    public void UpdateInformation()
+    {
+        EnableInfoButtons();
+        for (int i = 0; i < enabled_buttons; i++)
+        {
+            minionIndex = (current_info_page * info_buttons.Count) + i;
+            UpdateMinionInfoByIndex(minionIndex, i);
+        }
+    }
+
+    private void UpdateMinionInfoByIndex(int index, int i)
+    {
+        info_texts[i].text = minionData.minion_types[index]+"; Location: "+(int.Parse(minionData.minion_locations[index])+1)+"; Health: "+minionData.minion_health[index]+"; Energy: "+minionData.minion_energy[index];
+        //info_texts[i].text = minionData.minion_types[index];
+    }
+
+    public void SelectOption(int i)
+    {
+        minionData.LoadbyIndex(i + (current_info_page * info_buttons.Count));
+        //animator.SetTrigger("Map");
+    }
+
+    public void ChangePage(bool right)
+    {
+        if (!right && current_info_page > 0)
+        {
+            current_info_page--;
+        }
     }
 }

@@ -19,6 +19,8 @@ public class MinionDataManager : MonoBehaviour
     public List<string> minion_last_moved;
     public List<string> movement;
     public List<string> minion_health;
+    public List<string> minion_energy;
+    public List<string> minion_acted;
     public Minion currentMinion;
 
     public void SaveData()
@@ -36,6 +38,8 @@ public class MinionDataManager : MonoBehaviour
         data += GameManager.instance.ConvertListToString(minion_last_moved)+"#";
         data += GameManager.instance.ConvertListToString(movement)+"#";
         data += GameManager.instance.ConvertListToString(minion_health)+"#";
+        data += GameManager.instance.ConvertListToString(minion_energy)+"#";
+        data += GameManager.instance.ConvertListToString(minion_acted)+"#";
         File.WriteAllText("Assets/Saves/Minions/You/all_minions.txt", data);
     }
 
@@ -57,6 +61,21 @@ public class MinionDataManager : MonoBehaviour
         minion_last_moved = data_blocks[5].Split("|").ToList();
         movement = data_blocks[6].Split("|").ToList();
         minion_health = data_blocks[7].Split("|").ToList();
+        minion_energy = data_blocks[8].Split("|").ToList();
+        minion_acted = data_blocks[9].Split("|").ToList();
+        AdjustLists();
+    }
+
+    private void AdjustLists()
+    {
+        minions = GameManager.instance.RemoveEmptyListItems(minions);
+        minion_types = GameManager.instance.RemoveEmptyListItems(minion_types);
+        minion_locations = GameManager.instance.RemoveEmptyListItems(minion_locations);
+        minion_last_visited = GameManager.instance.RemoveEmptyListItems(minion_last_visited);
+        minion_last_moved = GameManager.instance.RemoveEmptyListItems(minion_last_moved);
+        movement = GameManager.instance.RemoveEmptyListItems(movement);
+        minion_health = GameManager.instance.RemoveEmptyListItems(minion_health);
+        minion_energy = GameManager.instance.RemoveEmptyListItems(minion_energy);
     }
 
     public void AddMinion(string type)
@@ -70,7 +89,9 @@ public class MinionDataManager : MonoBehaviour
         minion_last_visited.Add(GameManager.instance.current_day.ToString());
         minion_last_moved.Add(GameManager.instance.current_day.ToString());
         movement.Add(minionStats.ReturnMinionMove(type));
-        minion_health.Add(minionStats.ReturnMinionAttack(type));
+        minion_health.Add(minionStats.ReturnMinionHealth(type));
+        minion_energy.Add(minionStats.ReturnMinionEnergy(type));
+        minion_acted.Add("0");
         SaveData();
     }
 
@@ -87,6 +108,8 @@ public class MinionDataManager : MonoBehaviour
             minion_last_moved.RemoveAt(index);
             movement.RemoveAt(index);
             minion_health.RemoveAt(index);
+            minion_energy.RemoveAt(index);
+            minion_acted.RemoveAt(index);
         }
     }
 
@@ -104,7 +127,32 @@ public class MinionDataManager : MonoBehaviour
             currentMinion.movement = int.Parse(movement[index]);
             currentMinion.ResetMovement();
             currentMinion.health = int.Parse(minion_health[index]);
+            currentMinion.energy = int.Parse(minion_energy[index]);
+            currentMinion.acted = int.Parse(minion_acted[index]);
         }
+    }
+
+    public void LoadbyIndex(int index)
+    {
+        if (index >= 0)
+        {
+            currentMinion.ID = int.Parse(minions[index]);
+            currentMinion.SetType(minion_types[index]);
+            currentMinion.location = int.Parse(minion_locations[index]);
+            currentMinion.last_visited = int.Parse(minion_last_visited[index]);
+            currentMinion.last_moved = int.Parse(minion_last_moved[index]);
+            currentMinion.movement = int.Parse(movement[index]);
+            currentMinion.ResetMovement();
+            currentMinion.health = int.Parse(minion_health[index]);
+            currentMinion.energy = int.Parse(minion_energy[index]);
+            currentMinion.acted = int.Parse(minion_acted[index]);
+        }
+    }
+
+    public int GetIndexFromID()
+    {
+        int current_index = minions.IndexOf(currentMinion.ID.ToString());
+        return current_index;
     }
 
     public void SaveMinion()
@@ -116,6 +164,15 @@ public class MinionDataManager : MonoBehaviour
         minion_last_moved[index] = GameManager.instance.current_day.ToString();
         movement[index] = currentMinion.movement.ToString();
         minion_health[index] = currentMinion.health.ToString();
+        minion_energy[index] = currentMinion.energy.ToString();
+        minion_acted[index] = currentMinion.acted.ToString();
+    }
+
+    public void UpdateMinionLocation()
+    {
+        string new_id = currentMinion.ID.ToString();
+        int index = minions.IndexOf(new_id);
+        minion_locations[index] = currentMinion.location.ToString();
     }
 
     public void DetermineAction(string type, int location)

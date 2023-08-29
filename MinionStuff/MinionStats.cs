@@ -12,8 +12,10 @@ public class MinionStats : MonoBehaviour
     public List<string> types;
     public List<string> max_movement;
     public List<string> max_health;
+    public List<string> max_energy;
     public List<string> attack_power;
-    public List<string> costs;
+    public List<string> blood_costs;
+    public List<string> mana_costs;
     public List<string> description;
 
     public void LoadData()
@@ -28,9 +30,11 @@ public class MinionStats : MonoBehaviour
         types = data_blocks[0].Split("|").ToList();
         max_movement = data_blocks[1].Split("|").ToList();
         max_health = data_blocks[2].Split("|").ToList();
-        attack_power = data_blocks[3].Split("|").ToList();
-        costs = data_blocks[4].Split("|").ToList();
+        max_energy = data_blocks[3].Split("|").ToList();
+        attack_power = data_blocks[4].Split("|").ToList();
         description = data_blocks[5].Split("|").ToList();
+        blood_costs = data_blocks[6].Split("|").ToList();
+        mana_costs = data_blocks[7].Split("|").ToList();
         CountMinions();
     }
 
@@ -81,9 +85,9 @@ public class MinionStats : MonoBehaviour
         m_index = types.IndexOf(type);
         if (m_index >= 0)
         {
-            return costs[m_index];
+            string cost = blood_costs[m_index]+"|"+mana_costs[m_index];
         }
-        return "0/0";
+        return "0|0";
     }
 
     public string ReturnMinionDescription(string type)
@@ -94,5 +98,15 @@ public class MinionStats : MonoBehaviour
             return description[m_index];
         }
         return "";
+    }
+
+    public string ReturnMinionEnergy(string type)
+    {
+        m_index = types.IndexOf(type);
+        if (m_index >= 0)
+        {
+            return max_energy[m_index];
+        }
+        return "0";
     }
 }
