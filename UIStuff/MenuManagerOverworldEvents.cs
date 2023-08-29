@@ -20,7 +20,7 @@ public class MenuManagerOverworldEvents : MonoBehaviour
 
     protected void Start()
     {
-        tiles = GameManager.instance.villages.tiles;
+        tiles = GameManager.instance.tiles;
         GetEvents();
     }
 

@@ -8,7 +8,6 @@ using UnityEngine;
 public class VillageDataManager : MonoBehaviour
 {
     public string village_data;
-    public OverworldTilesDataManager tiles;
     public VillageTradingManager trading;
     public EventBoolManager events;
     public int total_villages;
@@ -24,7 +23,7 @@ public class VillageDataManager : MonoBehaviour
     public int collected_mana;
     // Blood can be used to heal and grants exp.
     public int collected_blood;
-    // Settlers are needed to claim new tiles and expand.
+    // Settlers are needed to expand.
     public int collected_settlers;
     protected string loaded_data;
     // Need to make a tech tree.
@@ -70,7 +69,6 @@ public class VillageDataManager : MonoBehaviour
         village_data += "#";
         village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString()+"|"+collected_blood.ToString()+"|"+collected_settlers.ToString();
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
-        tiles.SaveData();
         trading.SaveData();
     }
 
@@ -99,7 +97,6 @@ public class VillageDataManager : MonoBehaviour
         {
             NewData();
         }
-        tiles.LoadData();
         if (File.Exists("Assets/Saves/Villages/trade_data.txt"))
         {
             trading.LoadData();

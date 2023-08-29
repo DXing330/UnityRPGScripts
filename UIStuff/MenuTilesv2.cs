@@ -26,7 +26,7 @@ public class MenuTilesv2 : MonoBehaviour
         {
             texts[i].fontSize = 20;
         }
-        overworld_tiles = GameManager.instance.villages.tiles;
+        overworld_tiles = GameManager.instance.tiles;
         grid_size = overworld_tiles.grid_size;
         UpdateTexts();
     }

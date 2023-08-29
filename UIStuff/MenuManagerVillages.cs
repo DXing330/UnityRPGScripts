@@ -113,7 +113,7 @@ public class MenuManagerVillages : MonoBehaviour
             {
                 villagedatamanager.collected_settlers--;
                 villagedatamanager.collected_mana--;
-                villagedatamanager.tiles.ClaimTile(index);
+                GameManager.instance.tiles.ClaimTile(index);
                 exploremenu.UpdateCurrentTile();
                 exploremenu.StartUpdating();
             }

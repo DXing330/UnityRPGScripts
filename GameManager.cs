@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public SummonDataManager summons;
     public SpellDataManager spells;
     public VillageDataManager villages;
+    public OverworldTilesDataManager tiles;
     public EquipmentDataManager all_equipment;
     public EventDataManager all_events;
     public MinionDataManager all_minions;
@@ -82,7 +83,7 @@ public class GameManager : MonoBehaviour
 
     public int Current_Tile()
     {
-        return villages.tiles.current_tile;
+        return tiles.current_tile;
     }
 
     public string ConvertArrayToString(string[] string_array)
@@ -259,14 +260,14 @@ public class GameManager : MonoBehaviour
         {
             villages.collected_settlers--;
             villages.collected_mana--;
-            villages.tiles.ClaimTile(tile_num);
+            tiles.ClaimTile(tile_num);
         }
     }
 
     public void ExploreTile(int tile_num)
     {
         // Need to move to the tile and trigger the event there.
-        villages.tiles.TravelToTile(tile_num);
+        tiles.TravelToTile(tile_num);
     }
 
     // Player resources.
@@ -460,6 +461,7 @@ public class GameManager : MonoBehaviour
         spells.LoadData();
         all_equipment.LoadData();
         villages.LoadData();
+        tiles.LoadData();
         story.LoadData();
         all_events.LoadData();
         blood_deadline = story.ReturnDeadlineDate();
@@ -506,6 +508,7 @@ public class GameManager : MonoBehaviour
         spells.SaveData();
         all_equipment.SaveData();
         villages.SaveData();
+        tiles.SaveData();
         all_events.SaveData();
         all_minions.SaveData();
     }
@@ -542,6 +545,7 @@ public class GameManager : MonoBehaviour
         spells.LoadData();
         all_equipment.LoadData();
         villages.LoadData();
+        tiles.LoadData();
         story.LoadData();
         all_events.LoadData();
         all_minions.LoadData();
@@ -583,7 +587,7 @@ public class GameManager : MonoBehaviour
     public void NewDay()
     {
         current_day++;
-        villages.tiles.PassWorldTime();
+        tiles.PassWorldTime();
         story.CheckTime();
     }
 

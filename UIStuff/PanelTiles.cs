@@ -11,7 +11,7 @@ public class PanelTiles : MonoBehaviour
 
     void Start()
     {
-        overworldTiles = GameManager.instance.villages.tiles;
+        overworldTiles = GameManager.instance.tiles;
         minionData = GameManager.instance.all_minions;
     }
 

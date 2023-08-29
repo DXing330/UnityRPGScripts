@@ -25,7 +25,7 @@ public class MinionMap : MonoBehaviour
     void Start()
     {
         minionData = GameManager.instance.all_minions;
-        overworld_tiles = GameManager.instance.villages.tiles;
+        overworld_tiles = GameManager.instance.tiles;
         gridSize = overworld_tiles.grid_size;
     }
 

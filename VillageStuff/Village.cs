@@ -228,7 +228,7 @@ public class Village : MonoBehaviour
             {
                 discontentment++;
             }
-            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has gained population.");
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has gained population.");
         }
     }
 
@@ -421,7 +421,7 @@ public class Village : MonoBehaviour
         {
             fear -= population;
             PopulationLoss();
-            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people fleeing.");
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people fleeing.");
             // This doesn't look good for merchants.
             merchant_reputation--;
         }
@@ -437,7 +437,7 @@ public class Village : MonoBehaviour
             discontentment -= population;
             PopulationLoss();
             AddEvent("bandits|-1");
-            GameManager.instance.villages.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people turning to banditry.");
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people turning to banditry.");
             // This doesn't look good for merchants.
             merchant_reputation--;
         }

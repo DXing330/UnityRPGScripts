@@ -47,7 +47,7 @@ public class NPCVillageOwner : MonoBehaviour
     public void Start()
     {
         current_village = GameManager.instance.villages.current_village;
-        tiles = GameManager.instance.villages.tiles;
+        tiles = GameManager.instance.tiles;
     }
 
     public void Save()

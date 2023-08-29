@@ -126,10 +126,10 @@ public class MinionDataManager : MonoBehaviour
             currentMinion.last_visited = int.Parse(minion_last_visited[index]);
             currentMinion.last_moved = int.Parse(minion_last_moved[index]);
             currentMinion.movement = int.Parse(movement[index]);
-            currentMinion.ResetMovement();
             currentMinion.health = int.Parse(minion_health[index]);
             currentMinion.energy = int.Parse(minion_energy[index]);
             currentMinion.acted = int.Parse(minion_acted[index]);
+            currentMinion.ResetMovement();
         }
     }
 
@@ -143,10 +143,10 @@ public class MinionDataManager : MonoBehaviour
             currentMinion.last_visited = int.Parse(minion_last_visited[index]);
             currentMinion.last_moved = int.Parse(minion_last_moved[index]);
             currentMinion.movement = int.Parse(movement[index]);
-            currentMinion.ResetMovement();
             currentMinion.health = int.Parse(minion_health[index]);
             currentMinion.energy = int.Parse(minion_energy[index]);
             currentMinion.acted = int.Parse(minion_acted[index]);
+            currentMinion.ResetMovement();
         }
     }
 

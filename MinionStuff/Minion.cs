@@ -49,7 +49,7 @@ public class Minion : MonoBehaviour
             return;
         }
         int previous_location = location;
-        location = GameManager.instance.villages.tiles.Move(direction, location);
+        location = GameManager.instance.tiles.Move(direction, location);
         if (previous_location != location)
         {
             movement--;

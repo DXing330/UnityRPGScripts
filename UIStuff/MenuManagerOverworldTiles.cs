@@ -41,7 +41,7 @@ public class MenuManagerOverworldTiles : MonoBehaviour
 
     public void Start()
     {
-        overworld_tiles = GameManager.instance.villages.tiles;
+        overworld_tiles = GameManager.instance.tiles;
     }
 
     public void Return()

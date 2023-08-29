@@ -135,6 +135,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         tile_events.Clear();
         for (int i = 0; i < grid_size*grid_size; i++)
         {
+            no_tiles_explored.Add("No");
             tiles_explored.Add("No");
             tile_owner.Add("None");
         }
@@ -449,7 +450,6 @@ public class OverworldTilesDataManager : MonoBehaviour
             return;
         }
         int attack_power = 1;
-        int attack_area = -1;
         for (int i = 0; i < orc_tiles.Count; i++)
         {
             Debug.Log(orc_tiles[i]);
@@ -460,10 +460,8 @@ public class OverworldTilesDataManager : MonoBehaviour
                 if (tile_owner[adjacent_tiles[j]] == "You")
                 {
                     attack_power = DetermineOrcAttackPower(tile_owner[int.Parse(orc_tiles[i])]);
-                    attack_area = Random.Range(-1, village_to_add_events.buildings.Count);
                     AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]+1).ToString());
-                    village_to_add_events.Load(adjacent_tiles[j]);
-                    village_to_add_events.ReceiveAttack(attack_power, attack_area);
+                    AttackVillage(adjacent_tiles[j], attack_power);
                     break;
                 }
             }
@@ -735,4 +733,18 @@ public class OverworldTilesDataManager : MonoBehaviour
         DetermineVisibleTiles();
     }
 
+    public void AttackArea(int location, int strength)
+    {
+        if (tile_owner[location] == "You")
+        {
+            AttackVillage(location, strength);
+        }
+    }
+
+    private void AttackVillage(int location, int strength)
+    {
+        int attack_area = Random.Range(-1, village_to_add_events.buildings.Count);
+        village_to_add_events.Load(location);
+        village_to_add_events.ReceiveAttack(strength, attack_area);
+    }
 }
