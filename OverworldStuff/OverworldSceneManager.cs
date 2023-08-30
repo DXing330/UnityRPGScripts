@@ -4,33 +4,43 @@ using UnityEngine;
 
 public class OverworldSceneManager : MonoBehaviour
 {
-    public List<RandomizedSpawnRoom> orc_spawners;
-    public List<RandomizedSpawnRoom> orc_leader_spawners;
-    protected int orcs_count = 0;
-    protected int orc_leaders_count = 0;
-    protected int rng = -1;
-    // Start is called before the first frame update
+    private int location;
+    private int orcAmount;
+    private int totalAmount;
+    public List<GameObject> orcs;
+    public OverworldTilesDataManager tilesData;
+
     void Start()
     {
-        string[] enemies_count = GameManager.instance.villages.events.ReturnEnemies().Split("|");
-        orcs_count = int.Parse(enemies_count[2]);
-        orc_leaders_count = int.Parse(enemies_count[3]);
-        SetSpawnLimits();
+        tilesData = GameManager.instance.tiles;
+        totalAmount = orcs.Count;
+        location = tilesData.current_tile;
+        orcAmount = int.Parse(tilesData.orc_amount[location]);
+        for (int i = 0; i < Mathf.Min(orcAmount, orcs.Count); i++)
+        {
+            orcs[i].SetActive(true);
+        }
     }
 
-    protected void SetSpawnLimits()
+    void Update()
     {
-        while (orcs_count > 0)
+        
+        // Count the dead.
+        for (int i = 0; i < orcs.Count; i++)
         {
-            orcs_count--;
-            rng = Random.Range(0, orc_spawners.Count);
-            orc_spawners[rng].spawn_limit++;
+            if (orcs[i] == null)
+            {
+                orcs.RemoveAt(i);
+                // Subtract the amount from the amount of orcs there.
+                tilesData.orc_amount[location] = (int.Parse(tilesData.orc_amount[location]) - 1).ToString();
+            }
         }
-        while (orc_leaders_count > 0)
+        // If you beat all the enemies you win.
+        if (totalAmount - orcs.Count >= orcAmount)
         {
-            orc_leaders_count--;
-            rng = Random.Range(0, orc_leader_spawners.Count);
-            orc_leader_spawners[rng].spawn_limit++;
+            tilesData.ClearTile(location);
+            GameManager.instance.ReturnHome();
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
         }
     }
 }

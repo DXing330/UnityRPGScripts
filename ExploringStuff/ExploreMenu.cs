@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ExploreMenu : MonoBehaviour
 {
@@ -41,6 +42,9 @@ public class ExploreMenu : MonoBehaviour
                 break;
             case "None":
                 overworld_tiles.ExploreTile(current_tile);
+                break;
+            case "Orc":
+                UnityEngine.SceneManagement.SceneManager.LoadScene("FightO");
                 break;
         }
         // explore/attack/etc.

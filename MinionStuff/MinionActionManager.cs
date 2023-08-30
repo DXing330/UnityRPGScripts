@@ -109,6 +109,7 @@ public class MinionActionManager : MonoBehaviour
 
     private void AttackArea(int location)
     {
-        tilesData.AttackArea(location, power);
+        int counter_damage = Mathf.Max(1, tilesData.AttackArea(location, power));
+        minionData.currentMinion.ReceiveDamage(counter_damage);
     }
 }

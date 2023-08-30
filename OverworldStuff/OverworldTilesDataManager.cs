@@ -26,6 +26,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public bool new_events = false;
     public Village village_to_add_events;
     public List<int> adjacent_tiles;
+    public OverworldCombatManager combatManager;
 
     public void CountOwnedTiles()
     {
@@ -383,6 +384,11 @@ public class OverworldTilesDataManager : MonoBehaviour
         if (tile_owner[tile_num] != "None")
         {
             tile_owner[tile_num] = "None";
+            if (orc_tiles.Contains(tile_num.ToString()))
+            {
+                orc_tiles.Remove(tile_num.ToString());
+                orc_amount[tile_num] = "0";
+            }
         }
     }
 
@@ -408,8 +414,8 @@ public class OverworldTilesDataManager : MonoBehaviour
             village_to_add_events.AddEvent("traders|5");
             temporarily_visible.Clear();
             DetermineVisibleTiles();
-            MoveOrcs();
             SpawnOrcs();
+            MoveOrcs();
         }
         // After updating all villages and tiles, save the game.
         GameManager.instance.SaveState();
@@ -428,6 +434,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             tile_owner[tile_index] = "Orc";
             orc_amount[tile_index] = amount.ToString();
+            orc_tiles.Add(tile_index.ToString());
             if (tiles_explored[tile_index] == "Yes")
             {
                 AddEvent("Day: "+GameManager.instance.current_day+"; Orcs appeared at zone "+i);
@@ -449,7 +456,6 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             return;
         }
-        int attack_power = 1;
         for (int i = 0; i < orc_tiles.Count; i++)
         {
             GetAdjacentTiles(int.Parse(orc_tiles[i]));
@@ -458,9 +464,8 @@ public class OverworldTilesDataManager : MonoBehaviour
             {
                 if (tile_owner[adjacent_tiles[j]] == "You")
                 {
-                    attack_power = DetermineOrcAttackPower(orc_amount[int.Parse(orc_tiles[i])]);
                     AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]+1).ToString());
-                    AttackVillage(adjacent_tiles[j], attack_power);
+                    combatManager.OrcAttackVillage(int.Parse(orc_tiles[i]), adjacent_tiles[j]);
                     break;
                 }
             }
@@ -472,14 +477,9 @@ public class OverworldTilesDataManager : MonoBehaviour
                 CombineOrcs(adjacent_tiles[k], int.Parse(orc_amount[int.Parse(orc_tiles[i])]));
                 tile_owner[int.Parse(orc_tiles[i])] = "None";
                 orc_amount[int.Parse(orc_tiles[i])] = "0";
+                orc_tiles.RemoveAt(i);
             }
         }
-    }
-
-    private int DetermineOrcAttackPower(string orc_amount)
-    {
-        int power = int.Parse(orc_amount);
-        return power;
     }
 
     public void Negotiate()
@@ -728,40 +728,6 @@ public class OverworldTilesDataManager : MonoBehaviour
     // When you attack an area you may receive damage.
     public int AttackArea(int location, int strength)
     {
-        switch (tile_owner[location])
-        {
-            case "You":
-                return AttackVillage(location, strength);
-            case "Orc":
-                return AttackOrcs(location, strength);
-                
-        }
-        return 0;
-    }
-
-    private int AttackVillage(int location, int strength)
-    {
-        int attack_area = Random.Range(-1, village_to_add_events.buildings.Count);
-        village_to_add_events.Load(location);
-        village_to_add_events.ReceiveAttack(strength, attack_area);
-        return village_to_add_events.defense_level;
-    }
-
-    private int AttackOrcs(int location, int strength)
-    {
-        int total_orcs = int.Parse(orc_amount[location]);
-        if (strength >= 2 * total_orcs)
-        {
-            orc_amount[location] = "0";
-        }
-        else if (strength >= total_orcs)
-        {
-            orc_amount[location] = (total_orcs/2).ToString();
-        }
-        else
-        {
-            orc_amount[location] = (total_orcs - 1).ToString();
-        }
-        return int.Parse(orc_amount[location]);
+        return combatManager.AttackArea(location, strength);
     }
 }

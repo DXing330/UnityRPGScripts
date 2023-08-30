@@ -163,6 +163,7 @@ public class MinionMap : MonoBehaviour
     public void Rest()
     {
         minionData.currentMinion.Rest();
+        UpdateInfomation();
     }
 
     public void Act()
