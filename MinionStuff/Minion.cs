@@ -44,7 +44,7 @@ public class Minion : MonoBehaviour
 
     public void Move(int direction)
     {
-        if (movement <= 0)
+        if (movement <= 0 || energy <= 0)
         {
             return;
         }
@@ -53,6 +53,7 @@ public class Minion : MonoBehaviour
         if (previous_location != location)
         {
             movement--;
+            energy--;
             GameManager.instance.all_minions.UpdateMinionLocation();
         }
     }

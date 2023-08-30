@@ -19,6 +19,7 @@ public class OverworldTilesDataManager : MonoBehaviour
     public List<string> owned_tiles;
     // Keep track of orc owned tiles for more efficiency.
     public List<string> orc_tiles;
+    public List<string> orc_amount;
     public List<string> visited_tiles;
     public int current_tile = 312;
     public int home_base_tile = 312;
@@ -77,6 +78,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         overworld_data += GameManager.instance.ConvertListToString(visited_tiles)+"#";
         overworld_data += current_tile.ToString()+"#";
         overworld_data += home_base_tile.ToString()+"#";
+        overworld_data += GameManager.instance.ConvertListToString(orc_amount)+"#";
         File.WriteAllText("Assets/Saves/Villages/overworld_data.txt", overworld_data);
     }
 
@@ -95,6 +97,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             visited_tiles = loaded_data_blocks[6].Split("|").ToList();
             current_tile = int.Parse(loaded_data_blocks[7]);
             home_base_tile = int.Parse(loaded_data_blocks[8]);
+            orc_amount = loaded_data_blocks[9].Split("|").ToList();
         }
         else
         {
@@ -121,6 +124,14 @@ public class OverworldTilesDataManager : MonoBehaviour
         for (int i = 0; i < grid_size * grid_size; i++)
         {
             no_tiles_explored.Add("No");
+        }
+        if (orc_amount.Count < grid_size * grid_size)
+        {
+            orc_amount.Clear();
+            for (int i = 0; i < grid_size * grid_size; i++)
+            {
+                orc_amount.Add("0");
+            }
         }
     }
 
@@ -398,10 +409,6 @@ public class OverworldTilesDataManager : MonoBehaviour
             temporarily_visible.Clear();
             DetermineVisibleTiles();
             MoveOrcs();
-        }
-        // Every month orc encampments may spawn.
-        if (GameManager.instance.current_day%28 == 0)
-        {
             SpawnOrcs();
         }
         // After updating all villages and tiles, save the game.
@@ -414,31 +421,24 @@ public class OverworldTilesDataManager : MonoBehaviour
         CombineOrcs(rng);
     }
 
-    private void CombineOrcs(int tile_index)
+    private void CombineOrcs(int tile_index, int amount = 1)
     {
         int i = tile_index + 1;
         if (tile_owner[tile_index] == "None")
         {
             tile_owner[tile_index] = "Orc";
+            orc_amount[tile_index] = amount.ToString();
             if (tiles_explored[tile_index] == "Yes")
             {
-                AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs appeared at zone "+i.ToString());
+                AddEvent("Day: "+GameManager.instance.current_day+"; Orcs appeared at zone "+i);
             }
         }
         else if (tile_owner[tile_index] == "Orc")
         {
-            tile_owner[tile_index] = "Orc Camp";
+            orc_amount[tile_index] = (int.Parse(orc_amount[tile_index])+amount).ToString();
             if (tiles_explored[tile_index] == "Yes")
             {
-                AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs gather at zone "+i.ToString());
-            }
-        }
-        else if (tile_owner[tile_index] == "Orc Camp")
-        {
-            tile_owner[tile_index] = "Orc Army";
-            if (tiles_explored[tile_index] == "Yes")
-            {
-                AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs form an army at zone "+i.ToString());
+                AddEvent("Day: "+GameManager.instance.current_day+"; Orcs gather at zone "+i);
             }
         }
     }
@@ -452,14 +452,13 @@ public class OverworldTilesDataManager : MonoBehaviour
         int attack_power = 1;
         for (int i = 0; i < orc_tiles.Count; i++)
         {
-            Debug.Log(orc_tiles[i]);
             GetAdjacentTiles(int.Parse(orc_tiles[i]));
             // First the orcs look around for people to attack.
             for (int j = 0; j < adjacent_tiles.Count; j++)
             {
                 if (tile_owner[adjacent_tiles[j]] == "You")
                 {
-                    attack_power = DetermineOrcAttackPower(tile_owner[int.Parse(orc_tiles[i])]);
+                    attack_power = DetermineOrcAttackPower(orc_amount[int.Parse(orc_tiles[i])]);
                     AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]+1).ToString());
                     AttackVillage(adjacent_tiles[j], attack_power);
                     break;
@@ -467,27 +466,20 @@ public class OverworldTilesDataManager : MonoBehaviour
             }
             // Then they'll move in a random direction.
             int k = Random.Range(0, adjacent_tiles.Count);
-            if (tile_owner[adjacent_tiles[k]] == "None" || tile_owner[adjacent_tiles[k]] == tile_owner[int.Parse(orc_tiles[i])])
+            if (tile_owner[adjacent_tiles[k]] == "None" || tile_owner[adjacent_tiles[k]] == "Orc")
             {
                 // Move onto an empty tile or combine with orcs already there.
-                CombineOrcs(adjacent_tiles[k]);
-                tile_owner[int.Parse(orc_tiles[i])] =  "None";
+                CombineOrcs(adjacent_tiles[k], int.Parse(orc_amount[int.Parse(orc_tiles[i])]));
+                tile_owner[int.Parse(orc_tiles[i])] = "None";
+                orc_amount[int.Parse(orc_tiles[i])] = "0";
             }
         }
     }
 
-    private int DetermineOrcAttackPower(string orc_group)
+    private int DetermineOrcAttackPower(string orc_amount)
     {
-        switch (orc_group)
-        {
-            case "Orc":
-                return Random.Range(1, 3);
-            case "Orc Camp":
-                return Random.Range(3, 7);
-            case "Orc Army":
-                return Random.Range(7, 15);
-        }
-        return 1;
+        int power = int.Parse(orc_amount);
+        return power;
     }
 
     public void Negotiate()
@@ -733,18 +725,43 @@ public class OverworldTilesDataManager : MonoBehaviour
         DetermineVisibleTiles();
     }
 
-    public void AttackArea(int location, int strength)
+    // When you attack an area you may receive damage.
+    public int AttackArea(int location, int strength)
     {
-        if (tile_owner[location] == "You")
+        switch (tile_owner[location])
         {
-            AttackVillage(location, strength);
+            case "You":
+                return AttackVillage(location, strength);
+            case "Orc":
+                return AttackOrcs(location, strength);
+                
         }
+        return 0;
     }
 
-    private void AttackVillage(int location, int strength)
+    private int AttackVillage(int location, int strength)
     {
         int attack_area = Random.Range(-1, village_to_add_events.buildings.Count);
         village_to_add_events.Load(location);
         village_to_add_events.ReceiveAttack(strength, attack_area);
+        return village_to_add_events.defense_level;
+    }
+
+    private int AttackOrcs(int location, int strength)
+    {
+        int total_orcs = int.Parse(orc_amount[location]);
+        if (strength >= 2 * total_orcs)
+        {
+            orc_amount[location] = "0";
+        }
+        else if (strength >= total_orcs)
+        {
+            orc_amount[location] = (total_orcs/2).ToString();
+        }
+        else
+        {
+            orc_amount[location] = (total_orcs - 1).ToString();
+        }
+        return int.Parse(orc_amount[location]);
     }
 }

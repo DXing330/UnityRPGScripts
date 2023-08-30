@@ -35,6 +35,15 @@ public class PanelTiles : MonoBehaviour
 
     private void UpdateTileSprites(int index, int tile_number)
     {
+        // Look for enemies on the tile.
+        if (overworldTiles.orc_tiles.Contains(tile_number.ToString()))
+        {
+            UpdateEnemySprite(index, 0);
+        }
+        else
+        {
+            UpdateEnemySprite(index, -1);
+        }
         if (overworldTiles.current_tile == tile_number)
         {
             // O is the image index of the player sprite.
@@ -102,7 +111,7 @@ public class PanelTiles : MonoBehaviour
         tiles[index].UpdateTextandColor(new_text, new_color);
     }
 
-    public void UpdateAllySprite(int index, int type)
+    private void UpdateAllySprite(int index, int type)
     {
         if (type >= imageManager.ally_sprites.Count || type < 0)
         {
@@ -110,5 +119,15 @@ public class PanelTiles : MonoBehaviour
             return;
         }
         tiles[index].UpdateAllySprite(imageManager.ally_sprites[type]);
+    }
+
+    private void UpdateEnemySprite(int index, int type)
+    {
+        if (type >= imageManager.enemy_sprites.Count || type < 0)
+        {
+            tiles[index].ResetEnemySprite();
+            return;
+        }
+        tiles[index].UpdateEnemySprite(imageManager.enemy_sprites[type]);
     }
 }

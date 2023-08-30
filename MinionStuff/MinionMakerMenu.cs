@@ -31,7 +31,7 @@ public class MinionMakerMenu : MonoBehaviour
 
     public void StartUpdating()
     {
-        total_types = minionData.minionStats.total_types;
+        total_types = Mathf.Min(GameManager.instance.P_Level(), minionData.minionStats.total_types);
         UpdateSupply();
         UpdateCosts();
         UpdateInfoTexts();
@@ -81,10 +81,8 @@ public class MinionMakerMenu : MonoBehaviour
         }
         if (int.Parse(blood_supply.text) >= int.Parse(blood_cost.text) && int.Parse(mana_supply.text) >= int.Parse(mana_cost.text))
         {
-            // Pay the cost.
             GameManager.instance.villages.collected_blood -= int.Parse(blood_cost.text);
             GameManager.instance.villages.collected_mana -= int.Parse(mana_cost.text);
-            // Get the minion.
             minionData.AddMinion(minionData.minionStats.types[selectedIndex + (current_info_page * info_buttons.Count)]);
             UpdateSupply();
         }

@@ -464,6 +464,8 @@ public class GameManager : MonoBehaviour
         tiles.LoadData();
         story.LoadData();
         all_events.LoadData();
+        all_minions.LoadData();
+        all_minions.AddMinion("Bat");
         blood_deadline = story.ReturnDeadlineDate();
         SaveState();
     }

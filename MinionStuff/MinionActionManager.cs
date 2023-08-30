@@ -69,11 +69,11 @@ public class MinionActionManager : MonoBehaviour
     {
         if (tilesData.tile_owner[location] == "None")
         {
-            // Gather resources.
+            GatherResources(tilesData.tile_type[location]);
         }
         else
         {
-            // Attack.
+            AttackArea(location);
         }
     }
 

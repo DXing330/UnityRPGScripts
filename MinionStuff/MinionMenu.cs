@@ -68,7 +68,8 @@ public class MinionMenu : MonoBehaviour
 
     private void UpdateMinionInfoByIndex(int index, int i)
     {
-        info_texts[i].text = minionData.minion_types[index]+"; Location: "+(int.Parse(minionData.minion_locations[index])+1)+"; Health: "+minionData.minion_health[index]+"; Energy: "+minionData.minion_energy[index];
+        info_texts[i].text = minionData.minion_types[index]+"; Location: "+(int.Parse(minionData.minion_locations[index])+1);
+        //"\n"+"Health: "+minionData.minion_health[index]+"; Movement: "+minionData.movement[index]+"; Energy: "+minionData.minion_energy[index];
     }
 
     public void SelectOption(int i)
