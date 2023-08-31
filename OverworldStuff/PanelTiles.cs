@@ -33,8 +33,14 @@ public class PanelTiles : MonoBehaviour
         return Color.black;
     }
 
-    private void UpdateTileSprites(int index, int tile_number)
+    private void UpdateTileEnemySprites(int index, int tile_number)
     {
+        // You can only see enemies on explored tiles.
+        if (overworldTiles.tiles_explored[tile_number] != "Yes")
+        {
+            UpdateEnemySprite(index, -1);
+            return;
+        }
         // Look for enemies on the tile.
         if (overworldTiles.orc_tiles.Contains(tile_number.ToString()))
         {
@@ -44,6 +50,10 @@ public class PanelTiles : MonoBehaviour
         {
             UpdateEnemySprite(index, -1);
         }
+    }
+
+    private void UpdateTileSprites(int index, int tile_number)
+    {
         if (overworldTiles.current_tile == tile_number)
         {
             // O is the image index of the player sprite.
@@ -76,6 +86,7 @@ public class PanelTiles : MonoBehaviour
         if (tile_number < overworldTiles.tiles_explored.Count && tile_number >= 0)
         {
             UpdateTileSprites(index, tile_number);
+            UpdateTileEnemySprites(index, tile_number);
             if (overworldTiles.tiles_explored[tile_number] == "No")
             {
                 UpdateTile(index, "", Color.grey);

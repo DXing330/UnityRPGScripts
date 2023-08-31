@@ -9,25 +9,22 @@ public class MenuManagerOverworldEvents : MonoBehaviour
     public Text current_day;
     public Text deadline;
     public Text quota;
-    public Text event_0;
-    public Text event_1;
-    public Text event_2;
-    public Text event_3;
+    public List<Text> event_texts;
+    private int eventCount;
     protected int page = 0;
     protected int total_events;
-    protected int total_pages;
     public List<string> all_events;
 
     protected void Start()
     {
         tiles = GameManager.instance.tiles;
+        eventCount = event_texts.Count;
         GetEvents();
     }
 
     private void GetEvents()
     {
         total_events = tiles.tile_events.Count;
-        total_pages = total_events/4;
         all_events = GameManager.instance.InverstListOrder(tiles.tile_events, all_events);
     }
 
@@ -35,7 +32,7 @@ public class MenuManagerOverworldEvents : MonoBehaviour
     {
         if (right)
         {
-            if (total_events > (page+1)*4)
+            if (total_events > (page+1)*eventCount)
             {
                 page++;
                 UpdateEvents();
@@ -54,28 +51,24 @@ public class MenuManagerOverworldEvents : MonoBehaviour
     public void UpdateEvents()
     {
         GetEvents();
-        event_0.text = "N/A";
-        event_1.text = "N/A";
-        event_2.text = "N/A";
-        event_3.text = "N/A";
-        if (0 + page*4 < total_events)
+        for (int i = 0; i< eventCount; i++)
         {
-            if (all_events[0 + page*4].Length > 6)
+            event_texts[i].text = "";
+        }
+        int page_events = total_events - (page * eventCount);
+        for (int j = 0; j < Mathf.Min(page_events, eventCount); j++)
+        {
+            if (j == 0)
             {
-                event_0.text = all_events[0 + page*4];
+                if (all_events[page*eventCount].Length > 6)
+                {
+                    event_texts[j].text = all_events[page*eventCount];
+                }
             }
-        }
-        if (1 + page*4 < total_events)
-        {
-            event_1.text = all_events[1 + page*4];
-        }
-        if (2 + page*4 < total_events)
-        {
-            event_2.text = all_events[2 + page*4];
-        }
-        if (3 + page*4 < total_events)
-        {
-            event_3.text = all_events[3 + page*4];
+            else
+            {
+                event_texts[j].text = all_events[j+(page*eventCount)];
+            }
         }
     }
 

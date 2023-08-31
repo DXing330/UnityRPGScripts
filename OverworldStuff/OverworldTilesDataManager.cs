@@ -409,13 +409,14 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             rng = Random.Range(0, owned_tiles.Count);
             int location_index = int.Parse(owned_tiles[rng]);
-            AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+(location_index+1).ToString());
+            AddEvent("Day "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+(location_index+1).ToString());
             village_to_add_events.Load(location_index);
             village_to_add_events.AddEvent("traders|5");
             temporarily_visible.Clear();
             DetermineVisibleTiles();
             SpawnOrcs();
             MoveOrcs();
+            GameManager.instance.villages.PayUpkeepCosts();
         }
         // After updating all villages and tiles, save the game.
         GameManager.instance.SaveState();
@@ -437,7 +438,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             orc_tiles.Add(tile_index.ToString());
             if (tiles_explored[tile_index] == "Yes")
             {
-                AddEvent("Day: "+GameManager.instance.current_day+"; Orcs appeared at zone "+i);
+                AddEvent("Day "+GameManager.instance.current_day+"; Orcs appeared at zone "+i);
             }
         }
         else if (tile_owner[tile_index] == "Orc")
@@ -445,7 +446,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             orc_amount[tile_index] = (int.Parse(orc_amount[tile_index])+amount).ToString();
             if (tiles_explored[tile_index] == "Yes")
             {
-                AddEvent("Day: "+GameManager.instance.current_day+"; Orcs gather at zone "+i);
+                AddEvent("Day "+GameManager.instance.current_day+"; Orcs gather at zone "+i);
             }
         }
     }
@@ -464,7 +465,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             {
                 if (tile_owner[adjacent_tiles[j]] == "You")
                 {
-                    AddEvent("Day: "+GameManager.instance.current_day.ToString()+"; Orcs attacking village "+(adjacent_tiles[j]+1).ToString());
+                    AddEvent("Day "+GameManager.instance.current_day.ToString()+"; Orcs attack village "+(adjacent_tiles[j]+1).ToString());
                     combatManager.OrcAttackVillage(int.Parse(orc_tiles[i]), adjacent_tiles[j]);
                     break;
                 }

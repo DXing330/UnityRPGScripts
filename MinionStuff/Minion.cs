@@ -10,8 +10,8 @@ public class Minion : MonoBehaviour
     public string type;
     // Constant depending on type.
     private int max_movement;
-    private int max_health;
-    private int max_energy;
+    public int max_health;
+    public int max_energy;
     private int decay_rate;
     private int attack_power;
     // Variables.

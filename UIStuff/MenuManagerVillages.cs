@@ -34,7 +34,6 @@ public class MenuManagerVillages : MonoBehaviour
     {
         // Costs a day to travel to a village.
         ReturnFromVillage();
-        GameManager.instance.NewDay();
     }
 
     public void ReturnFromVillage()
@@ -66,7 +65,7 @@ public class MenuManagerVillages : MonoBehaviour
         villagepanel.UpdateVillageInformation();
     }
 
-    public void UpdateOverworldInfo()
+    public void UpdateOverworldResources()
     {
         collected_food.text = villagedatamanager.collected_food.ToString();
         collected_mats.text = villagedatamanager.collected_materials.ToString();

@@ -275,4 +275,21 @@ public class VillageDataManager : MonoBehaviour
         return false;
     }
 
+    public void PayUpkeepCosts()
+    {
+        // Feed your settlers.
+        if (collected_food >= collected_settlers)
+        {
+            collected_food -= collected_settlers;
+        }
+        else
+        {
+            collected_settlers--;
+        }
+        // You can preserve food with your powers.
+        if (collected_food > GameManager.instance.P_Level())
+        {
+            collected_food = GameManager.instance.P_Level();
+        }
+    }
 }

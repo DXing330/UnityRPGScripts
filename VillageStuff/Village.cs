@@ -228,7 +228,7 @@ public class Village : MonoBehaviour
             {
                 discontentment++;
             }
-            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has gained population.");
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" gains population.");
         }
     }
 
@@ -367,6 +367,11 @@ public class Village : MonoBehaviour
         if (food_supply > population)
         {
             food_supply -= population;
+            // Too much food will make some rot.
+            if (food_supply > population)
+            {
+                food_supply = food_supply/2;
+            }
         }
         // Hungry people are angry.
         else
@@ -396,6 +401,8 @@ public class Village : MonoBehaviour
         }
         // Reputation has a floor of zero, basically a place you don't want to go.
         merchant_reputation = Mathf.Max(0, merchant_reputation);
+        // Reputation has a cap of population.
+        merchant_reputation = Mathf.Min(merchant_reputation, population);
     }
 
     protected void CheckVillageMood()
@@ -436,7 +443,7 @@ public class Village : MonoBehaviour
         {
             discontentment -= population;
             PopulationLoss();
-            AddEvent("bandits|-1");
+            AddEvent("bandits|7");
             GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people turning to banditry.");
             // This doesn't look good for merchants.
             merchant_reputation--;
@@ -733,13 +740,9 @@ public class Village : MonoBehaviour
                 events.RemoveAt(i);
             }
         }
-        if (events.Contains("goblins") || events.Contains("bandits"))
+        if (events.Contains("bandits"))
         {
-            int rng = Random.Range(0, 6);
-            if (rng == 0)
-            {
-                Robbed(Random.Range(0, buildings.Count));
-            }
+            Robbed(Random.Range(-1, buildings.Count));
         }
     }
 
@@ -761,6 +764,13 @@ public class Village : MonoBehaviour
 
     protected void Robbed(int area)
     {
+        if (area == -1)
+        {
+            accumulated_gold = 0;
+            food_supply = food_supply/2;
+            accumulated_materials = accumulated_materials/2;
+            return;
+        }
         if (buildings[area] == surroundings[area])
         {
             return;

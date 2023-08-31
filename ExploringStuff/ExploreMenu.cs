@@ -20,6 +20,7 @@ public class ExploreMenu : MonoBehaviour
     public List<int> zone_tiles;
     public Animator animator;
     public OverworldTilesDataManager overworld_tiles;
+    public EventLog eventLog;
 
     void Start()
     {
@@ -27,10 +28,16 @@ public class ExploreMenu : MonoBehaviour
         grid_size = overworld_tiles.grid_size;
     }
 
+    public void UpdateNews()
+    {
+        eventLog.UpdateEvents();
+    }
+
     public void StartUpdating()
     {
         UpdateCurrentTile();
         UpdateTiles();
+        UpdateNews();
     }
 
     public void TileInteract()
@@ -47,6 +54,7 @@ public class ExploreMenu : MonoBehaviour
                 UnityEngine.SceneManagement.SceneManager.LoadScene("FightO");
                 break;
         }
+        UpdateNews();
         // explore/attack/etc.
     }
 
@@ -76,19 +84,19 @@ public class ExploreMenu : MonoBehaviour
         switch (c_tile_owner)
         {
             case "You":
-                village_action.text = "Visit Village"+"\n"+"(1 Day)";
+                village_action.text = "Visit Village";
                 tile_action.text = "Explore Area"+"\n"+"(1 Day)";
                 break;
             case "None":
-                village_action.text = "Make Village"+"\n"+"(1 Mana,"+"\n"+ "1 Settler)";
+                village_action.text = "Make Village"+"\n"+"(Mana, Settler)";
                 tile_action.text = "Explore Area"+"\n"+"(1 Days)";
                 break;
             case "Orc":
-                village_action.text = "Make Village"+"\n"+"(1 Mana,"+"\n"+ "1 Settler)";
+                village_action.text = "Make Village"+"\n"+"(Mana, Settler)";
                 tile_action.text = "Attack Area"+"\n"+"(1 Days)";
                 break;
             case "Vampire":
-                village_action.text = "Make Village"+"\n"+"(1 Mana,"+"\n"+ "1 Settler)";
+                village_action.text = "Make Village"+"\n"+"(Mana, Settler)";
                 tile_action.text = "Attack Area"+"\n"+"(1 Days)";
                 break;
         }
@@ -185,7 +193,6 @@ public class ExploreMenu : MonoBehaviour
     public void Move(int direction)
     {
         overworld_tiles.PlayerMove(direction);
-        UpdateCurrentTile();
-        UpdateTiles();
+        StartUpdating();
     }
 }

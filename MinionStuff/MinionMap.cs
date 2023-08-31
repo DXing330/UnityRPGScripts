@@ -29,6 +29,11 @@ public class MinionMap : MonoBehaviour
         gridSize = overworld_tiles.grid_size;
     }
 
+    public void SaveMinion()
+    {
+        minionData.SaveMinion();
+    }
+
     public void NextMinion()
     {
         int current_index = minionData.GetIndexFromID();
@@ -56,9 +61,9 @@ public class MinionMap : MonoBehaviour
     private void UpdateInfomation()
     {
         typeText.text = minionData.currentMinion.type;
-        healthText.text = "Health: "+minionData.currentMinion.health;
+        healthText.text = "Health: "+minionData.currentMinion.health+"/"+minionData.currentMinion.max_health;
         moveText.text = "Movement: "+minionData.currentMinion.movement;
-        energyText.text = "Energy: "+minionData.currentMinion.energy;
+        energyText.text = "Energy: "+minionData.currentMinion.energy+"/"+minionData.currentMinion.max_energy;;
         locationText.text = "Location: "+(minionData.currentMinion.location+1);
         UpdateAction();
         UpdateRestOption();
@@ -76,6 +81,11 @@ public class MinionMap : MonoBehaviour
 
     private void UpdateAction()
     {
+        if (minionData.currentMinion.energy <= 0 && minionData.currentMinion.Restable())
+        {
+            actionText.text = "Rest";
+            return;
+        }
         actionText.text = minionData.actionManager.ActionText(minionData.currentMinion.type, minionData.currentMinion.location);
     }
 
@@ -170,6 +180,11 @@ public class MinionMap : MonoBehaviour
     {
         if (minionData.currentMinion.acted > 0)
         {
+            return;
+        }
+        if (minionData.currentMinion.energy <= 0 && minionData.currentMinion.Restable())
+        {
+            Rest();
             return;
         }
         minionData.currentMinion.Act();
