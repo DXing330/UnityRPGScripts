@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -66,14 +68,14 @@ public class GameManager : MonoBehaviour
         int sum = 0;
         for (int i = 0; i < dice_rolls; i++)
         {
-            sum += Random.Range(1, dice_faces+1);
+            sum += UnityEngine.Random.Range(1, dice_faces+1);
         }
         return sum;
     }
 
     public int ReturnPlayerLevelRNG()
     {
-        return Random.Range(1, player.playerLevel + 1);
+        return UnityEngine.Random.Range(1, player.playerLevel + 1);
     }
 
     public int P_Level()
@@ -86,7 +88,7 @@ public class GameManager : MonoBehaviour
         return tiles.current_tile;
     }
 
-    public string ConvertArrayToString(string[] string_array)
+    public string ConvertArrayToString(string[] string_array, string delimiter = "|")
     {
         string returned = "";
         for (int i = 0; i < string_array.Length; i++)
@@ -94,24 +96,30 @@ public class GameManager : MonoBehaviour
             returned += string_array[i];
             if (i < string_array.Length-1)
             {
-                returned += "|";
+                returned += delimiter;
             }
         }
         return returned;
     }
 
-    public string ConvertListToString(List<string> string_list)
+    public string ConvertListToString(List<string> string_list, string delimiter = "|")
     {
-        string returned = "";
+        return String.Join(delimiter, string_list);
+        /*string returned = "";
         for (int i = 0; i < string_list.Count; i++)
         {
             returned += string_list[i];
             if (i < string_list.Count-1)
             {
-                returned += "|";
+                returned += delimiter;
             }
         }
-        return returned;
+        return returned;*/
+    }
+
+    public string IntListToString(List<int> intList, string delimiter = "|")
+    {
+        return ConvertListToString(IntListToStringList(intList), delimiter);
     }
 
     public List<string> RemoveEmptyListItems(List<string> string_list)
@@ -135,6 +143,21 @@ public class GameManager : MonoBehaviour
             newly_reversed_list.Add(list_to_reverse[i-1]);
         }
         return newly_reversed_list;
+    }
+
+    public List<string> IntListToStringList(List<int> listToConvert)
+    {
+        return listToConvert.ConvertAll<string>(x => x.ToString());
+    }
+
+    public List<int> StringListToIntList(List<string> listToConvert)
+    {
+        return listToConvert.ConvertAll<int>(x => int.Parse(x));
+    }
+
+    public List<int> StringArrayToIntList(string[] stringArray)
+    {
+        return stringArray.ToList().ConvertAll<int>(x => int.Parse(x));
     }
 
     // Floating text.
@@ -557,7 +580,7 @@ public class GameManager : MonoBehaviour
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Randomize spawnpoints when entering a new scene.
-        int spawn_zone = Random.Range(0, 3);
+        int spawn_zone = UnityEngine.Random.Range(0, 3);
         switch (spawn_zone)
         {
             case 0:

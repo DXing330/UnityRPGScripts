@@ -48,7 +48,6 @@ public class MinionDataManager : MonoBehaviour
         minionStats.LoadData();
         if (!File.Exists("Assets/Saves/Minions/You/all_minions.txt"))
         {
-            Debug.Log("Load Failed");
             return;
         }
         data = File.ReadAllText("Assets/Saves/Minions/You/all_minions.txt");
@@ -118,7 +117,7 @@ public class MinionDataManager : MonoBehaviour
     {
         string new_id = current_ID.ToString();
         int index = minions.IndexOf(new_id);
-        if (index > 0)
+        if (index >= 0)
         {
             currentMinion.ID = current_ID;
             currentMinion.SetType(minion_types[index]);
@@ -137,16 +136,7 @@ public class MinionDataManager : MonoBehaviour
     {
         if (index >= 0)
         {
-            currentMinion.ID = int.Parse(minions[index]);
-            currentMinion.SetType(minion_types[index]);
-            currentMinion.location = int.Parse(minion_locations[index]);
-            currentMinion.last_visited = int.Parse(minion_last_visited[index]);
-            currentMinion.last_moved = int.Parse(minion_last_moved[index]);
-            currentMinion.movement = int.Parse(movement[index]);
-            currentMinion.health = int.Parse(minion_health[index]);
-            currentMinion.energy = int.Parse(minion_energy[index]);
-            currentMinion.acted = int.Parse(minion_acted[index]);
-            currentMinion.ResetMovement();
+            LoadMinion(int.Parse(minions[index]));
         }
     }
 

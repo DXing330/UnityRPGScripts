@@ -27,9 +27,29 @@ public class MinionActionManager : MonoBehaviour
             case "Ghoul":
                 action_text = GhoulActionText(location);
                 break;
+            case "Wolf":
+                action_text = WolfActionText(location);
+                break;
+            case "Werewolf":
+                action_text = WolfActionText(location);
+                break;
 
         }
         return action_text;
+    }
+
+    private string WolfActionText(int location)
+    {
+        string action = "";
+        if (tilesData.tile_owner[location] == "None")
+        {
+            action = "Sniff Around";
+        }
+        else
+        {
+            action = "Attack";
+        }
+        return action;
     }
 
     private string GhoulActionText(int location)
@@ -57,6 +77,12 @@ public class MinionActionManager : MonoBehaviour
             case "Ghoul":
                 GhoulAction(location);
                 break;
+            case "Wolf":
+                WolfAction(location);
+                break;
+            case "Werewolf":
+                WolfAction(location);
+                break;
         }
     }
 
@@ -70,6 +96,18 @@ public class MinionActionManager : MonoBehaviour
         if (tilesData.tile_owner[location] == "None")
         {
             GatherResources(tilesData.tile_type[location]);
+        }
+        else
+        {
+            AttackArea(location);
+        }
+    }
+
+    private void WolfAction(int location)
+    {
+        if (tilesData.tile_owner[location] == "None")
+        {
+            tilesData.ScanTile(location);
         }
         else
         {

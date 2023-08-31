@@ -13,7 +13,7 @@ public class Minion : MonoBehaviour
     public int max_health;
     public int max_energy;
     private int decay_rate;
-    private int attack_power;
+    public int attack_power;
     // Variables.
     public int location;
     public int last_visited;
@@ -36,9 +36,20 @@ public class Minion : MonoBehaviour
     {
         if (GameManager.instance.current_day > last_moved)
         {
+            PassiveResting();
             movement = int.Parse(GameManager.instance.all_minions.minionStats.ReturnMinionMove(type));
             last_moved = GameManager.instance.current_day;
             acted = 0;
+        }
+    }
+
+    private void PassiveResting()
+    {
+        // For every day you don't do anything, they rest.
+        int difference = GameManager.instance.current_day - last_moved - 1;
+        if (difference > 0)
+        {
+            energy += Mathf.Min(difference, max_energy - energy);
         }
     }
 

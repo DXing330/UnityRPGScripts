@@ -5,10 +5,12 @@ using UnityEngine;
 public class OverworldCombatManager : MonoBehaviour
 {
     public OverworldTilesDataManager tilesData;
+    public MinionDataManager minionData;
 
     void Start()
     {
         tilesData = GameManager.instance.tiles;
+        minionData = GameManager.instance.all_minions;
     }
 
     public int AttackArea(int location, int strength)
@@ -28,6 +30,8 @@ public class OverworldCombatManager : MonoBehaviour
     {
         int power = DetermineOrcAttackPower(tilesData.orc_amount[orc_location]);
         int retribution = AttackVillage(village_location, power);
+        Debug.Log(village_location);
+        Debug.Log(retribution);
         if (power > retribution * 2)
         {
             return;
@@ -76,6 +80,23 @@ public class OverworldCombatManager : MonoBehaviour
             tilesData.tile_owner[location] = "None";
             tilesData.orc_amount[location] = "0";
             tilesData.orc_tiles.Remove(location.ToString());
+        }
+    }
+
+    public void AttackMinions(int location, int strength)
+    {
+        if (!minionData.minion_locations.Contains(location.ToString()))
+        {
+            return;
+        }
+        for (int i = 0; i < minionData.minion_locations.Count; i++)
+        {
+            if (minionData.minion_locations[i] == location.ToString())
+            {
+                minionData.LoadbyIndex(i);
+                minionData.currentMinion.ReceiveDamage(Mathf.Max(1, strength - minionData.currentMinion.attack_power));
+                minionData.SaveMinion();
+            }
         }
     }
 }

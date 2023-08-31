@@ -74,13 +74,13 @@ public class Village : MonoBehaviour
 
     public void Save()
     {
-        GameManager.instance.villages.SaveVillage(this);
+        GameManager.instance.villages.SaveVillage();
     }
 
     public void Load(int ID)
     {
         village_number = ID;
-        GameManager.instance.villages.LoadVillage(this);
+        GameManager.instance.villages.LoadVillage(village_number);
         AdjustLists();
     }
 
@@ -203,8 +203,8 @@ public class Village : MonoBehaviour
         // People want to feel good.
         growth_rate += population - fear;
         growth_rate += population - discontentment;
-        // Average growth is once every two weeks, with adequate food.
-        int rng = Random.Range(0, 14);
+        // Average growth needs balancing.
+        int rng = Random.Range(0, 21);
         if (growth_rate > rng)
         {
             return true;
@@ -348,7 +348,6 @@ public class Village : MonoBehaviour
             // Week = 5 days kek.
             if (last_update_day%5==0)
             {
-                // When discontement is used.
                 DetermineVillageStats();
                 // Mainly when discontentment rises.
                 PayUpkeepCosts();
@@ -665,7 +664,6 @@ public class Village : MonoBehaviour
             string building_name = buildings[int.Parse(assigned_buildings[i])];
             string new_products = villagebuilding.DetermineAllProducts(building_name);
             AddBuildingProducts(new_products);
-            UpdateBuildingExperience(int.Parse(assigned_buildings[i]));
             string special_effect = villagebuilding.GetSpecialEffects(building_name);
             AddSpecialBuildingProducts(special_effect);
         }

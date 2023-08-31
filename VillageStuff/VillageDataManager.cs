@@ -8,6 +8,7 @@ using UnityEngine;
 public class VillageDataManager : MonoBehaviour
 {
     public string village_data;
+    public VillageDataStorage villageData;
     public VillageTradingManager trading;
     public EventBoolManager events;
     public int total_villages;
@@ -70,6 +71,7 @@ public class VillageDataManager : MonoBehaviour
         village_data += collected_food.ToString()+"|"+collected_materials.ToString()+"|"+collected_gold.ToString()+"|"+collected_mana.ToString()+"|"+collected_blood.ToString()+"|"+collected_settlers.ToString();
         File.WriteAllText("Assets/Saves/Villages/village_data.txt", village_data);
         trading.SaveData();
+        villageData.SaveData();
     }
 
     public void LoadData()
@@ -101,6 +103,7 @@ public class VillageDataManager : MonoBehaviour
         {
             trading.LoadData();
         }
+        villageData.LoadData();
         current_village.villagebuildingmanager.LoadData();
     }
 
@@ -184,20 +187,22 @@ public class VillageDataManager : MonoBehaviour
         village.building_bonus_outputs = village_data_blocks[11].Split("|").ToList();
     }
 
-    public void SaveVillage(Village village)
+    public void SaveVillage()
     {
-        if (!Directory.Exists("Assets/Saves/Villages"))
+        villageData.SaveVillage();
+        /*if (!Directory.Exists("Assets/Saves/Villages"))
         {
             Directory.CreateDirectory("Assets/Saves/Villages");
         }
         string string_path = "Assets/Saves/Villages/village_"+village.village_number.ToString()+".txt";
         string village_data = ConvertVillageToString(village);
-        File.WriteAllText(string_path, village_data);
+        File.WriteAllText(string_path, village_data);*/
     }
 
-    public void LoadVillage(Village village)
+    public void LoadVillage(int village_number)
     {
-        string string_path = "Assets/Saves/Villages/village_"+village.village_number.ToString()+".txt";
+        villageData.LoadVillage(village_number);
+        /*string string_path = "Assets/Saves/Villages/village_"+village.village_number.ToString()+".txt";
         if (File.Exists(string_path))
         {
             string loaded_village = File.ReadAllText(string_path);
@@ -206,17 +211,18 @@ public class VillageDataManager : MonoBehaviour
         else
         {
             village.RandomizeNewVillage();
-        }
+        }*/
     }
 
     public void NewVillage(string base_surroundings, int index)
     {
         total_villages++;
+        villageData.NewVillage(base_surroundings, index);
         // Change this so the village ID is the tile number its own and you can access that village from the overworld map.
-        current_village.village_number = index;
+        /*current_village.village_number = index;
         current_village.RandomizeNewVillage(base_surroundings);
         SaveVillage(current_village);
-        SaveData();
+        SaveData();*/
     }
 
     public void CollectTax(string type)

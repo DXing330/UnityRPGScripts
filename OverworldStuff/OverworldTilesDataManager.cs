@@ -449,6 +449,8 @@ public class OverworldTilesDataManager : MonoBehaviour
                 AddEvent("Day "+GameManager.instance.current_day+"; Orcs gather at zone "+i);
             }
         }
+        // When orcs move they may damage minions on the tiles.
+        combatManager.AttackMinions(tile_index, int.Parse(orc_amount[tile_index]));
     }
 
     private void MoveOrcs()

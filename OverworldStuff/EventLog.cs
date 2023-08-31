@@ -26,7 +26,7 @@ public class EventLog : MonoBehaviour
         {
             texts[i].text = "";
         }
-        for (int j = 0; j < texts.Count; j++)
+        for (int j = 0; j < Mathf.Min(all_events.Count, texts.Count); j++)
         {
             if (all_events[j].Length > 6)
             {
