@@ -107,6 +107,7 @@ public class StoryDataManager : MonoBehaviour
         {
             current_deadline += 60;
             UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+            GameManager.instance.hud.Unfade();
             if (CheckPayment())
             {
                 Success();

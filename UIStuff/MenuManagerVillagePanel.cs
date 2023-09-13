@@ -134,6 +134,8 @@ public class MenuManagerVillagePanel : MonoBehaviour
                 return Color.yellow;
             case "mountains":
                 return Color.grey;
+            case "cave":
+                return Color.grey;
             case "lake":
                 return Color.blue;
             case "forest":

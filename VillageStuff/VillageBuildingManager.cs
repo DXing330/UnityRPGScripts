@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class VillageBuildingManager : MonoBehaviour
 {
+    public string configData;
     protected string building;
     private string[] building_info;
     private string loaded_data;
@@ -24,7 +25,29 @@ public class VillageBuildingManager : MonoBehaviour
 
     public void LoadData()
     {
-        if (File.Exists("Assets/Config/all_buildings.txt"))
+        loaded_data = configData;
+        loaded_buildings = loaded_data.Split("#").ToList();
+        all_buildings.Clear();
+        all_prerequisites.Clear();
+        all_worker_limit.Clear();
+        all_outputs.Clear();
+        all_specials.Clear();
+        all_special_amounts.Clear();
+        all_flavor_texts.Clear();
+        all_costs.Clear();
+        for (int i = 0; i < loaded_buildings.Count; i++)
+        {
+            building_info = loaded_buildings[i].Split("$");
+            all_buildings.Add(building_info[0]);
+            all_prerequisites.Add(building_info[1]);
+            all_worker_limit.Add(building_info[2]);
+            all_outputs.Add(building_info[3]);
+            all_specials.Add(building_info[4]);
+            all_special_amounts.Add(building_info[5]);
+            all_flavor_texts.Add(building_info[6]);
+            all_costs.Add(building_info[7]);
+        }
+        /*if (File.Exists("Assets/Config/all_buildings.txt"))
         {
             loaded_data = File.ReadAllText("Assets/Config/all_buildings.txt");
             loaded_buildings = loaded_data.Split("#").ToList();
@@ -48,11 +71,7 @@ public class VillageBuildingManager : MonoBehaviour
                 all_flavor_texts.Add(building_info[6]);
                 all_costs.Add(building_info[7]);
             }
-        }
-        else
-        {
-            Debug.Log("File Missing");
-        }
+        }*/
     }
 
     public List<int> PotentialBuildings(string area)
@@ -93,9 +112,9 @@ public class VillageBuildingManager : MonoBehaviour
                     case 1:
                         return "plains";
                     case 2:
-                        return "forest";
+                        return "plains";
                     case 3:
-                        return "mountain";
+                        return "forest";
                     case 4:
                         return "lake";
                 }
@@ -108,7 +127,7 @@ public class VillageBuildingManager : MonoBehaviour
                     case 1:
                         return "forest";
                     case 2:
-                        return "plains";
+                        return "forest";
                     case 3:
                         return "plains";
                     case 4:
@@ -136,11 +155,11 @@ public class VillageBuildingManager : MonoBehaviour
                     case 0:
                         return "mountain";
                     case 1:
-                        return "lake";
-                    case 2:
-                        return "mountain";
-                    case 3:
                         return "cave";
+                    case 2:
+                        return "forest";
+                    case 3:
+                        return "lake";
                     case 4:
                         return "desert";
                 }
@@ -155,7 +174,7 @@ public class VillageBuildingManager : MonoBehaviour
                     case 2:
                         return "lake";
                     case 3:
-                        return "lake";
+                        return "forest";
                     case 4:
                         return "plains";
                 }

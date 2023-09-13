@@ -16,10 +16,10 @@ public class MenuManagerWeapons : MonoBehaviour
     {
         int wl0 = int.Parse(GameManager.instance.weapon.weapon_levels_list[0]);
         int wl1 = int.Parse(GameManager.instance.weapon.weapon_levels_list[1]);
-        int wl2 = int.Parse(GameManager.instance.weapon.weapon_levels_list[2]);
+        //int wl2 = int.Parse(GameManager.instance.weapon.weapon_levels_list[2]);
         weapon_level_0.text = wl0.ToString();
         weapon_level_1.text = wl1.ToString();
-        weapon_level_2.text = wl2.ToString();
+        //weapon_level_2.text = wl2.ToString();
         switch (selected_weapon)
         {
             case 0:
@@ -29,7 +29,7 @@ public class MenuManagerWeapons : MonoBehaviour
                 weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl1*wl1).ToString()+"Gold+"+(wl1*wl1).ToString()+"Mats)";
                 break;
             case 2:
-                weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl2*wl2).ToString()+"Gold+"+(wl2*wl2).ToString()+"Mats)";
+                //weapon_upgrade_cost.text = "Upgrade" +"\n" + "("+(wl2*wl2).ToString()+"Gold+"+(wl2*wl2).ToString()+"Mats)";
                 break;
         }
         UpdateEquippedText(selected_weapon);
@@ -52,12 +52,20 @@ public class MenuManagerWeapons : MonoBehaviour
 
     public void EquipWeapon()
     {
+        if (selected_weapon < 0)
+        {
+            return;
+        }
         GameManager.instance.PickWeaponType(selected_weapon);
         UpdateEquippedText(selected_weapon);
     }
 
     public void UpgradeWeapon()
     {
+        if (selected_weapon < 0)
+        {
+            return;
+        }
         if (GameManager.instance.UpgradeWeapon(selected_weapon))
         {
             UpdateMenuInfo();

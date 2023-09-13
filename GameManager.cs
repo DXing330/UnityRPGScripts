@@ -419,12 +419,26 @@ public class GameManager : MonoBehaviour
         OnManaChange();
         bag.DropItems();
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+        hud.Unfade();
         if (interactableTextManager.showing)
         {
             ClearInteractableText();
         }
         ShowInteractableText("You were defeated but I dragged you back, a little time regenerating in your coffin and you're as good as new.", "Spirit Guardian Blaty");
-        NewDay();
+        // Normally you sleep for around a week but you'll be woken before the deadline if the deadline is sooner than your sleepy time.
+        int time_til_deadline = story.ReturnDeadlineDate() - current_day;
+        if (time_til_deadline <= 0)
+        {
+            story.CheckTime();
+        }
+        else
+        {
+            int sleepy_time = Mathf.Min(time_til_deadline ,UnityEngine.Random.Range(1, 6));
+            for (int i = 0; i < sleepy_time; i++)
+            {
+                NewDay();
+            }
+        }
         SaveState();
     }
 
@@ -478,6 +492,7 @@ public class GameManager : MonoBehaviour
         player.Reset();
         UpdateHlthManaStam();
         familiar.Reset();
+        weapon.Reset();
         experience = 0;
         current_day = 1;
         summons.LoadData();

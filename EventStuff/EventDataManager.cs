@@ -7,6 +7,18 @@ using UnityEngine;
 public class EventDataManager : MonoBehaviour
 {
     private int detail_index = 0;
+    public string eventUnowned;
+    public string eventPlains;
+    public string eventForest;
+    public string eventMountain;
+    public string eventDesert;
+    public string eventLake;
+    public string conID;
+    public string conDetails;
+    public string rewID;
+    public string rewDetails;
+    public string punID;
+    public string punDetails;
     protected string raw_data;
     protected string save_string;
     protected int story_progress;
@@ -32,13 +44,36 @@ public class EventDataManager : MonoBehaviour
     public void SaveData()
     {
         save_string = GameManager.instance.ConvertListToString(possible_overworld_events);
-        File.WriteAllText("Assets/Events/unlocked_exploring.txt", save_string);
     }
 
     [ContextMenu("Load")]
     public void LoadData()
     {
-        if (File.Exists("Assets/Events/unlocked_exploring.txt"))
+        raw_data = eventUnowned;
+        explore_overworld_events = raw_data.Split("$").ToList();
+        raw_data = eventPlains;
+        explore_plains_events = raw_data.Split("$").ToList();
+        raw_data = eventForest;
+        explore_forest_events = raw_data.Split("$").ToList();
+        raw_data = eventMountain;
+        explore_mountain_events = raw_data.Split("$").ToList();
+        raw_data = eventLake;
+        explore_lake_events = raw_data.Split("$").ToList();
+        raw_data = eventDesert;
+        explore_desert_events = raw_data.Split("$").ToList();
+        raw_data = conID;
+        condition_ID = raw_data.Split("#").ToList();
+        raw_data = conDetails;
+        condition_details = raw_data.Split("#").ToList();
+        raw_data = rewID;
+        reward_ID = raw_data.Split("#").ToList();
+        raw_data = rewDetails;
+        reward_details = raw_data.Split("#").ToList();
+        raw_data = punID;
+        punish_ID = raw_data.Split("#").ToList();
+        raw_data = punDetails;
+        punish_details = raw_data.Split("#").ToList();
+        /*if (File.Exists("Assets/Events/unlocked_exploring.txt"))
         {
             raw_data = File.ReadAllText("Assets/Events/unlocked_exploring.txt");
             possible_overworld_events = raw_data.Split("|").ToList();
@@ -70,7 +105,7 @@ public class EventDataManager : MonoBehaviour
         reward_details = raw_data.Split("#").ToList();raw_data = File.ReadAllText("Assets/Events/Config/punish_ID.txt");
         punish_ID = raw_data.Split("#").ToList();
         raw_data = File.ReadAllText("Assets/Events/Config/punish_details.txt");
-        punish_details = raw_data.Split("#").ToList();
+        punish_details = raw_data.Split("#").ToList();*/
     }
 
     public void PickEvent(string type)

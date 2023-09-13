@@ -23,6 +23,13 @@ public class Weapon : Collideable
     // Swing
     public Animator animator;
 
+    public void Reset()
+    {
+        weapon_type = 0;
+        weapon_levels = "1|1|1";
+        weapon_levels_list = weapon_levels.Split("|");
+    }
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();

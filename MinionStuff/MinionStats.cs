@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class MinionStats : MonoBehaviour
 {
+    public string configData;
     private string data;
     private int m_index;
     public int total_types = 0;
@@ -20,12 +21,13 @@ public class MinionStats : MonoBehaviour
 
     public void LoadData()
     {
-        if (!File.Exists("Assets/Config/all_minions.txt"))
+        data = configData;
+        /*if (!File.Exists("Assets/Config/all_minions.txt"))
         {
             Debug.Log("No minion base stat data.");
             return;
         }
-        data = File.ReadAllText("Assets/Config/all_minions.txt");
+        data = File.ReadAllText("Assets/Config/all_minions.txt");*/
         string[] data_blocks = data.Split("#");
         types = data_blocks[0].Split("|").ToList();
         max_movement = data_blocks[1].Split("|").ToList();

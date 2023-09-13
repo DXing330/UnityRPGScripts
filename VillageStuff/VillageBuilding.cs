@@ -51,29 +51,29 @@ public class VillageBuilding : MonoBehaviour
         }
         if (amount == 0)
         {
-            return "0|None";
+            return "0|none";
         }
         else
         {
             switch (index)
             {
                 case 0:
-                    output_type = "Blood";
+                    output_type = "blood";
                     break;
                 case 1:
-                    output_type = "Settlers";
+                    output_type = "settlers";
                     break;
                 case 2:
-                    output_type = "Mana";
+                    output_type = "mana";
                     break;
                 case 3:
-                    output_type = "Gold";
+                    output_type = "gold";
                     break;
                 case 4:
-                    output_type = "Food";
+                    output_type = "food";
                     break;
                 case 5:
-                    output_type = "Mats";
+                    output_type = "mats";
                     break;
             }
         }

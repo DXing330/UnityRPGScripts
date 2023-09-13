@@ -41,6 +41,7 @@ public class OverworldSceneManager : MonoBehaviour
             tilesData.ClearTile(location);
             GameManager.instance.ReturnHome();
             UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+            GameManager.instance.hud.Unfade();
         }
     }
 }
