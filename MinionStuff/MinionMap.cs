@@ -64,7 +64,7 @@ public class MinionMap : MonoBehaviour
         healthText.text = "Health: "+minionData.currentMinion.health+"/"+minionData.currentMinion.max_health;
         moveText.text = "Movement: "+minionData.currentMinion.movement;
         energyText.text = "Energy: "+minionData.currentMinion.energy+"/"+minionData.currentMinion.max_energy;;
-        locationText.text = "Location: "+(minionData.currentMinion.location+1);
+        locationText.text = "Location: "+overworld_tiles.ReturnTileRowColumn(minionData.currentMinion.location);
         UpdateAction();
         UpdateRestOption();
         UpdateLocation();

@@ -126,7 +126,16 @@ public class MenuManagerVillageBuilding : MonoBehaviour
         }
         else
         {
-            upgrade_cost.text = "Upgrade" +"\n" + "("+(cost_to_upgrade[0])+"Gold+"+(cost_to_upgrade[1])+"Mats+"+(cost_to_upgrade[2])+"Mana)";
+            upgrade_cost.text = "Upgrade"+"\n";
+            if (int.Parse(cost_to_upgrade[0]) > 0)
+            {
+                upgrade_cost.text += (cost_to_upgrade[0])+"Gold+";
+            }
+            if (int.Parse(cost_to_upgrade[1]) > 0)
+            {
+                upgrade_cost.text += (cost_to_upgrade[1])+"Mats+";
+            }
+            upgrade_cost.text += (cost_to_upgrade[2])+"Mana)";
         }
     }
 

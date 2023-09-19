@@ -7,10 +7,11 @@ using UnityEngine;
 public class VillageBuildingManager : MonoBehaviour
 {
     public string configData;
+    public string passiveData;
     protected string building;
     private string[] building_info;
     private string loaded_data;
-    private List<string> loaded_buildings;
+    private List<string> loaded_details;
     public List<int> potential_buildings;
     public List<string> unlocked_buildings;
     public List<string> building_prerequisites;
@@ -22,11 +23,15 @@ public class VillageBuildingManager : MonoBehaviour
     public List<string> all_special_amounts;
     public List<string> all_flavor_texts;
     public List<string> all_costs;
+    public List<string> all_passives;
+    public List<string> all_passive_amounts;
+    public List<string> passive_keys;
+    public List<string> passive_values;
 
     public void LoadData()
     {
         loaded_data = configData;
-        loaded_buildings = loaded_data.Split("#").ToList();
+        loaded_details = loaded_data.Split("#").ToList();
         all_buildings.Clear();
         all_prerequisites.Clear();
         all_worker_limit.Clear();
@@ -35,9 +40,13 @@ public class VillageBuildingManager : MonoBehaviour
         all_special_amounts.Clear();
         all_flavor_texts.Clear();
         all_costs.Clear();
-        for (int i = 0; i < loaded_buildings.Count; i++)
+        for (int i = 0; i < loaded_details.Count; i++)
         {
-            building_info = loaded_buildings[i].Split("$");
+            if (loaded_details[i].Length < 6)
+            {
+                continue;
+            }
+            building_info = loaded_details[i].Split("$");
             all_buildings.Add(building_info[0]);
             all_prerequisites.Add(building_info[1]);
             all_worker_limit.Add(building_info[2]);
@@ -46,6 +55,22 @@ public class VillageBuildingManager : MonoBehaviour
             all_special_amounts.Add(building_info[5]);
             all_flavor_texts.Add(building_info[6]);
             all_costs.Add(building_info[7]);
+            all_passives.Add(building_info[8]);
+            all_passive_amounts.Add(building_info[9]);
+        }
+        passive_keys.Clear();
+        passive_values.Clear();
+        loaded_data = passiveData;
+        loaded_details = loaded_data.Split("#").ToList();
+        for (int i = 0; i < loaded_details.Count; i++)
+        {
+            if (loaded_details[i].Length < 6)
+            {
+                continue;
+            }
+            building_info = loaded_details[i].Split("=");
+            passive_keys.Add(building_info[0]);
+            passive_values.Add(building_info[1]);
         }
         /*if (File.Exists("Assets/Config/all_buildings.txt"))
         {
@@ -181,5 +206,15 @@ public class VillageBuildingManager : MonoBehaviour
                 return "lake";
         }
         return "plains";
+    }
+
+    public string ReturnPassiveOutputs(string key)
+    {
+        int index = passive_keys.IndexOf(key);
+        if (index == -1)
+        {
+            return "0|0|0|0|0|0|0|0";
+        }
+        return passive_values[index];
     }
 }

@@ -106,7 +106,7 @@ public class ExploreMenu : MonoBehaviour
     {
         current_tile = overworld_tiles.current_tile;
         c_tile_owner = overworld_tiles.tile_owner[current_tile];
-        current_tile_number.text = (1 + current_tile).ToString();
+        current_tile_number.text = overworld_tiles.ReturnTileRowColumn(current_tile);
         current_night.text = GameManager.instance.current_day.ToString();
         DetermineColumn();
         DetermineRow();

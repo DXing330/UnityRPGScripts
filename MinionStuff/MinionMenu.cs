@@ -7,6 +7,7 @@ public class MinionMenu : MonoBehaviour
 {
     public Animator animator;
     private MinionDataManager minionData;
+    private OverworldTilesDataManager overworldTiles;
     public List<Text> info_texts;
     public List<GameObject> info_buttons;
     private int current_info_page = 0;
@@ -17,6 +18,7 @@ public class MinionMenu : MonoBehaviour
     void Start()
     {
         minionData = GameManager.instance.all_minions;
+        overworldTiles = GameManager.instance.tiles;
     }
 
     public void Return()
@@ -68,7 +70,7 @@ public class MinionMenu : MonoBehaviour
 
     private void UpdateMinionInfoByIndex(int index, int i)
     {
-        info_texts[i].text = minionData.minion_types[index]+"; Location: "+(int.Parse(minionData.minion_locations[index])+1);
+        info_texts[i].text = minionData.minion_types[index]+"; Location: "+overworldTiles.ReturnTileRowColumn(int.Parse(minionData.minion_locations[index]));
         //"\n"+"Health: "+minionData.minion_health[index]+"; Movement: "+minionData.movement[index]+"; Energy: "+minionData.minion_energy[index];
     }
 

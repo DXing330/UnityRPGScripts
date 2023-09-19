@@ -117,6 +117,27 @@ public class VillageBuilding : MonoBehaviour
         return special;
     }
 
+    public string GetPassiveEffects(string building_name)
+    {
+        string passive = "";
+        ResetBIndex(building_name);
+        if (b_index == -1)
+        {
+            return "None|0";
+        }
+        if (building_data.all_passives[b_index] == "None")
+        {
+            return "None|0";
+        }
+        passive += building_data.all_passives[b_index]+"|"+building_data.all_passive_amounts[b_index];
+        return passive;
+    }
+
+    public string ReturnPassiveOutputs(string passive)
+    {
+        return building_data.ReturnPassiveOutputs(passive);
+    }
+
     public string DetermineCost(string building_name)
     {
         ResetBIndex(building_name);

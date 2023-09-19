@@ -199,12 +199,12 @@ public class Village : MonoBehaviour
         }
         int growth_rate = 0;
         // People want food.
-        growth_rate += food_supply - population;
+        growth_rate += Mathf.Min(population, food_supply - population);
         // People want to feel good.
-        growth_rate += population - fear;
-        growth_rate += population - discontentment;
+        growth_rate += Mathf.Min(population, population - fear);
+        growth_rate += Mathf.Min(population, population - discontentment);
         // Average growth needs balancing.
-        int rng = Random.Range(0, 21);
+        int rng = Random.Range(0, population + 13);
         if (growth_rate > rng)
         {
             return true;
@@ -212,7 +212,6 @@ public class Village : MonoBehaviour
         return false;
     }
 
-    // If there's enough food, more people are made, otherwise people die/leave.
     protected void PopulationGrowth()
     {
         // Population adjusts randomly based on food supply and satisfaction.
@@ -228,7 +227,7 @@ public class Village : MonoBehaviour
             {
                 discontentment++;
             }
-            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" gains population.");
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+GameManager.instance.tiles.ReturnTileRowColumn(village_number)+" gains population.");
         }
     }
 
@@ -427,7 +426,7 @@ public class Village : MonoBehaviour
         {
             fear -= population;
             PopulationLoss();
-            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people fleeing.");
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+GameManager.instance.tiles.ReturnTileRowColumn(village_number)+" has people fleeing.");
             // This doesn't look good for merchants.
             merchant_reputation--;
         }
@@ -443,7 +442,7 @@ public class Village : MonoBehaviour
             discontentment -= population;
             PopulationLoss();
             AddEvent("bandits|7");
-            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+(village_number+1).ToString()+" has people turning to banditry.");
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+GameManager.instance.tiles.ReturnTileRowColumn(village_number)+" has people turning to banditry.");
             // This doesn't look good for merchants.
             merchant_reputation--;
         }
@@ -502,6 +501,7 @@ public class Village : MonoBehaviour
         // Reset defense every time as well, need to keep assigning defenders to keep the defense level up.
         defense_level = 0;
         GetBuildingProducts();
+        GetPassiveProducts();
         // Unassigned people gather food for themselves.
         gathered_food += population - assigned_buildings.Count;
         // People who don't work are happier.
@@ -669,6 +669,29 @@ public class Village : MonoBehaviour
         }
     }
 
+    protected void GetPassiveProducts()
+    {
+        for (int i = 0; i < buildings.Count; i++)
+        {
+            if (buildings[i] == surroundings[i])
+            {
+                continue;
+            }
+            string passive_effect = villagebuilding.GetPassiveEffects(buildings[i]);
+            AddPassiveBuildingProducts(passive_effect);
+        }
+    }
+
+    protected void AddPassiveBuildingProducts(string passive)
+    {
+        string[] passive_details = passive.Split("|");
+        if (passive_details[0] == "None")
+        {
+            return;
+        }
+        AddBuildingProducts(villagebuilding.ReturnPassiveOutputs(passive_details[0]));
+    }
+
     protected void UpdateBuildingExperience(int area)
     {
         // Make sure there is actually a building there.
@@ -707,15 +730,25 @@ public class Village : MonoBehaviour
     protected void AddSpecialBuildingProducts(string product)
     {
         string[] special_amount = product.Split("|");
+        int amount = int.Parse(special_amount[1]);
         switch (special_amount[0])
         {
             case "None":
                 break;
             case "Defense":
-                gathered_defense += int.Parse(special_amount[1]);
+                gathered_defense += amount;
                 break;
             case "Population":
-                population += int.Parse(special_amount[1]);
+                population += amount;
+                break;
+            case "Monsters":
+                AddEvent("monsters|"+amount);
+                break;
+            case "Bandits":
+                AddEvent("bandits|"+amount);
+                break;
+            case "Traders":
+                AddEvent("traders|"+amount);
                 break;
         }
     }
@@ -738,9 +771,16 @@ public class Village : MonoBehaviour
                 events.RemoveAt(i);
             }
         }
-        if (events.Contains("bandits"))
+        for (int i = 0; i < events.Count; i++)
         {
-            Robbed(Random.Range(-1, buildings.Count));
+            if (events[i] == "bandits")
+            {
+                Robbed(Random.Range(-1, buildings.Count));
+            }
+            if (events[i] == "monsters")
+            {
+                ReceiveAttack(1, Random.Range(-1, buildings.Count));
+            }
         }
     }
 
@@ -767,6 +807,7 @@ public class Village : MonoBehaviour
             accumulated_gold = 0;
             food_supply = food_supply/2;
             accumulated_materials = accumulated_materials/2;
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+GameManager.instance.tiles.ReturnTileRowColumn(village_number)+" was robbed.");
             return;
         }
         if (buildings[area] == surroundings[area])
@@ -805,6 +846,8 @@ public class Village : MonoBehaviour
         if (area == -1)
         {
             strength -= population;
+            PopulationLoss();
+            GameManager.instance.tiles.AddEvent("Day "+GameManager.instance.current_day.ToString()+": Village at zone "+GameManager.instance.tiles.ReturnTileRowColumn(village_number)+" was attacked.");
         }
         strength -= defense_level;
         if (strength > 0)

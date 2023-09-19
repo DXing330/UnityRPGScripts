@@ -409,7 +409,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             rng = Random.Range(0, owned_tiles.Count);
             int location_index = int.Parse(owned_tiles[rng]);
-            AddEvent("Day "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+(location_index+1).ToString());
+            AddEvent("Day "+GameManager.instance.current_day.ToString()+"; Traders arrive at zone "+ReturnTileRowColumn(location_index));
             village_to_add_events.Load(location_index);
             village_to_add_events.AddEvent("traders|5");
             temporarily_visible.Clear();
@@ -430,7 +430,7 @@ public class OverworldTilesDataManager : MonoBehaviour
 
     private void CombineOrcs(int tile_index, int amount = 1)
     {
-        int i = tile_index + 1;
+        string i = ReturnTileRowColumn(tile_index);
         if (tile_owner[tile_index] == "None")
         {
             tile_owner[tile_index] = "Orc";
@@ -467,7 +467,7 @@ public class OverworldTilesDataManager : MonoBehaviour
             {
                 if (tile_owner[adjacent_tiles[j]] == "You")
                 {
-                    AddEvent("Day "+GameManager.instance.current_day.ToString()+"; Orcs attack village "+(adjacent_tiles[j]+1).ToString());
+                    AddEvent("Day "+GameManager.instance.current_day.ToString()+"; Orcs attack village "+ReturnTileRowColumn(adjacent_tiles[j]));
                     combatManager.OrcAttackVillage(int.Parse(orc_tiles[i]), adjacent_tiles[j]);
                     break;
                 }
@@ -623,6 +623,11 @@ public class OverworldTilesDataManager : MonoBehaviour
         int horz_dist = Mathf.Abs(column_one-column_two);
         int vert_dist = Mathf.Abs(row_one-row_two);
         return  (horz_dist + vert_dist);
+    }
+
+    public string ReturnTileRowColumn(int tile_num)
+    {
+        return (DetermineTileRow(tile_num)+1)+"-"+(DetermineTileCol(tile_num)+1);
     }
 
     public int DetermineTileRow(int tile_num)
