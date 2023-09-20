@@ -496,7 +496,7 @@ public class OverworldTilesDataManager : MonoBehaviour
         {
             tiles_visible.Clear();
         }
-        tiles_explored = no_tiles_explored;
+        tiles_explored = new List<string>(no_tiles_explored);
     }
 
     private void DetermineVisibleTiles()
