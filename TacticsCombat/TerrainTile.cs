@@ -7,10 +7,21 @@ public class TerrainTile : MonoBehaviour
 {
     public int cType;
     public Image tileImage;
+    public Image actorImage;
 
     public void SetType(int newType)
     {
         cType = newType;
+    }
+
+    public void ResetImage()
+    {
+        actorImage.sprite = null;
+    }
+
+    public void UpdateImage(Sprite newActor)
+    {
+        actorImage.sprite = newActor;
     }
 
     public void UpdateColor(int type)
@@ -40,9 +51,9 @@ public class TerrainTile : MonoBehaviour
         }
     }
 
-    public int ReturnMoveCost(int type)
+    public int ReturnMoveCost(int type, int occupied = 0)
     {
-        if (type < 0)
+        if (type < 0 || occupied > 0)
         {
             return 999;
         }
