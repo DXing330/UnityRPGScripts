@@ -15,9 +15,9 @@ public class TerrainType : MonoBehaviour
 
     enum moveTypes
     {
-        march = 0;
-        fly = 1;
-        ride = 2;
-        swim = 3;
-    }
+        march = 0,
+        fly = 1,
+        ride = 2,
+        swim = 3
+    };
 }

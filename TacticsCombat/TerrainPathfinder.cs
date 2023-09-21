@@ -35,7 +35,7 @@ public class TerrainPathfinder : MonoBehaviour
         for (int i = 0; i < fullSize * fullSize; i++)
         {
             moveCostList.Add(terrainTile.ReturnMoveCost(terrainInfo[i], newOccupied[i]));
-            flyingMoveCosts.Add(terrainTile.ReturnFlyingMoveCost(terrainInfo[i], newOccupied[i]))
+            flyingMoveCosts.Add(terrainTile.ReturnFlyingMoveCost(terrainInfo[i], newOccupied[i]));
         }
     }
 
@@ -72,7 +72,7 @@ public class TerrainPathfinder : MonoBehaviour
         for (int i = 0; i < fullSize * fullSize; i++)
         {
             moveCostList.Add(terrainTile.ReturnMoveCost(terrainInfo[i], newOccupied[i]));
-            flyingMoveCosts.Add(terrainTile.ReturnFlyingMoveCost(terrainInfo[i], newOccupied[i]))
+            flyingMoveCosts.Add(terrainTile.ReturnFlyingMoveCost(terrainInfo[i], newOccupied[i]));
         }
     }
 
