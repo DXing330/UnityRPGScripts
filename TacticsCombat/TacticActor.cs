@@ -7,15 +7,23 @@ public class TacticActor : MonoBehaviour
 {
     // 0 is player's team, other teams are NPCs.
     public int team = 0;
+    // Race/class/etc.
+    public int type = 0;
     public int locationIndex;
     //private int movementType = 0;
     public int health;
     public int maxHealth = 6;
-    private int maxMovement = 3;
+    private int initiative = 0;
+    private int maxMovement = 4;
+    private int maxAttacks = 1;
+    private int attacksLeft;
+    public int attackRange = 1;
+    private int attackDamage = 1;
     public int movement;
-    public int destinationIndex;
+    private int destinationIndex;
+    private TacticActor attackTarget;
     public Image image;
-    private List<int> currentPath;
+    public List<int> currentPath;
     public TerrainMap terrainMap;
 
     void Start()
@@ -44,6 +52,43 @@ public class TacticActor : MonoBehaviour
         }
     }
 
+    public void RegainHealth(int amount)
+    {
+        health += amount;
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+    }
+
+    private void Attack(TacticActor target)
+    {
+        // Check if target is in attack range?
+        target.ReceiveDamage(attackDamage);
+    }
+
+    private void AttackTarget()
+    {
+        while (attacksLeft > 0)
+        {
+            Attack(attackTarget);
+            attacksLeft--;
+        }
+    }
+
+    private void AttackAction()
+    {
+        if (terrainMap.pathFinder.CalculateDistance(locationIndex, attackTarget.locationIndex) <= attackRange)
+        {
+            AttackTarget();
+        }
+    }
+
+    private void UpdateTarget(TacticActor newTarget)
+    {
+        attackTarget = newTarget;
+    }
+
     public void SetMap(TerrainMap newMap)
     {
         terrainMap = newMap;
@@ -56,24 +101,32 @@ public class TacticActor : MonoBehaviour
 
     public void NPCStartTurn()
     {
-        movement = maxMovement;
+        StartTurn();
         // Pick a target, based on goals.
         CheckGoal();
         GetPath();
         MoveAction();
-        // Do an attack action or something.
+        //AttackAction();
+    }
+
+    public void StartTurn()
+    {
+        movement = maxMovement;
+        attacksLeft = maxAttacks;
     }
 
     private void CheckGoal()
     {
-        // Randomly move around.
+        // Randomly move around if you don't have a target.
         if (terrainMap.CheckAdjacency(locationIndex, destinationIndex))
         {
-            UpdateTargetDest(terrainMap.RandomDestination(locationIndex));
+            UpdateDest(terrainMap.RandomDestination(locationIndex));
         }
+        // Attack your target if you have one.
+        // If you're injured then start looking for targets? Depends on the type of AI.
     }
 
-    public void UpdateTargetDest(int newDest)
+    public void UpdateDest(int newDest)
     {
         destinationIndex = newDest;
     }
@@ -87,6 +140,7 @@ public class TacticActor : MonoBehaviour
         if (Moveable())
         {
             MoveAction();
+            terrainMap.UpdateOnActorTurn();
         }
     }
 

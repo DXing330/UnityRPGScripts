@@ -8,10 +8,24 @@ public class TerrainTile : MonoBehaviour
     public int cType;
     public Image tileImage;
     public Image actorImage;
+    public Image highlight;
+    public Text text;
+    // Show the border when you're trying to select a tile.
+    public Image border;
 
     public void SetType(int newType)
     {
         cType = newType;
+    }
+
+    public void ResetText()
+    {
+        text.text = "";
+    }
+
+    public void UpdateText(string newText)
+    {
+        text.text = newText;
     }
 
     public void ResetImage()
@@ -24,31 +38,56 @@ public class TerrainTile : MonoBehaviour
         actorImage.sprite = newActor;
     }
 
+    public void ResetHighlight()
+    {
+        Color tempColor = Color.white;
+        tempColor.a = 0f;
+        highlight.color = tempColor;
+    }
+
+    public void Highlight(bool blue = true)
+    {
+        Color tempColor = Color.blue;
+        if (!blue)
+        {
+            tempColor = Color.red;
+        }
+        tempColor.a = 0.66f;
+        highlight.color = tempColor;
+    }
+
     public void UpdateColor(int type)
     {
+        Color tempColor = Color.white;
+        tempColor.a = 0.5f;
         if (type < 0)
         {
-            tileImage.color = Color.black;
+            tempColor = Color.black;
+            tempColor.a = 1f;
+            tileImage.color = tempColor;
             return;
         }
         switch (type)
         {
             case 0:
-                tileImage.color = Color.green;
+                tempColor = Color.green;
+                tempColor.a = 0.3f;
                 break;
             case 1:
-                tileImage.color = Color.green;
+                tempColor = Color.green;
+                tempColor.a = 0.8f;
                 break;
             case 2:
-                tileImage.color = Color.grey;
+                tempColor = Color.grey;
                 break;
             case 3:
-                tileImage.color = Color.blue;
+                tempColor = Color.blue;
                 break;
             case 4:
-                tileImage.color = Color.yellow;
+                tempColor = Color.yellow;
                 break;
         }
+        tileImage.color = tempColor;
     }
 
     public int ReturnMoveCost(int type, int occupied = 0)
@@ -71,5 +110,24 @@ public class TerrainTile : MonoBehaviour
                 return 1;
         }
         return 999;
+    }
+
+    // Maybe make it so fliers can share tiles with other units.
+    public int ReturnFlyingMoveCost(int type, int occupied = 0)
+    {
+        switch (type)
+        {
+            case 0:
+                return 1;
+            case 1:
+                return 1;
+            case 2:
+                return 1;
+            case 3:
+                return 1;
+            case 4:
+                return 1;
+        }
+        return 1;
     }
 }

@@ -14,6 +14,7 @@ public class TerrainPathfinder : MonoBehaviour
     public List<int> actualPath;
     // Stores the move cost for each tile.
     public List<int> moveCostList;
+    public List<int> flyingMoveCosts;
     // Occupied tiles adjust move cost.
     public List<int> occupiedTiles;
     private int fullSize;
@@ -22,6 +23,8 @@ public class TerrainPathfinder : MonoBehaviour
     public List<int> distances;
     // Shortest path tree.
     public List<int> checkedTiles;
+    // Reachable tiles.
+    public List<int> reachableTiles;
 
     public void SetTerrainInfo(List<int> newTerrain, int size, List<int> newOccupied)
     {
@@ -32,16 +35,33 @@ public class TerrainPathfinder : MonoBehaviour
         for (int i = 0; i < fullSize * fullSize; i++)
         {
             moveCostList.Add(terrainTile.ReturnMoveCost(terrainInfo[i], newOccupied[i]));
+            flyingMoveCosts.Add(terrainTile.ReturnFlyingMoveCost(terrainInfo[i], newOccupied[i]))
         }
     }
 
     private void ResetHeap()
     {
         heap.Reset();
-        heap.InitialCapacity(fullSize * fullSize * 2);
+        heap.InitialCapacity(fullSize * fullSize);
+    }
+
+    private void ResetDistances(int startIndex)
+    {
+        ResetHeap();
+        distances.Clear();
         for (int i = 0; i < fullSize * fullSize; i++)
         {
-            heap.AddNodeWeight(i, distances[i]);
+            // At the start no idea what tile leads to what.
+            savedPathList.Add(-1);
+            if (i == startIndex)
+            {
+                // Starting tile is always distance zero.
+                distances.Add(0);
+                heap.AddNodeWeight(startIndex, 0);
+                continue;
+            }
+            // Other tiles are considered far away.
+            distances.Add(bigInt);
         }
     }
 
@@ -52,6 +72,7 @@ public class TerrainPathfinder : MonoBehaviour
         for (int i = 0; i < fullSize * fullSize; i++)
         {
             moveCostList.Add(terrainTile.ReturnMoveCost(terrainInfo[i], newOccupied[i]));
+            flyingMoveCosts.Add(terrainTile.ReturnFlyingMoveCost(terrainInfo[i], newOccupied[i]))
         }
     }
 
@@ -59,27 +80,14 @@ public class TerrainPathfinder : MonoBehaviour
     public List<int> FindPathIndex(int startIndex, int destIndex)
     {
         checkedTiles.Clear();
-        distances.Clear();
         savedPathList.Clear();
         // Initialize distances and previous tiles.
-        for (int i = 0; i < fullSize * fullSize; i++)
-        {
-            // At the start no idea what tile leads to what.
-            savedPathList.Add(-1);
-            if (i == startIndex)
-            {
-                // Starting tile is always distance zero.
-                distances.Add(0);
-                continue;
-            }
-            // Other tiles are considered far away.
-            distances.Add(bigInt);
-        }
+        ResetDistances(startIndex);
         //ResetHeap();
         // Each loop checks one tile.
-        for (int i = 0; i < fullSize * fullSize; i++)
+        for (int i = 0; i < bigInt; i++)
         {
-            CheckClosestTile(destIndex);
+            CheckClosestTile();
             if (checkedTiles.Contains(destIndex))
             {
                 break;
@@ -98,60 +106,158 @@ public class TerrainPathfinder : MonoBehaviour
         return actualPath;
     }
 
-    private void CheckClosestTile(int destTile)
+    private void CheckClosestTile(bool path = true, int type = 0)
     {
-        //int closestTile = heap.Pull();
-        int closestTile = -1;
-        int closestIndexValue = bigInt;
         // Find the closest tile.
         // This part is where the heap is used making it O(nlgn) instead of O(n^2).
-        for (int i = 0; i < distances.Count; i++)
+        int closestTile = heap.Pull();
+        if (path)
         {
-            if (distances[i] < closestIndexValue && !checkedTiles.Contains(i))
+            while (checkedTiles.Contains(closestTile))
             {
-                closestIndexValue = distances[i];
-                closestTile = i;
+                closestTile = heap.Pull();
             }
+            checkedTiles.Add(closestTile);
         }
-        checkedTiles.Add(closestTile);
+        else
+        {
+            while (reachableTiles.Contains(closestTile))
+            {
+                closestTile = heap.Pull();
+            }
+            reachableTiles.Add(closestTile);
+        }
         AdjacentFromIndex(closestTile);
         for (int i = 0; i < adjacentTiles.Count; i++)
         {
             // If the cost to move to the path from this tile is less than what we've already recorded;
-            if (distances[closestTile]+moveCostList[adjacentTiles[i]] < distances[adjacentTiles[i]])
+            // Based on movement type check a different list.
+            int moveCost = 0;
+            switch (type)
+            {
+                case 0:
+                    moveCost = moveCostList[adjacentTiles[i]];
+                    break;
+                case 1:
+                    moveCost = flyingMoveCosts[adjacentTiles[i]];
+                    break;
+            }
+            if (distances[closestTile]+moveCost < distances[adjacentTiles[i]])
             {
                 // Then update the distance and the previous tile.
-                distances[adjacentTiles[i]] = distances[closestTile]+moveCostList[adjacentTiles[i]];
+                distances[adjacentTiles[i]] = distances[closestTile]+moveCost;
                 //Debug.Log(closestTile);
                 //Debug.Log(adjacentTiles[i]);
-                if (adjacentTiles[i] == destTile)
-                {
-                    Debug.Log(closestTile);
-                }
                 savedPathList[adjacentTiles[i]] = closestTile;
-                //heap.AddNodeWeight(adjacentTiles[i], distances[adjacentTiles[i]]);
+                heap.AddNodeWeight(adjacentTiles[i], distances[adjacentTiles[i]]);
             }
         }
     }
 
-    public void AdjacentFromIndex(int index)
+    public void AdjacentFromIndex(int location)
     {
         adjacentTiles.Clear();
-        if (index%fullSize > 0)
+        if (location%fullSize > 0)
         {
-            adjacentTiles.Add(index-1);
+            adjacentTiles.Add(location-1);
         }
-        if (index%fullSize < fullSize - 1)
+        if (location%fullSize < fullSize - 1)
         {
-            adjacentTiles.Add(index+1);
+            adjacentTiles.Add(location+1);
         }
-        if (index < (fullSize - 1) * fullSize)
+        if (location < (fullSize - 1) * fullSize)
         {
-            adjacentTiles.Add(index+fullSize);
+            adjacentTiles.Add(location+fullSize);
         }
-        if (index > fullSize - 1)
+        if (location > fullSize - 1)
         {
-            adjacentTiles.Add(index-fullSize);
+            adjacentTiles.Add(location-fullSize);
         }
+    }
+
+    public bool DirectionCheck(int location, int direction)
+    {
+        switch (direction)
+        {
+            // Up.
+            case 0:
+                return (location > fullSize - 1);
+            // Right.
+            case 1:
+                return (location%fullSize < fullSize - 1);
+            // Down.
+            case 2:
+                return (location < (fullSize - 1) * fullSize);
+            // Left.
+            case 3:
+                return (location%fullSize > 0);
+        }
+        return false;   
+    }
+
+    public int GetDestination(int location, int direction)
+    {
+        switch (direction)
+        {
+            // Up.
+            case 0:
+                return (location-fullSize);
+            // Right.
+            case 1:
+                return (location+1);
+            // Down.
+            case 2:
+                return (location+fullSize);
+            // Left.
+            case 3:
+                return (location-1);
+        }
+        return location;
+    }
+
+    public List<int> FindTilesInRange(int startIndex, int range, int moveType = 0)
+    {
+        reachableTiles.Clear();
+        if (range <= 0)
+        {
+            return reachableTiles;
+        }
+        ResetDistances(startIndex);
+        int distance = 0;
+        while (distance <= range && reachableTiles.Count < fullSize * fullSize)
+        {
+            distance = heap.PeekWeight();
+            if (distance > range)
+            {
+                break;
+            }
+            CheckClosestTile(false, moveType);
+        }
+        return reachableTiles;
+    }
+
+    public int CalculateDistance(int pointOne, int pointTwo)
+    {
+        int rowOne = GetRow(pointOne);
+        int columnOne = GetColumn(pointOne);
+        int rowTwo = GetRow(pointTwo);
+        int columnTwo = GetColumn(pointTwo);
+        return Mathf.Abs(rowOne-rowTwo)+Mathf.Abs(columnOne-columnTwo);
+    }
+
+    private int GetRow(int location)
+    {
+        int row = 0;
+        while (location >= fullSize)
+        {
+            location -= fullSize;
+            row++;
+        }
+        return row;
+    }
+
+    private int GetColumn(int location)
+    {
+        return location%fullSize;
     }
 }

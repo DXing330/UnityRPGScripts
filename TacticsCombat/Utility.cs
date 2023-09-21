@@ -20,8 +20,8 @@ public class Utility : MonoBehaviour
 
     public void InitialCapacity(int capacity)
     {
-        nodes = new List<int>(new int[capacity * 2]);
-        weights = new List<int>(new int[capacity * 2]);
+        nodes = new List<int>(new int[capacity]);
+        weights = new List<int>(new int[capacity]);
     }
 
     private int getLeftChildIndex(int parentIndex)
@@ -107,6 +107,15 @@ public class Utility : MonoBehaviour
         return nodes[0];
     }
 
+    public int PeekWeight()
+    {
+        if (size == 0)
+        {
+            return -1;
+        }
+        return weights[0];
+    }
+
     public int Pull()
     {
         if (size == 0)
@@ -133,7 +142,7 @@ public class Utility : MonoBehaviour
     private void HeapifyUp()
     {
         int index = size - 1;
-        while (hasParent(index) && parent(index) > nodes[index])
+        while (parent(index) > weights[index])
         {
             Swap(getParentIndex(index), index);
             index = getParentIndex(index);
@@ -143,18 +152,10 @@ public class Utility : MonoBehaviour
     private void HeapifyDown()
     {
         int index = 0;
-        for (int i = 0; i < size; i++)
+        while (hasLeftChild(index))
         {
-            if (index >= size)
-            {
-                break;
-            }
-            if (!hasLeftChild(index))
-            {
-                break;
-            }
             int smallerChildIndex = getLeftChildIndex(index);
-            if (hasRightChild(index) && getRightChildIndex(index) < smallerChildIndex)
+            if (hasRightChild(index) && weights[getRightChildIndex(index)] < weights[smallerChildIndex])
             {
                 smallerChildIndex = getRightChildIndex(index);
             }

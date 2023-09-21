@@ -12,4 +12,12 @@ public class TerrainType : MonoBehaviour
         water = 3,
         desert = 4
     };
+
+    enum moveTypes
+    {
+        march = 0;
+        fly = 1;
+        ride = 2;
+        swim = 3;
+    }
 }
