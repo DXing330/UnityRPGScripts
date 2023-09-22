@@ -113,18 +113,10 @@ public class TerrainPathfinder : MonoBehaviour
         int closestTile = heap.Pull();
         if (path)
         {
-            while (checkedTiles.Contains(closestTile))
-            {
-                closestTile = heap.Pull();
-            }
             checkedTiles.Add(closestTile);
         }
         else
         {
-            while (reachableTiles.Contains(closestTile))
-            {
-                closestTile = heap.Pull();
-            }
             reachableTiles.Add(closestTile);
         }
         AdjacentFromIndex(closestTile);
@@ -233,6 +225,8 @@ public class TerrainPathfinder : MonoBehaviour
             }
             CheckClosestTile(false, moveType);
         }
+        // Don't include your own tile in the reachable tiles.
+        reachableTiles.RemoveAt(0);
         return reachableTiles;
     }
 

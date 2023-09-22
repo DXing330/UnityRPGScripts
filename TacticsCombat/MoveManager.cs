@@ -5,6 +5,12 @@ using UnityEngine;
 public class MoveManager : MonoBehaviour
 {
     public TerrainPathfinder pathfinder;
+    public MoveMenu moveMenu;
+
+    public void UpdateMoveMenu()
+    {
+        moveMenu.UpdateText();
+    }
 
     private bool Moveable(int location, int dest, int movement)
     {

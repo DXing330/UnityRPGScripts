@@ -6,7 +6,7 @@ using TMPro;
 
 public class MenuManagerNavigator : MonoBehaviour
 {
-    public TextMeshProUGUI current_day;
+    public Text current_day;
 
     public void Sleep()
     {

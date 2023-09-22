@@ -16,4 +16,19 @@ public class ActorManager : MonoBehaviour
         newActor.SetMap(terrainMap);
         terrainMap.AddActor(newActor);
     }
+
+    public TacticActor ReturnCurrentTarget()
+    {
+        return terrainMap.ReturnCurrentTarget();
+    }
+
+    public void CurrentActorAttack()
+    {
+        
+    }
+
+    public void ActorAttackActor(TacticActor attacker, TacticActor defender)
+    {
+        attacker.Attack(defender);
+    }
 }

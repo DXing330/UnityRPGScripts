@@ -180,4 +180,9 @@ public class MenuManager : MonoBehaviour
         equip_menu_info.UpdateResistanceTexts();
         equip_menu_info.UpdateStatTexts();
     }
+
+    public void Suicide()
+    {
+        GameManager.instance.GameOver();
+    }
 }

@@ -24,6 +24,7 @@ public class StartMenu : MonoBehaviour
 
     public void Show()
     {
+        Debug.Log("Showing");
         animator.SetTrigger("Show");
     }
 

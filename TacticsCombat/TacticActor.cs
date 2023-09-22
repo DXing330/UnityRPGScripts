@@ -13,11 +13,12 @@ public class TacticActor : MonoBehaviour
     //private int movementType = 0;
     public int health;
     public int maxHealth = 6;
-    private int initiative = 0;
-    private int maxMovement = 4;
-    private int maxAttacks = 1;
+    // Not sure if we need an initiative tracker it might make things more complex.
+    //private int initiative = 0;
+    private int maxMovement = 5;
+    private int maxAttacks = 12;
     private int attacksLeft;
-    public int attackRange = 1;
+    public int attackRange = 3;
     private int attackDamage = 1;
     public int movement;
     private int destinationIndex;
@@ -40,6 +41,7 @@ public class TacticActor : MonoBehaviour
 
     private void Death()
     {
+        terrainMap.RemoveActor(this);
         Destroy(gameObject);
     }
 
@@ -61,10 +63,15 @@ public class TacticActor : MonoBehaviour
         }
     }
 
-    private void Attack(TacticActor target)
+    public void Attack(TacticActor target)
     {
+        if (target ==  null || attacksLeft <= 0)
+        {
+            return;
+        }
         // Check if target is in attack range?
         target.ReceiveDamage(attackDamage);
+        attacksLeft--;
     }
 
     private void AttackTarget()

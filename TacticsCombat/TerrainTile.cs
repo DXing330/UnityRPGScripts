@@ -30,12 +30,18 @@ public class TerrainTile : MonoBehaviour
 
     public void ResetImage()
     {
+        Color tempColor = Color.white;
+        tempColor.a = 0f;
         actorImage.sprite = null;
+        actorImage.color = tempColor;
     }
 
     public void UpdateImage(Sprite newActor)
     {
+        Color tempColor = Color.white;
+        tempColor.a = 0.6f;
         actorImage.sprite = newActor;
+        actorImage.color = tempColor;
     }
 
     public void ResetHighlight()
@@ -45,10 +51,10 @@ public class TerrainTile : MonoBehaviour
         highlight.color = tempColor;
     }
 
-    public void Highlight(bool blue = true)
+    public void Highlight(bool cyan = true)
     {
-        Color tempColor = Color.blue;
-        if (!blue)
+        Color tempColor = Color.cyan;
+        if (!cyan)
         {
             tempColor = Color.red;
         }

@@ -9,13 +9,13 @@ public class TerrainMap : MonoBehaviour
     private int startIndex = 0;
     private int cornerRow;
     private int cornerColumn;
-    private int gridSize = 5;
-    private int fullSize = 6;
+    private int gridSize = 7;
+    public int fullSize = 7;
     private List<int> terrainInfo;
     public List<int> allUnoccupied;
     private List<int> occupiedTiles;
     private List<int> highlightedTiles;
-    private List<int> targetableTiles;
+    public List<int> targetableTiles;
     private int currentTarget = 0;
     public List<int> currentTiles;
     public List<TerrainTile> terrainTiles;
@@ -27,12 +27,13 @@ public class TerrainMap : MonoBehaviour
 
     void Start()
     {
-        GenerateMap(0, 7);
+        GenerateMap(0, fullSize);
         UpdateCenterTile((fullSize * 2) + 2);
         UpdateMap();
         //actorManager.GenerateActor(0, 0, 0);
         GenerateActor(0, 0, 0);
         GenerateActor((fullSize * 2) + 2, 0, 1);
+        GenerateActor((fullSize * fullSize) - 2, 0, 1);
         pathFinder.SetTerrainInfo(terrainInfo, fullSize, occupiedTiles);
         NextTurn();
     }
@@ -44,15 +45,104 @@ public class TerrainMap : MonoBehaviour
 
     public void ActorsTurn()
     {
+        if (actors[turnIndex] == null)
+        {
+            actors.RemoveAt(turnIndex);
+            NextTurn();
+        }
+        moveManager.UpdateMoveMenu();
         pathFinder.UpdateOccupiedTiles(occupiedTiles);
         UpdateCenterTile(actors[turnIndex].locationIndex);
         UpdateMap();
         actors[turnIndex].StartTurn();
-        GetReachableTiles();
         if (actors[turnIndex].team > 0)
         {
             NPCActorsTurn();
         }
+    }
+
+    public void ActorStartMoving()
+    {
+        GetReachableTiles();
+    }
+
+    public void ActorStopMoving()
+    {
+        UpdateCenterTile(actors[turnIndex].locationIndex);
+        UpdateMap();
+    }
+
+    public void ActorStartAttacking()
+    {
+        GetTargetableTiles(actors[turnIndex].attackRange);
+        if (targetableTiles.Count > 0)
+        {
+            currentTarget = 0;
+            SeeTarget();
+        }
+    }
+
+    public void SwitchTarget(bool right = true)
+    {
+        if (targetableTiles.Count <= 0)
+        {
+            return;
+        }
+        if (right)
+        {
+            if (targetableTiles.Count - 1 > currentTarget)
+            {
+                currentTarget++;
+            }
+            else
+            {
+                currentTarget = 0;
+            }
+        }
+        else
+        {
+            if (currentTarget > 0)
+            {
+                currentTarget--;
+            }
+            else
+            {
+                currentTarget = targetableTiles.Count - 1;
+            }
+        }
+        SeeTarget();
+    }
+
+    public TacticActor ReturnCurrentTarget()
+    {
+        if (targetableTiles.Count <= 0)
+        {
+            return null;
+        }
+        int targetLocation = targetableTiles[currentTarget];
+        for (int i = 0; i < actors.Count; i++)
+        {
+            if (actors[i].locationIndex == targetLocation)
+            {
+                return actors[i];
+            }
+        }
+        return null;
+    }
+
+    public void ActorStopAttacking()
+    {
+        UpdateCenterTile(actors[turnIndex].locationIndex);
+        UpdateMap();
+    }
+
+    public void CurrentActorAttack()
+    {
+        if (targetableTiles.Count <= 0)
+        {
+            return;
+        }
+        actors[turnIndex].Attack(ReturnCurrentTarget());
     }
 
     public void MoveActor(int direction)
@@ -125,6 +215,15 @@ public class TerrainMap : MonoBehaviour
         UpdateMap();
     }
 
+    public void RemoveActor(TacticActor deadActor)
+    {
+        if (actors.Contains(deadActor))
+        {
+            actors.Remove(deadActor);
+            UpdateMap();
+        }
+    }
+
     public void GenerateActor(int location, int type, int team)
     {
         actorManager.GenerateActor(location, type, team);
@@ -151,8 +250,8 @@ public class TerrainMap : MonoBehaviour
     private void DetermineCornerRowColumn()
     {
         int start = startIndex;
-        cornerRow = -2;
-        cornerColumn = -2;
+        cornerRow = -(gridSize/2);
+        cornerColumn = -(gridSize/2);
         while (start >= fullSize)
         {
             start -= fullSize;
@@ -201,12 +300,14 @@ public class TerrainMap : MonoBehaviour
     private void UpdateMap()
     {
         UpdateOccupiedTiles();
+        // O(n)
         for (int i = 0; i < terrainTiles.Count; i++)
         {
             terrainTiles[i].ResetImage();
             terrainTiles[i].ResetHighlight();
             UpdateTile(i, currentTiles[i]);
         }
+        // O(n^2)
         for (int i = 0; i < actors.Count; i++)
         {
             if (currentTiles.Contains(actors[i].locationIndex))
@@ -242,6 +343,7 @@ public class TerrainMap : MonoBehaviour
         HighlightTiles();
     }
 
+    // O(n^3)?
     private void HighlightTiles()
     {
         for (int i = 0; i < highlightedTiles.Count; i++)
@@ -261,13 +363,14 @@ public class TerrainMap : MonoBehaviour
     private void GetTargetableTiles(int targetRange)
     {
         currentTarget = 0;
+        UpdateOccupiedTiles();
         targetableTiles.Clear();
         int start = actors[turnIndex].locationIndex;
         highlightedTiles = pathFinder.FindTilesInRange(start, targetRange, 1);
         // Check if the tiles in attack range have targets.
         for (int i = 0; i < highlightedTiles.Count; i++)
         {
-            if (occupiedTiles.Contains(highlightedTiles[i]))
+            if (occupiedTiles[highlightedTiles[i]] > 0)
             {
                 targetableTiles.Add(highlightedTiles[i]);
             }
@@ -277,34 +380,8 @@ public class TerrainMap : MonoBehaviour
     private void SeeTarget()
     {
         UpdateCenterTile(targetableTiles[currentTarget]);
+        UpdateMap();
+        HighlightTile(gridSize*gridSize/2, false);
         // Update some info about the target.
-    }
-
-    public void TargetSelection(bool right = true)
-    {
-        // Scroll between different possible targets.
-        if (right)
-        {
-            if (currentTarget + 1 < targetableTiles.Count)
-            {
-                currentTarget++;
-            }
-            else
-            {
-                currentTarget = 0;
-            }
-        }
-        else
-        {
-            if (currentTarget - 1 >= 0)
-            {
-                currentTarget--;
-            }
-            else
-            {
-                currentTarget = targetableTiles.Count - 1;
-            }
-        }
-        SeeTarget();
     }
 }
